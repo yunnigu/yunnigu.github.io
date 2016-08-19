@@ -3,14 +3,26 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: writup | Hexo</title>
+  <title>RSAtools使用方法 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/tags/writup/index.html">
+  <meta name="description" content="#RSAtool使用方法最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。
+RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RSAtools使用方法">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="#RSAtool使用方法最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。
+RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。">
+<meta property="og:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/L9mbvbpBkma3bpwgnsU61lm7GHWWCi8KVRu4u7yNnV8!/b/dAcBAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
+<meta property="og:image" content="http://a2.qpic.cn/psb?/V14JgGr112jeEy/mH8LS81J.XTQ0sfpCw*23nOGbK.jtF3bdUNFyV38tFI!/b/dKwAAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
+<meta property="og:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/2ahwM7mdmuor46OGGSSFl9by9mRaakLBRxq9hOz0w1E!/b/dK0AAAAAAAAA&bo=.QELAQAAAAADB9A!&rf=viewer_4">
+<meta property="og:image" content="http://a2.qpic.cn/psb?/V14JgGr112jeEy/0riIxYaiDvD4SkhWcsOoJ.JVVWr8E2NuZlDiqnZvZ8c!/b/dKwAAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
+<meta property="og:updated_time" content="2016-08-19T11:45:40.806Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="RSAtools使用方法">
+<meta name="twitter:description" content="#RSAtool使用方法最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。
+RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。">
+<meta name="twitter:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/L9mbvbpBkma3bpwgnsU61lm7GHWWCi8KVRu4u7yNnV8!/b/dAcBAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -35,9 +47,9 @@
           fancybox: true,
           animate: true,
           isHome: false,
-          isPost: false,
+          isPost: true,
           isArchive: false,
-          isTag: true,
+          isTag: false,
           isCategory: false,
           open_in_new: false
       }
@@ -239,54 +251,209 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap">
+      <div class="body-wrap"><article id="post-RSAtools使用方法" class="article article-type-post" itemscope itemprop="blogPost">
   
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2016/08/09/pwn之-数组下标越界/" class="archive-article-date">
-      <time datetime="2016-08-09T07:05:05.000Z" itemprop="datePublished">08-09</time>
+    <div class="article-meta">
+      <a href="/2016/08/19/RSAtools使用方法/" class="article-date">
+      <time datetime="2016-08-19T11:14:40.000Z" itemprop="datePublished">2016-08-19</time>
 </a>
-        </div>
-         
+    </div>
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a>
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RSAtools使用方法
     </h1>
   
 
-        <div class="article-info info-on-archive">
-          
+      </header>
+      
+      <div class="article-info article-info-post">
+        
 
-          
+        
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writup/">writup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/漏洞/">漏洞</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/密码学，工具/">密码学，工具</a></li></ul>
     </div>
 
-        </div>
         <div class="clearfix"></div>
-    </header>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>#RSAtool使用方法<br>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。</p>
+<p>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。<br><a id="more"></a></p>
+<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
+<p>##例一</p>
+<pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
+已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
+(N=322831561921859 e = 23)
+请解密出明文，提交时请将数字转化为ascii码提交
+比如你解出的明文是0x6162，那么请提交字符串ab
+提交格式:PCTF{明文字符串}
+</code></pre><p><img src="http://a3.qpic.cn/psb?/V14JgGr112jeEy/L9mbvbpBkma3bpwgnsU61lm7GHWWCi8KVRu4u7yNnV8!/b/dAcBAAAAAAAA&amp;bo=hgJnAgAAAAADB8M!&amp;rf=viewer_4" alt=""></p>
+<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
+<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
+<p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/mH8LS81J.XTQ0sfpCw*23nOGbK.jtF3bdUNFyV38tFI!/b/dKwAAAAAAAAA&amp;bo=hgJnAgAAAAADB8M!&amp;rf=viewer_4" alt=""></p>
+<p><img src="http://a3.qpic.cn/psb?/V14JgGr112jeEy/2ahwM7mdmuor46OGGSSFl9by9mRaakLBRxq9hOz0w1E!/b/dK0AAAAAAAAA&amp;bo=.QELAQAAAAADB9A!&amp;rf=viewer_4" alt=""></p>
+<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
+<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
+<p>##例二<br>    已知RSA公钥生成参数：<br>    p = 3487583947589437589237958723892346254777<br>    q = 8767867843568934765983476584376578389<br>    e = 65537<br>    求d =<br>    请提交PCTF{d}</p>
+<p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/0riIxYaiDvD4SkhWcsOoJ.JVVWr8E2NuZlDiqnZvZ8c!/b/dKwAAAAAAAAA&amp;bo=hgJnAgAAAAADB8M!&amp;rf=viewer_4" alt=""></p>
+<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+
+      
+    </div>
+    
   </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2016/08/19/RSAtools使用方法/">RSAtools使用方法</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 John Doe 的个人博客">John Doe</a></p>
+        <p><span>发布时间:</span>2016年08月19日 - 19时14分</p>
+        <p><span>最后更新:</span>2016年08月19日 - 19时45分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2016/08/19/RSAtools使用方法/" title="RSAtools使用方法">http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/　　作者: John Doe" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2016/08/09/pwn之-数组下标越界/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">pwn之-数组下标越界</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="2016/08/19/RSAtools使用方法/" data-title="RSAtools使用方法" data-url="http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"null"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = '/js/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    <!-- 多说公共JS代码 end -->
+</div>
 
     
 
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2016/08/09/pwn之-数组下标越界/" title="下一篇: pwn之-数组下标越界">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtools使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
 </div>
       <footer id="footer">
     <div class="outer">
@@ -351,17 +518,6 @@
         };
     })
 </script>
-
-    <button class="hide-labels">TAG 开关</button>
-    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js">
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("button").click(function() {
-                $(".article-info").toggle(200);
-            });
-        });
-    </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
