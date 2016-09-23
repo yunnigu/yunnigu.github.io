@@ -13,6 +13,7 @@
 <meta property="og:description" content="##IDEA编程检验java中的四种修饰符的访问权限">
 <meta property="og:image" content="http://i1.piimg.com/567571/473ef35bc1ddae11.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/461effe466156a9e.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/97fa72f646fba6e1.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/1e2721e02d4711d9.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/984b0774b0b1d6d4.png">
 <meta property="og:image" content="http://i4.piimg.com/567571/20cf06485dcec7cb.png">
@@ -21,11 +22,12 @@
 <meta property="og:image" content="http://i4.piimg.com/567571/e9d1ba98186f10a4.png">
 <meta property="og:image" content="http://i4.piimg.com/567571/913c0b41bb916c9a.png">
 <meta property="og:image" content="http://i4.piimg.com/567571/c6a3484fd932e8d8.png">
+<meta property="og:image" content="http://p1.bqimg.com/567571/75a9eee72a6216ee.png">
 <meta property="og:image" content="http://i4.piimg.com/567571/e9d1ba98186f10a4.png">
 <meta property="og:image" content="http://i4.piimg.com/567571/913c0b41bb916c9a.png">
 <meta property="og:image" content="http://i4.piimg.com/567571/12e7669444d51153.png">
-<meta property="og:image" content="http://hiphotos.baidu.com/exp/pic/item/61183b2dd42a2834a452a0f659b5c9ea14cebf1c.jpg">
-<meta property="og:updated_time" content="2016-09-23T05:02:06.108Z">
+<meta property="og:image" content="http://p1.bqimg.com/567571/dac06ed9b515bc2d.png">
+<meta property="og:updated_time" content="2016-09-23T10:07:16.960Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IDEA编程检验java中的四种修饰符的访问权限">
 <meta name="twitter:description" content="##IDEA编程检验java中的四种修饰符的访问权限">
@@ -278,33 +280,35 @@
           
         <p>##IDEA编程检验java中的四种修饰符的访问权限</p>
 <a id="more"></a>
-<p>首先在IDEA的模块中创建两个包分别为com.tongleer和com.tongleer.app.分别在com.tongleer和com.tongleer.app两个包中建立People，Person和Student，Computer，程序如下：</p>
-<p>首先说明public的权限问题，分别比较本类、同包、子类、其他包的区别。<br><img src="http://i1.piimg.com/567571/473ef35bc1ddae11.png" alt=""></p>
+<p>首先在IDEA的模块中创建两个包分别为com.tongleer和com.tongleer.app.分别在com.tongleer和com.tongleer.app两个包中建立People，Person，Teacher和Student，Computer，程序如下：</p>
+<p>首先说明public的权限问题，分别比较本类、同包、同包子类、其他包、其他包子类的区别。<br><img src="http://i1.piimg.com/567571/473ef35bc1ddae11.png" alt=""></p>
 <pre><code>name是public的，如编译通过则说明有本类的访问权限。
 </code></pre><p><img src="http://i1.piimg.com/567571/461effe466156a9e.png" alt=""></p>
 <pre><code>People类是和Person建立在同一个包下的类，若编译通过，则说明拥有同包访问权限。
-</code></pre><p><img src="http://i1.piimg.com/567571/1e2721e02d4711d9.png" alt=""></p>
-<pre><code>Student类是与Person不同包的子类，若编译通过，则说明拥有子类的访问权限。
+</code></pre><p><img src="http://p1.bpimg.com/567571/97fa72f646fba6e1.png" alt=""><br>    Teacher类是和Person建立在同一个包下的子类，若编译通过，则说明拥有同包子类的访问权限。</p>
+<p><img src="http://i1.piimg.com/567571/1e2721e02d4711d9.png" alt=""></p>
+<pre><code>Student类是与Person不同包的子类，若编译通过，则说明拥有其他包子类的访问权限。
 </code></pre><p><img src="http://i1.piimg.com/567571/984b0774b0b1d6d4.png" alt=""></p>
 <pre><code>Computer是与Person不同包的其他类，里面引用了name这个属性，若通过编译，则说明拥有包外访问权限。
 </code></pre><p>再来说明protect权限问题，这里要注意：public可以修饰任何类而且类名要与文件名相同，protected不可以修饰类。</p>
-<p>Persond代码如下，其他三个类同上：<br><img src="http://i4.piimg.com/567571/20cf06485dcec7cb.png" alt=""></p>
-<p><img src="http://i4.piimg.com/567571/f9ba609ffa3abb12.png" alt=""><br>    Person、People、Student能编译通过，就说明用protected修饰的类在本类、同包、子类中互相访问都是可以的，而Computer编译不通过说明protected不可以在包外没有继承关系的类中互相访问。</p>
-<p>接着说明default权限问题，同样定义4个类Person、People、Student、Computer，分别比较本类、同包、子类、其他包的区别。<br>这里要注意：default（不写默认指定default）同public一样可以修饰任何类而且类名要与文件名相同。<br>Person代码如图所示，其他3个类同上：</p>
+<p>Persond代码如下，其他四个类同上：<br><img src="http://i4.piimg.com/567571/20cf06485dcec7cb.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/f9ba609ffa3abb12.png" alt=""><br>    Person、People、Student能编译通过，就说明用protected修饰的类在本类、同包、同包子类中互相访问都是可以的，而Computer编译不通过说明protected不可以在包外没有继承关系的类中互相访问。</p>
+<p>接着说明default权限问题，同样定义4个类Person、People、Student、Computer，分别比较本类、同包、子类、其他包的区别。<br>这里要注意：default（不写默认指定default）同public一样可以修饰任何类而且类名要与文件名相同。<br>Person代码如图所示，其他四个类同上：</p>
 <p><img src="http://i4.piimg.com/567571/c3e3c4abba0d0fe6.png" alt=""></p>
 <p><img src="http://i4.piimg.com/567571/e9d1ba98186f10a4.png" alt=""></p>
 <p><img src="http://i4.piimg.com/567571/913c0b41bb916c9a.png" alt=""></p>
-<pre><code>Person、People能编译通过，就说明用default修饰的类在本类、同包中互相
+<pre><code>Person、People、Teacher能编译通过，就说明用default修饰的类在本类、同包或者同包子类中互相
 访问都是可以的，而Student、Computer编译不通过说明default不可以在包外
 不管有没有继承关系的类都不可以互相访问。
-</code></pre><p>最后说明private权限问题，同样定义4个类Person、People、Student、Computer，分别比较本类、同包、子类、其他包的区别。<br>这里要注意：private同protected一样不可以修饰类。<br>Person代码如图所示，其他3个类同上：</p>
+</code></pre><p>最后说明private权限问题，同样定义五个类Person、People、Teacher、Student、Computer，分别比较本类、同包、同包子类、其他包子类的区别。<br>这里要注意：private同protected一样不可以修饰类。<br>Person代码如图所示，其他四个类同上：</p>
 <p><img src="http://i4.piimg.com/567571/c6a3484fd932e8d8.png" alt=""></p>
+<p><img src="http://p1.bqimg.com/567571/75a9eee72a6216ee.png" alt=""></p>
 <p><img src="http://i4.piimg.com/567571/e9d1ba98186f10a4.png" alt=""></p>
 <p><img src="http://i4.piimg.com/567571/913c0b41bb916c9a.png" alt=""></p>
 <p><img src="http://i4.piimg.com/567571/12e7669444d51153.png" alt=""></p>
-<pre><code>Person能编译通过而People、Student、Computer编译不通过，就说明用private修饰的类只能在本类中访问。
-</code></pre><p>综上所述，java中4种修饰符访问权限的区别及详解全过程就此演示完了，再一次说明java语言的严谨性和安全性，我们在以后使用这4中修饰符时创建一个类，这个类的权限尽量要小，这样才能减少漏洞和提高安全性，从而体现java面向对象的封装性。</p>
-<p><img src="http://hiphotos.baidu.com/exp/pic/item/61183b2dd42a2834a452a0f659b5c9ea14cebf1c.jpg" alt=""></p>
+<pre><code>Person能编译通过而People、Teacher、Student、Computer编译不通过，就说明用private修饰的类只能在本类中无继承方法的类中访问。
+</code></pre><p>综上所述，java中4种修饰符访问权限的区别及详解全过程就此演示完了，再一次说明java语言的严谨性和安全性，我们在以后使用这4中修饰符时创建一个类，这个类的权限尽量要小，这样才能减少漏洞和提高安全性，从而体现java面向对象的封装性。<br>总之：父类里面所有public和protected属性子类都能继承，但是只有当子类和父亲在同一个包中的时候才能继承默认级别属性。当我们在通过子类访问子类从父类继承的特性时，相对于父类的位置。</p>
+<p><img src="http://p1.bqimg.com/567571/dac06ed9b515bc2d.png" alt=""></p>
 
       
     </div>
@@ -316,7 +320,7 @@
         <p><span>本文标题:</span><a href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年09月23日 - 10时59分</p>
-        <p><span>最后更新:</span>2016年09月23日 - 13时02分</p>
+        <p><span>最后更新:</span>2016年09月23日 - 18时07分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/" title="IDEA编程检验java中的四种修饰符的访问权限">http://yunnigu.dropsec.xyz/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
