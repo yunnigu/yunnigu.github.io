@@ -139,7 +139,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA，面向对象/" style="font-size: 10px;">IDEA，面向对象</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a>
                     </div>
                 </section>
                 
@@ -226,6 +226,91 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-IDEA编程检验java中的四种修饰符的访问权限" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/" class="article-date">
+      <time datetime="2016-09-23T02:59:02.000Z" itemprop="datePublished">2016-09-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>##IDEA编程检验java中的四种修饰符的访问权限</p>
+<p>首先在IDEA的模块中创建两个包分别为com.tongleer和com.tongleer.app.分别在com.tongleer和com.tongleer.app两个包中建立People，Person和Student，Computer，程序如下：</p>
+<p>首先说明public的权限问题，分别比较本类、同包、子类、其他包的区别。<br><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/weBR3hTEHotutUA5JbhAWPZJNWFeOuYjH1ED2CpGAPc!/b/dKkAAAAAAAAA&amp;bo=QgKMAQAAAAADB.8!&amp;rf=viewer_4" alt=""></p>
+<pre><code>name是public的，如编译通过则说明有本类的访问权限。
+</code></pre><p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/TL82mZVEh1zw4bVICaw7faVF1nylH9vTvQUN.DaaB3s!/b/dKwAAAAAAAAA&amp;bo=UQFzAQAAAAADBwA!&amp;rf=viewer_4" alt=""></p>
+<pre><code>People类是和Person建立在同一个包下的类，若编译通过，则说明拥有同包访问权限。
+</code></pre><p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/c1cz16QOz.hpsKJzaLgR1UXDGgVnMP8ye.*i8HD7oYk!/b/dLIAAAAAAAAA&amp;bo=YQFSAQAAAAADBxE!&amp;rf=viewer_4" alt=""></p>
+<pre><code>Student类是与Person不同包的子类，若编译通过，则说明拥有子类的访问权限。
+</code></pre><p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/f5QaQIjRwfx529DQMMsZTyvTpTqv*28Fy6vpIc3ac9Q!/b/dLIAAAAAAAAA&amp;bo=mgFfAQAAAAADB.c!&amp;rf=viewer_4" alt=""></p>
+<pre><code>Computer是与Person不同包的其他类，里面引用了name这个属性，若通过编译，则说明拥有包外访问权限。
+</code></pre><p>再来说明protect权限问题，这里要注意：public可以修饰任何类而且类名要与文件名相同，protected不可以修饰类。</p>
+<p>Persond代码如下，其他三个类同上：<br><img src="http://i4.piimg.com/567571/20cf06485dcec7cb.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/f9ba609ffa3abb12.png" alt=""><br>    Person、People、Student能编译通过，就说明用protected修饰的类在本类、同包、子类中互相访问都是可以的，而Computer编译不通过说明protected不可以在包外没有继承关系的类中互相访问。</p>
+<p>接着说明default权限问题，同样定义4个类Person、People、Student、Computer，分别比较本类、同包、子类、其他包的区别。<br>这里要注意：default（不写默认指定default）同public一样可以修饰任何类而且类名要与文件名相同。<br>Person代码如图所示，其他3个类同上：</p>
+<p><img src="http://i4.piimg.com/567571/c3e3c4abba0d0fe6.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/e9d1ba98186f10a4.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/913c0b41bb916c9a.png" alt=""></p>
+<pre><code>Person、People能编译通过，就说明用default修饰的类在本类、同包中互相
+访问都是可以的，而Student、Computer编译不通过说明default不可以在包外
+不管有没有继承关系的类都不可以互相访问。
+</code></pre><p>最后说明private权限问题，同样定义4个类Person、People、Student、Computer，分别比较本类、同包、子类、其他包的区别。<br>这里要注意：private同protected一样不可以修饰类。<br>Person代码如图所示，其他3个类同上：</p>
+<p><img src="http://i4.piimg.com/567571/c6a3484fd932e8d8.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/e9d1ba98186f10a4.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/913c0b41bb916c9a.png" alt=""></p>
+<p><img src="http://i4.piimg.com/567571/12e7669444d51153.png" alt=""></p>
+<pre><code>Person能编译通过而People、Student、Computer编译不通过，就说明用private修饰的类只能在本类中访问。
+</code></pre><p>综上所述，java中4种修饰符访问权限的区别及详解全过程就此演示完了，再一次说明java语言的严谨性和安全性，我们在以后使用这4中修饰符时创建一个类，这个类的权限尽量要小，这样才能减少漏洞和提高安全性，从而体现java面向对象的封装性。</p>
+<p><img src="http://hiphotos.baidu.com/exp/pic/item/61183b2dd42a2834a452a0f659b5c9ea14cebf1c.jpg" alt=""></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDEA，面向对象/">IDEA，面向对象</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Python之encode与decode" class="article article-type-post" itemscope itemprop="blogPost">
   
