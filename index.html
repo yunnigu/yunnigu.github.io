@@ -139,7 +139,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA/" style="font-size: 20px;">IDEA</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 20px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA/" style="font-size: 20px;">IDEA</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 10px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 20px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -226,6 +226,129 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="w-java之包的概念及其意义" class="article article-type-w" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/09/24/java之包的概念及其意义/" class="article-date">
+      <time datetime="2016-09-24T10:36:57.000Z" itemprop="datePublished">2016-09-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>#java之包的概念及其意义</p>
+<p>##一、包的概念</p>
+<p>在Java语言中，为了对同一个项目中的多个类和接口进行分类和管理，专门设计了包(Package)的概念，使用包管理和类和接口。</p>
+<p>其实出现包的概念最开始的原因是避免类名重复，现在这个作用也得到了广泛的应用。例如各个公司会为同一个功能实现一套类，这些类名之间大量的存在重复，使用包的概念就可以很方便的解决类名重复的问题。那么包到底是什么呢？</p>
+<p>其实包是一个逻辑的概念，就是给类名加了一个前缀，就像北京路这个路名上海和南京都有，再说这个路名时，就可以使用南京市北京路和上海市北京路进行区分，这里的北京路就相当于类，而前面的前缀，如南京市或上海市，就相当于包名。</p>
+<p>在物理上包被转换成一个文件夹，操作系统通过文件夹来管理各个类和接口，从而实现对类的分类，或者称之为按照类的功能对这些类进行封装。</p>
+<p>下面介绍一下和包有关的两个语法：打包和引入包。</p>
+<p>##二、打包<br>打包的作用就是将声明的类放入包中，也就是为类指定包名。在实际的项目中，一般根据类的功能来设定包，例如设置界面类包，逻辑类包，网络类包等结构。</p>
+<p>打包的语法格式为：</p>
+<pre><code>package 包名1[.包名2[.包名3……]];
+</code></pre><p>在该语法中，包名可以设置多个，包名和包名之间使用“.”进行分割，包名的个数没有限制。其中前面的包名包含后面的包名。按照Java语言的编码规范，包名所有字母都小写，由于包名将转换为文件夹的名称，所以包名中不能包含特殊字符。例如：</p>
+<pre><code>package test;
+package demo.chapter8;
+package game.bubble.ui;
+</code></pre><p>在示例中的最后一个，package game.bubble.ui，该包名将转换为路径/game/bubble/ui，也就是前面的包名是后面包名的父目录。</p>
+<p>需要特别注意的是：</p>
+<pre><code>1、打包的语句必须是程序代码中的第一行可执行代码，也就是说打包语句的上面只能包含空行或注释。
+2、打包的语句最多只有一句。
+</code></pre><p>如果在代码中没有书写package语句，则该类将被打入到默认包中，默认包无法被其它的包引用。</p>
+<pre><code>示例代码：
+              //文件名：PackageClass.java
+              package chapter8;
+              public class PackageClass{
+                       //类内部的代码
+              }
+</code></pre><p>通过打包语法，可以为每个类增加一个前缀，也就是说以前使用类，使用类名即可，有了包名的概念以后，类的全名就是包名.类名了，通过在类名前面加入包名，可以使不同包中存在系统的类名，但是一般不建议一个项目中的类名存在重复。当一个类有了包名以后，在编译和运行时将和前面的操作产生一些变化，下面介绍一下JDK和Eclipse中相关操作的变化。</p>
+<p>a)JDK编译和运行打包的源文件 编译源代码的命令：javac –d 类文件路径 源代码名称，</p>
+<pre><code>例如：javac  –d  d:/  PackageClass.java
+</code></pre><p>该命令的作用是将PackageClass类编译成class，并将生成的class文件存储到d盘根目录下。则class文件的存储路径是：d:/chapter8/PackageClass.class。使用该命令编译时自动将包名转换为文件夹。</p>
+<p>如果想将编译生成的class文件生成在源代码所在的目录，则可以使用如下格式：javac –d . 源文件名<br>这里的源文件没可以使用*.java代表当前目录下的所有源文件。</p>
+<p> 说明：执行javac命令必须将目录切换到源代码所在的目录。<br> 行类文件的格式： java 包名.类名<br>    例如：java  chapter8.PackageClass</p>
+<p>该命令的作用是运行该类，按照上面的编译命令，运行该程序时，不应该切换到class文件所在的目录，而是切换到最顶层的包名所在的目录，所以执行以上命令时，在控制台下面只需要切换到d盘根目录即可。</p>
+<p>b)eclipe编译和运行打包的源代码</p>
+<p>在新建源代码时，可以在新建类向导中，可以在package栏中添加包名，在eclipse编译时会自动生成包名的结构。<br>运行带包名的代码也和以前的运行步骤一样。</p>
+<p>需要特别注意的是：在eclipse中，源代码的组织也要求将包名转换为文件夹，否则将出现语法错误，这点在复制代码到eclipse项目中时需要特别小心。</p>
+<p>##三、引入包</p>
+<p>当类进行了打包操作以后，同一个包内部的类默认引入，当需要使用其它包中的类时，则必须首先引入对应的类，然后才可以使用该类。</p>
+<p>引入包的语法格式为：</p>
+<pre><code>import 包名1.[.包名2[.包名3……]].类名|*;
+</code></pre><p>在该语法中，import关键字后面是包名，包名和包名之间使用“.”分割，最后为类名或“*”，如果书写类名则代表只引入该类，如果书写星号则代表引入该包中的所有类、接口、异常和错误等。例如：</p>
+<pre><code>import chapter8.*;
+import java.io.*;
+import chapter8. PackageClass;
+</code></pre><p>引入包的代码书写在类声明语句的上面，打包语句的下面，import语句在一个代码中可以书写任意多句，例如：</p>
+<pre><code>package chapter8;
+import java.io.*;
+import java.net.*;
+public class Test{
+      //其它代码
+}
+</code></pre><p>说明：这里的java.io包和java.net包都是JDK中提供的包名。</p>
+<p>每引入一个类或接口，将在内存中占有几十个字节的空间，所以使用星号引入一个包中所有的类或接口虽然编写起来比较简单，但是却浪费了一些内存，而一个一个的引入类名编写起来又比较麻烦。</p>
+<p>小提示：使用eclipse中的source菜单下的Orgnize Imports可以将星号的引用转换为对类名的引用。</p>
+<p>最后需要特别注意的是，import只引入当前包下面的类，而不引入该包下面的子包里面的类。例如：<br>                  //文件名：A.java<br>                   package a;<br>                   public class A{}</p>
+<pre><code>//文件名：B.java
+package a.b;
+public class B{}
+
+//文件名：Test.java
+import a.*;
+public class Test{
+         public static void main(String[] args){
+                  B b = new B();   //语法错误，B类未引入
+         }
+}
+</code></pre><p>说明：在该示例的Test类中，使用import a.*;引入了包a中的所有类，也就是类A，而包a的子包a.b中的类将不会被引入，所以在Test类中使用B类将出现语法错误。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-java之getters和setters" class="article article-type-post" itemscope itemprop="blogPost">
   
