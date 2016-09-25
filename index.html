@@ -139,7 +139,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA/" style="font-size: 20px;">IDEA</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 20px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 20px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA/" style="font-size: 16.67px;">IDEA</a> <a href="/tags/java/" style="font-size: 16.67px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 20px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 13.33px;">python</a> <a href="/tags/writeup/" style="font-size: 16.67px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 16.67px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -165,6 +165,8 @@
                       <a target="_blank" class="main-nav-link switch-friends-link" href="http://fgp.dropsec.xyz/">鹏哥</a>
                     
                       <a target="_blank" class="main-nav-link switch-friends-link" href="http://spd.dropsec.xyz/">东哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://cq.dropsec.xyz/">陈奇奇</a>
                     
                     </div>
                 </section>
@@ -226,6 +228,217 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-java之抽象类与接口" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/09/25/java之抽象类与接口/" class="article-date">
+      <time datetime="2016-09-25T04:05:00.000Z" itemprop="datePublished">2016-09-25</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>#java之抽象类与接口</p>
+<p>##一、抽象类的定义及特点：</p>
+<pre><code>1.方法只声明不实现，该方法就是抽象方法，需要abstract修饰，
+  抽象方法必须定义在抽象类中，该类必须被abstract修饰。
+2.抽象类不可以被实例化，不能new。因为方法内容不确定所以对象调用方法没意义。
+3.抽象类必须由子类覆盖了所有的方法后，该子类才可以实例化，否则这个子类还是抽象类。
+4.抽象类由构造函数用于给子类对象进行初始化。
+5.抽象类可以不定义抽象方法,目的是不让类创建对象，AWT的适配器类对象就
+  是这种类，是一个抽象类，但是却没有一个抽象方法，有的是非抽象方法，但是这些方法有方法体，却没有内容。
+6.抽象关键字不能和以下几类共存：
+  private：因为抽象方法必须要覆盖，一旦私有子类就不知道有这个方法，就不能实现覆盖。
+  static：类名即可调用，但是调用却没意义。
+  final：抽象方法必须覆盖，final不能被覆盖。
+7.抽象类和一般类的异同.
+  相同：都是用来描述事物，都在内部定义了成员。
+  不同：
+  一般类由足够的信息描述事物，一般类描述事物的信息不足。
+  一般类不能定义抽象方法，抽象类可以定义抽象方法和非抽象方法。
+  一般类可以被实例化，抽象类不能被实例化。
+8.抽象类一定是父类，因为需要子类覆盖方法。
+</code></pre><p>抽象类的定义格式</p>
+<pre><code>abstract class 抽象类名称{
+    属性；
+    访问权限 返回值类型 方法名称（参数）{        //普通方法
+        [return 返回值]；
+    }
+    访问权限abstract返回值类型 方法名称（参数）；  //抽象方法
+    //在抽象类方法中是没有具体方法的
+}
+</code></pre><p>##二、接口的定义与实现</p>
+<p>###定义接口：<br>使用interface来定义一个接口。接口定义同类的定义类似，也是分为接口的声明和接口体，其中接口体由常量定义和方法定义两部分组成。定义接口的基本格式如下：</p>
+<pre><code>　　[修饰符] interface 接口名 [extends 父接口名列表]{
+　　    [public] [static] [final] 常量;
+　　    [public] [abstract] 方法;
+　　}
+</code></pre><p>　　修饰符：可选，用于指定接口的访问权限，可选值为public。如果省略则使用默认的访问权限。</p>
+<p>　　接口名：必选参数，用于指定接口的名称，接口名必须是合法的Java标识符。一般情况下，要求首字母大写。</p>
+<p>　　extends 父接口名列表：可选参数，用于指定要定义的接口继承于哪个父接口。当使用extends关键字时，父接口名为必选参数。</p>
+<p>　　方法：接口中的方法只有定义而没有被实现。</p>
+<p>　　例如，定义一个用于计算的接口，在该接口中定义了一个常量PI和两个方法，具体代码如下：</p>
+<pre><code>　　public interface CalInterface
+　　{
+    　　final float PI=3.14159f;//定义用于表示圆周率的常量PI
+    　　float getArea(float r);//定义一个用于计算面积的方法getArea()
+    　　float getCircumference(float r);//定义一个用于计算周长的方法getCircumference()
+　　}
+</code></pre><p>　　注意：与Java的类文件一样，接口文件的文件名必须与接口名相同。</p>
+<p>###实现接口：</p>
+<p>　　接口在定义后，就可以在类中实现该接口。在类中实现接口可以使用关键字implements，其基本格式如下：</p>
+<pre><code>　　[修饰符] class &lt;类名&gt; [extends &lt;父类名&gt;] [implements 接口列表] {
+
+　　}
+</code></pre><p>　　修饰符：可选参数，用于指定类的访问权限，可选值为public、abstract和final。</p>
+<p>　　类名：必选参数，用于指定类的名称，类名必须是合法的Java标识符。一般情况下，要求首字母大写。</p>
+<p>　　extends 父类名：可选参数，用于指定要定义的类继承于哪个父类。当使用extends关键字时，父类名为必选参数。</p>
+<p>　　implements 接口列表：可选参数，用于指定该类实现的是哪些接口。当使用implements关键字时，接口列表为必选参数。当接口列表中存在多个接口名时，各个接口名之间使用逗号分隔。</p>
+<p>　　在类中实现接口时，方法的名字、返回值类型、参数的个数及类型必须与接口中的完全一致，并且必须实现接口中的所有方法。例如，编写一个名称为Cire的类，具体代码如下：</p>
+<pre><code>　　public class Cire implements CalInterface
+　　{
+    　　public float getArea(float r)
+        　　{
+            　　float area=PI*r*r;//计算圆面积并赋值给变量area
+            　　return area;//返回计算后的圆面积
+        　　}
+    　　public float getCircumference(float r)
+        　　{
+            　　float circumference=2*PI*r; //计算圆周长并赋值给变量circumference
+            　　return circumference; //返回计算后的圆周长
+        　　}
+    　　public static void main(String[] args)
+        　　{
+            　　Cire c = new Cire();
+            　　float f = c.getArea(2.0f);
+            　　System.out.println(Float.toString(f));
+        　　}
+　　}
+</code></pre><p>##三、抽象类和接口在继承中的语法特征</p>
+<p>由于从某种角度讲，接口是一种特殊的抽象类，它们的渊源颇深，有很大的相似之处，所以在选择使用谁的问题上很容易迷糊。我们首先分析它们具有的相同点。</p>
+<pre><code> 1.都代表类树形结构的抽象层。在使用引用变量时，尽量使用类结构的抽象层，使
+方法的定义和实现分离，这样做对于代码有松散耦合的好处。
+ 2.都不能被实例化。
+ 3.都能包含抽象方法。抽象方法用来描述系统提供哪些功能，而不必关心具体的实现。
+ 4.抽象类可以为部分方法提供实现，避免了在子类中重复实现这些方法，提高了代
+码的可重用性，这是抽象类的优势；而接口中只能包含抽象方法，不能包含任何实现。
+
+public abstract class A{
+    public abstract void method1();
+    public void method2(){
+        //A method2
+    }
+}
+public class B extends A{
+    public void method1(){
+        //B method1
+    }
+}
+public class C extends A{
+    public void method1(){
+        //C method1
+    }
+}
+</code></pre><p>抽象类A有两个子类B、C，由于A中有方法method2的实现，子类B、C中不需要重写method2方法，我们就说A为子类提供了公共的功能，或A约束了子类的行为。method2就是代码可重用的例子。A 并没有定义 method1的实现，也就是说B、C 可以根据自己的特点实现method1方法，这又体现了松散耦合的特性。<br>再换成接口看看：</p>
+<pre><code>public interface A{
+    public void method1();
+    public void method2();
+}
+public class B implements A{
+    public void method1(){
+        //B method1
+    }
+    public void method2(){
+        //B method2
+    }
+}
+public class C implements A{
+    public void method1(){
+        //C method1
+    }
+    public void method2(){
+        //C method2
+    }
+}
+</code></pre><p>接口A无法为实现类B、C提供公共的功能，也就是说A无法约束B、C的行为。B、C可以自由地发挥自己的特点现实 method1和 method2方法，接口A毫无掌控能力。</p>
+<p>一个类只能继承一个直接的父类（可能是抽象类），但一个类可以实现多个接口，这个就是接口的优势。</p>
+<pre><code>interface A{
+    public void method2();
+}
+interface B{
+    public void method1();
+}
+class C implements A,B{
+    public void method1(){
+        //C method1
+    }
+    public void method2(){
+        //C method2
+    }
+}
+//可以如此灵活的使用C，并且C还有机会进行扩展，实现其他接口
+A a=new C();
+B b=new C();
+abstract class A{
+    public abstract void method1();
+}
+abstract class B extends A{
+    public abstract void method2();
+}
+class C extends B{
+    public void method1(){
+        //C method1
+    }
+    public void method2() {
+        //C method2
+    }
+</code></pre>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-基类子类对象间的替换" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -475,10 +688,10 @@
 
 
   
-    <article id="post-“java之构造函数，默认构造函数及构造函数的重载" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-java之构造函数，默认构造函数及构造函数的重载" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/" class="article-date">
+      <a href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/" class="article-date">
       <time datetime="2016-09-24T02:58:03.000Z" itemprop="datePublished">2016-09-24</time>
 </a>
     </div>
@@ -492,7 +705,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/">“java之构造函数，默认构造函数及构造函数的重载</a>
+      <a class="article-title" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">“java之构造函数，默认构造函数及构造函数的重载</a>
     </h1>
   
 
@@ -518,7 +731,7 @@
 
       
         <p class="article-more-link">
-          <a  href="/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/#more">大航海 >></a>
+          <a  href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>
@@ -537,10 +750,10 @@
 
 
   
-    <article id="post-IDEA编程检验java中的四种修饰符的访问权限" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-java之IDEA编程检验java中的四种修饰符的访问权限" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/" class="article-date">
+      <a href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/" class="article-date">
       <time datetime="2016-09-23T02:59:02.000Z" itemprop="datePublished">2016-09-23</time>
 </a>
     </div>
@@ -554,7 +767,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a>
+      <a class="article-title" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a>
     </h1>
   
 
@@ -580,7 +793,7 @@
 
       
         <p class="article-more-link">
-          <a  href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/#more">大航海 >></a>
+          <a  href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>
@@ -783,70 +996,6 @@ Return a string of one character with ordinal i; 0 &lt;= i &lt; 256.
       
         <p class="article-more-link">
           <a  href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-RSAtools使用方法" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/08/19/RSAtools使用方法/" class="article-date">
-      <time datetime="2016-08-19T11:14:40.000Z" itemprop="datePublished">2016-08-19</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>#RSAtool使用方法</p>
-<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。</p>
-<p>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/密码学/">密码学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具/">工具</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/08/19/RSAtools使用方法/#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

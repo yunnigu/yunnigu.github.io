@@ -3,29 +3,26 @@
 <head>
   <meta charset="utf-8">
   
-  <title>RSAtool使用方法 | YungGong</title>
+  <title>“java之构造函数，默认构造函数及构造函数的重载 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#RSAtool使用方法
-最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。
-RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。">
+  <meta name="description" content="#java之构造函数，默认构造函数及构造函数的重载">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RSAtool使用方法">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/index.html">
+<meta property="og:title" content="“java之构造函数，默认构造函数及构造函数的重载">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#RSAtool使用方法
-最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。
-RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。">
-<meta property="og:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/L9mbvbpBkma3bpwgnsU61lm7GHWWCi8KVRu4u7yNnV8!/b/dAcBAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
-<meta property="og:image" content="http://a2.qpic.cn/psb?/V14JgGr112jeEy/mH8LS81J.XTQ0sfpCw*23nOGbK.jtF3bdUNFyV38tFI!/b/dKwAAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
-<meta property="og:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/2ahwM7mdmuor46OGGSSFl9by9mRaakLBRxq9hOz0w1E!/b/dK0AAAAAAAAA&bo=.QELAQAAAAADB9A!&rf=viewer_4">
-<meta property="og:image" content="http://a2.qpic.cn/psb?/V14JgGr112jeEy/0riIxYaiDvD4SkhWcsOoJ.JVVWr8E2NuZlDiqnZvZ8c!/b/dKwAAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
-<meta property="og:updated_time" content="2016-08-19T11:59:32.367Z">
+<meta property="og:description" content="#java之构造函数，默认构造函数及构造函数的重载">
+<meta property="og:image" content="http://p1.bpimg.com/567571/ccb5b9b2744db57f.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/74c25dfb33ea0361.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/10d60a0b872d64dc.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/df291e3f939aef19.png">
+<meta property="og:image" content="http://p1.bqimg.com/567571/31d06e1f8fa09abb.png">
+<meta property="og:image" content="http://p1.bqimg.com/567571/214c2801e252ce80.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/a56b3c78518f65ff.png">
+<meta property="og:updated_time" content="2016-09-24T04:15:25.013Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RSAtool使用方法">
-<meta name="twitter:description" content="#RSAtool使用方法
-最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。
-RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。">
-<meta name="twitter:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/L9mbvbpBkma3bpwgnsU61lm7GHWWCi8KVRu4u7yNnV8!/b/dAcBAAAAAAAA&bo=hgJnAgAAAAADB8M!&rf=viewer_4">
+<meta name="twitter:title" content="“java之构造函数，默认构造函数及构造函数的重载">
+<meta name="twitter:description" content="#java之构造函数，默认构造函数及构造函数的重载">
+<meta name="twitter:image" content="http://p1.bpimg.com/567571/ccb5b9b2744db57f.png">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -236,11 +233,11 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-RSAtools使用方法" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-java之构造函数，默认构造函数及构造函数的重载" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/08/19/RSAtools使用方法/" class="article-date">
-      <time datetime="2016-08-19T11:14:40.000Z" itemprop="datePublished">2016-08-19</time>
+      <a href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/" class="article-date">
+      <time datetime="2016-09-24T02:58:03.000Z" itemprop="datePublished">2016-09-24</time>
 </a>
     </div>
   
@@ -253,7 +250,7 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
         
   
     <h1 class="article-title" itemprop="name">
-      RSAtool使用方法
+      “java之构造函数，默认构造函数及构造函数的重载
     </h1>
   
 
@@ -264,7 +261,7 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/密码学/">密码学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具/">工具</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDEA/">IDEA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面向对象/">面向对象</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,27 +271,32 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#RSAtool使用方法</p>
-<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。</p>
-<p>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。<br><a id="more"></a></p>
-<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
-<p>##例一</p>
-<pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
-已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
-(N=322831561921859 e = 23)
-请解密出明文，提交时请将数字转化为ascii码提交
-比如你解出的明文是0x6162，那么请提交字符串ab
-提交格式:PCTF{明文字符串}
-</code></pre><p><img src="http://a3.qpic.cn/psb?/V14JgGr112jeEy/L9mbvbpBkma3bpwgnsU61lm7GHWWCi8KVRu4u7yNnV8!/b/dAcBAAAAAAAA&amp;bo=hgJnAgAAAAADB8M!&amp;rf=viewer_4" alt=""></p>
-<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
-<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
-<p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/mH8LS81J.XTQ0sfpCw*23nOGbK.jtF3bdUNFyV38tFI!/b/dKwAAAAAAAAA&amp;bo=hgJnAgAAAAADB8M!&amp;rf=viewer_4" alt=""></p>
-<p><img src="http://a3.qpic.cn/psb?/V14JgGr112jeEy/2ahwM7mdmuor46OGGSSFl9by9mRaakLBRxq9hOz0w1E!/b/dK0AAAAAAAAA&amp;bo=.QELAQAAAAADB9A!&amp;rf=viewer_4" alt=""></p>
-<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
-<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
-<p>##例二<br>    已知RSA公钥生成参数：<br>    p = 3487583947589437589237958723892346254777<br>    q = 8767867843568934765983476584376578389<br>    e = 65537<br>    求d =<br>    请提交PCTF{d}</p>
-<p><img src="http://a2.qpic.cn/psb?/V14JgGr112jeEy/0riIxYaiDvD4SkhWcsOoJ.JVVWr8E2NuZlDiqnZvZ8c!/b/dKwAAAAAAAAA&amp;bo=hgJnAgAAAAADB8M!&amp;rf=viewer_4" alt=""></p>
-<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+        <p>#java之构造函数，默认构造函数及构造函数的重载</p>
+<a id="more"></a>
+<p>构造方法：用于完成对象属性的初始化工作，同时又如下特点：</p>
+<pre><code>（1）构造方法的名字必须和类名完全一样（包括大小写）；
+（2）构造方法没有返回值，连void也不会出现；
+（3）如果认为没有给类创建一个构造方法，java编译器会自动给我们添加一个没有参数且方法体为空的构造
+    方法，称为默认构造方法当然，如果认为已经添加了一个构造方法，java编译器就不会给我添加和这个构造方法。
+（4）我们不能显式调用类的构造方法，构造方法通常识是通过new关键字隐式调用；
+</code></pre><p>自己写了一小段代码证明默认构造函数的存在：</p>
+<p><img src="http://p1.bpimg.com/567571/ccb5b9b2744db57f.png" alt=""></p>
+<p><img src="http://p1.bpimg.com/567571/74c25dfb33ea0361.png" alt=""></p>
+<p>如果不定义构造函数，new会调用默认构造函数，如果类中定义了有参的构造函数，就会报错。</p>
+<p>视使用情景或条件的不同，创建对象时也许希望有对应的初始流程。可以定义多个构造函数，只要参数类型或个数不同，这称为重载构造函数。如下：</p>
+<p><img src="http://p1.bpimg.com/567571/10d60a0b872d64dc.png" alt=""></p>
+<p>对构造方法进行调用时，对new的使用特点：</p>
+<pre><code>（1）调用时，后面的小括号（）表示构造方法的参数列表，如果构造方法不接收参数，那么小括号可以为空；
+（2）如果构造方法接收参数，那么小括号中的实际参数就需要和构造方法定义中的形式参数保持一致（一致
+    条件为：参数数量一致、参数类型一致、按相应的顺序排列逐一赋值）。
+</code></pre><p>上述程序调用构造函数之后的运行结果如下：</p>
+<p><img src="http://p1.bpimg.com/567571/df291e3f939aef19.png" alt=""></p>
+<p>下面来介绍一下关于构造函数继承的问题，如下是A的一个子类：</p>
+<p><img src="http://p1.bqimg.com/567571/31d06e1f8fa09abb.png" alt=""></p>
+<p>如果子类构造函数没有指定执行父类哪个构造函数，默认会调用父类中无参构造函数。运行结果如下：</p>
+<p><img src="http://p1.bqimg.com/567571/214c2801e252ce80.png" alt=""></p>
+<p>如果父类没有定义构造函数，那么子类就会调用父类的默认构造函数：</p>
+<p><img src="http://p1.bpimg.com/567571/a56b3c78518f65ff.png" alt=""></p>
 
       
     </div>
@@ -303,13 +305,13 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></p>
+        <p><span>本文标题:</span><a href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">“java之构造函数，默认构造函数及构造函数的重载</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年08月19日 - 19时14分</p>
-        <p><span>最后更新:</span>2016年08月19日 - 19时59分</p>
+        <p><span>发布时间:</span>2016年09月24日 - 10时58分</p>
+        <p><span>最后更新:</span>2016年09月24日 - 12时15分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/08/19/RSAtools使用方法/" title="RSAtool使用方法">http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/" title="“java之构造函数，默认构造函数及构造函数的重载">http://yunnigu.dropsec.xyz/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -322,18 +324,18 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
 
 <nav id="article-nav">
   
-    <a href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/09/24/java之getters和setters/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          python中的ord，chr函数
+          java之getters和setters
         
       </div>
     </a>
   
   
-    <a href="/2016/08/09/pwn之-数组下标越界/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">pwn之-数组下标越界</div>
+    <a href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">IDEA编程检验java中的四种修饰符的访问权限</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -392,7 +394,7 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/08/19/RSAtools使用方法/" data-title="RSAtool使用方法" data-url="http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/"></div>
+    <div class="ds-thread" data-thread-key="2016/09/24/java之构造函数，默认构造函数及构造函数的重载/" data-title="“java之构造函数，默认构造函数及构造函数的重载" data-url="http://yunnigu.dropsec.xyz/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -415,13 +417,13 @@ RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几�
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/" title="上一篇: python中的ord，chr函数">
+            <a href="/2016/09/24/java之getters和setters/" title="上一篇: java之getters和setters">
                 <i class="fa fa-angle-left"></i>
             </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/08/09/pwn之-数组下标越界/" title="下一篇: pwn之-数组下标越界">
+            <a href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/" title="下一篇: IDEA编程检验java中的四种修饰符的访问权限">
                 <i class="fa fa-angle-right"></i>
             </a>
         
