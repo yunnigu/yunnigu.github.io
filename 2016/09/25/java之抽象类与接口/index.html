@@ -5,16 +5,16 @@
   
   <title>java之抽象类与接口 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#java之抽象类与接口">
+  <meta name="description" content="#java之抽象类与接口(附加IDEA中debug快捷键)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java之抽象类与接口">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#java之抽象类与接口">
-<meta property="og:updated_time" content="2016-09-25T04:38:24.347Z">
+<meta property="og:description" content="#java之抽象类与接口(附加IDEA中debug快捷键)">
+<meta property="og:updated_time" content="2016-09-25T04:55:30.120Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java之抽象类与接口">
-<meta name="twitter:description" content="#java之抽象类与接口">
+<meta name="twitter:description" content="#java之抽象类与接口(附加IDEA中debug快捷键)">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -137,7 +137,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA/" style="font-size: 16.67px;">IDEA</a> <a href="/tags/java/" style="font-size: 16.67px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 20px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 13.33px;">python</a> <a href="/tags/writeup/" style="font-size: 16.67px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 16.67px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDEA/" style="font-size: 20px;">IDEA</a> <a href="/tags/java/" style="font-size: 16.67px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 20px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 10px;">liunx</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/python/" style="font-size: 13.33px;">python</a> <a href="/tags/writeup/" style="font-size: 16.67px;">writeup</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/漏洞/" style="font-size: 10px;">漏洞</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 16.67px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -253,7 +253,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDEA/">IDEA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -263,7 +263,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#java之抽象类与接口<br><a id="more"></a></p>
+        <p>#java之抽象类与接口(附加IDEA中debug快捷键)<br><a id="more"></a></p>
 <p>##一、抽象类的定义及特点：</p>
 <pre><code>1.方法只声明不实现，该方法就是抽象方法，需要abstract修饰，
   抽象方法必须定义在抽象类中，该类必须被abstract修饰。
@@ -417,6 +417,17 @@ class C extends B{
     public void method2() {
         //C method2
     }
+</code></pre><p>##四、IDEA里debug快捷键</p>
+<pre><code>F9            resume programe 恢复程序
+Alt+F10       show execution point 显示执行断点
+F8            Step Over 相当于eclipse的f6      跳到下一步
+F7            Step Into 相当于eclipse的f5就是  进入到代码
+Alt+shift+F7  Force Step Into 这个是强制进入代码
+Shift+F8      Step Out  相当于eclipse的f8跳到下一个断点，也相当于eclipse的f7跳出函数
+Atl+F9        Run To Cursor 运行到光标处
+ctrl+shift+F9   debug运行java类
+ctrl+shift+F10  正常运行java类
+alt+F8          debug时选中查看值
 </code></pre>
       
     </div>
@@ -428,7 +439,7 @@ class C extends B{
         <p><span>本文标题:</span><a href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年09月25日 - 12时05分</p>
-        <p><span>最后更新:</span>2016年09月25日 - 12时38分</p>
+        <p><span>最后更新:</span>2016年09月25日 - 12时55分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/09/25/java之抽象类与接口/" title="java之抽象类与接口">http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
