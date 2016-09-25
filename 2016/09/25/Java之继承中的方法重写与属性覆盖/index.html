@@ -3,26 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>“java之构造函数，默认构造函数及构造函数的重载 | YungGong</title>
+  <title>Java之继承中的方法重写与属性覆盖 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#java之构造函数，默认构造函数及构造函数的重载">
+  <meta name="description" content="#Java之继承中的方法重写与属性覆盖">
 <meta property="og:type" content="article">
-<meta property="og:title" content="“java之构造函数，默认构造函数及构造函数的重载">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/index.html">
+<meta property="og:title" content="Java之继承中的方法重写与属性覆盖">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#java之构造函数，默认构造函数及构造函数的重载">
-<meta property="og:image" content="http://p1.bpimg.com/567571/ccb5b9b2744db57f.png">
-<meta property="og:image" content="http://p1.bpimg.com/567571/74c25dfb33ea0361.png">
-<meta property="og:image" content="http://p1.bpimg.com/567571/10d60a0b872d64dc.png">
-<meta property="og:image" content="http://p1.bpimg.com/567571/df291e3f939aef19.png">
-<meta property="og:image" content="http://p1.bqimg.com/567571/31d06e1f8fa09abb.png">
-<meta property="og:image" content="http://p1.bqimg.com/567571/214c2801e252ce80.png">
-<meta property="og:image" content="http://p1.bpimg.com/567571/a56b3c78518f65ff.png">
-<meta property="og:updated_time" content="2016-09-24T04:15:25.013Z">
+<meta property="og:description" content="#Java之继承中的方法重写与属性覆盖">
+<meta property="og:updated_time" content="2016-09-25T03:23:09.862Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="“java之构造函数，默认构造函数及构造函数的重载">
-<meta name="twitter:description" content="#java之构造函数，默认构造函数及构造函数的重载">
-<meta name="twitter:image" content="http://p1.bpimg.com/567571/ccb5b9b2744db57f.png">
+<meta name="twitter:title" content="Java之继承中的方法重写与属性覆盖">
+<meta name="twitter:description" content="#Java之继承中的方法重写与属性覆盖">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -231,11 +223,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-“java之构造函数，默认构造函数及构造函数的重载" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Java之继承中的方法重写与属性覆盖" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/" class="article-date">
-      <time datetime="2016-09-24T02:58:03.000Z" itemprop="datePublished">2016-09-24</time>
+      <a href="/2016/09/25/Java之继承中的方法重写与属性覆盖/" class="article-date">
+      <time datetime="2016-09-25T02:47:28.000Z" itemprop="datePublished">2016-09-25</time>
 </a>
     </div>
   
@@ -248,7 +240,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      “java之构造函数，默认构造函数及构造函数的重载
+      Java之继承中的方法重写与属性覆盖
     </h1>
   
 
@@ -259,7 +251,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDEA/">IDEA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面向对象/">面向对象</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -269,33 +261,252 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#java之构造函数，默认构造函数及构造函数的重载</p>
-<a id="more"></a>
-<p>构造方法：用于完成对象属性的初始化工作，同时又如下特点：</p>
-<pre><code>（1）构造方法的名字必须和类名完全一样（包括大小写）；
-（2）构造方法没有返回值，连void也不会出现；
-（3）如果认为没有给类创建一个构造方法，java编译器会自动给我们添加一个没有参数且方法体为空的构造
-    方法，称为默认构造方法当然，如果认为已经添加了一个构造方法，java编译器就不会给我添加和这个构造方法。
-（4）我们不能显式调用类的构造方法，构造方法通常识是通过new关键字隐式调用；
-</code></pre><p>自己写了一小段代码证明默认构造函数的存在：</p>
-<p><img src="http://p1.bpimg.com/567571/ccb5b9b2744db57f.png" alt=""></p>
-<p><img src="http://p1.bpimg.com/567571/74c25dfb33ea0361.png" alt=""></p>
-<p>如果不定义构造函数，new会调用默认构造函数，如果类中定义了有参的构造函数，就会报错。</p>
-<p>视使用情景或条件的不同，创建对象时也许希望有对应的初始流程。可以定义多个构造函数，只要参数类型或个数不同，这称为重载构造函数。如下：</p>
-<p><img src="http://p1.bpimg.com/567571/10d60a0b872d64dc.png" alt=""></p>
-<p>对构造方法进行调用时，对new的使用特点：</p>
-<pre><code>（1）调用时，后面的小括号（）表示构造方法的参数列表，如果构造方法不接收参数，那么小括号可以为空；
-（2）如果构造方法接收参数，那么小括号中的实际参数就需要和构造方法定义中的形式参数保持一致（一致
-    条件为：参数数量一致、参数类型一致、按相应的顺序排列逐一赋值）。
-</code></pre><p>上述程序调用构造函数之后的运行结果如下：</p>
-<p><img src="http://p1.bpimg.com/567571/df291e3f939aef19.png" alt=""></p>
-<p>下面来介绍一下关于构造函数继承的问题，如下是A的一个子类：</p>
-<p><img src="http://p1.bqimg.com/567571/31d06e1f8fa09abb.png" alt=""></p>
-<p>如果子类构造函数没有指定执行父类哪个构造函数，默认会调用父类中无参构造函数。运行结果如下：</p>
-<p><img src="http://p1.bqimg.com/567571/214c2801e252ce80.png" alt=""></p>
-<p>如果父类没有定义构造函数，那么子类就会调用父类的默认构造函数：</p>
-<p><img src="http://p1.bpimg.com/567571/a56b3c78518f65ff.png" alt=""></p>
+        <p>#Java之继承中的方法重写与属性覆盖<br><a id="more"></a></p>
+<p>##1、Java继承中属性覆盖</p>
+<p>变量，或者叫做类的属性，在继承的情况下，如果父类和子类存在同名的变量会出现变量（属性）的覆盖。 </p>
+<p>这个问题虽然简单，但是情况却比较复杂。因为我们不仅要考虑变量、静态变量和常量三种情况，还要考虑private、friendly（即不加访问修饰符）、protected和public四种访问权限下对属性的不同影响。 </p>
+<p>我们先从普通变量说起。先来看一段代码：</p>
+<pre><code>class ParentClass {   
+    private String privateField = &quot;父类变量--private&quot;;   
 
+    /* friendly */String friendlyField = &quot;父类变量--friendly&quot;;   
+
+    protected String protectedField = &quot;父类变量--protected&quot;;   
+
+    public String publicField = &quot;父类变量--public&quot;;   
+
+    // private的变量无法直接访问，因此我们给他增加了一个访问方法   
+    public String getPrivateFieldValue() {   
+        return privateField;   
+    }   
+}   
+
+public class SubClass extends ParentClass {   
+    private String privateField = &quot;子类变量--private&quot;;   
+
+    * friendly */String friendlyField = &quot;子类变量--friendly&quot;;   
+
+    protected String protectedField = &quot;子类变量--protected&quot;;   
+
+    public String publicField = &quot;子类变量--public&quot;;   
+
+    // private的变量无法直接访问，因此我们给他增加了一个访问方法   
+    public String getPrivateFieldValue() {   
+        return privateField;   
+    }   
+
+public static void main(String[] args) {   
+        // 为了便于查阅，我们统一按照private、friendly、protected、public的顺序   
+        // 输出下列三种情况中变量的值   
+
+        // ParentClass类型，ParentClass对象   
+        ParentClass parentClass = new ParentClass();   
+        System.out.println(&quot;ParentClass parentClass = new ParentClass();&quot;);   
+        System.out.println(parentClass.getPrivateFieldValue());   
+        System.out.println(parentClass.friendlyField);   
+        System.out.println(parentClass.protectedField);   
+        System.out.println(parentClass.publicField);   
+
+        System.out.println();   
+
+        // ParentClass类型，SubClass对象   
+        ParentClass subClass = new SubClass();   
+        System.out.println(&quot;ParentClass subClass = new SubClass();&quot;);   
+        System.out.println(subClass.getPrivateFieldValue());   
+        System.out.println(subClass.friendlyField);   
+        System.out.println(subClass.protectedField);   
+        System.out.println(subClass.publicField);   
+
+        System.out.println();   
+
+        // SubClass类型，SubClass对象   
+        SubClass subClazz = new SubClass();   
+        System.out.println(&quot;SubClass subClazz = new SubClass();&quot;);   
+        System.out.println(subClazz.getPrivateFieldValue());   
+        System.out.println(subClazz.friendlyField);   
+        System.out.println(subClazz.protectedField);   
+        System.out.println(subClazz.publicField);   
+    }   
+}  
+</code></pre><p>从上面的结果中可以看出，private的变量与其它三种访问权限变量的不同，这是由于方法的重写（override）而引起的。关于重写知识下面会有，这里我们来看一下其它三种访问权限下变量的覆盖情况。 </p>
+<p>分析上面的输出结果就会发现，变量的值取决于我们定义的变量的类型，而不是创建的对象的类型。 </p>
+<p>在上面的例子中，同名的变量访问权限也是相同的，那么对于名称相同但是访问权限不同的变量，情况又会怎样呢？由于private变量的特殊性，在接下来的实验中我们都把它排除在外，不予考虑。 </p>
+<p>由于上面的例子已经说明了，当变量类型是父类（ParentClass）时，不管我们创建的对象是父类（ParentClass）的还是子类（SubClass）的，都不存在属性覆盖的问题，因此接下来我们也只考虑变量类型和创建对象都是子类（SubClass）的情况。</p>
+<pre><code>class ParentClass {   
+    /* friendly */String field = &quot;父类变量&quot;;   
+}   
+
+public class SubClass extends ParentClass {   
+    protected String field = &quot;子类变量&quot;;   
+
+    public static void main(String[] args) {   
+        SubClass subClass = new SubClass();   
+        System.out.println(subClass.field);   
+    }   
+}  
+
+运行结果： 
+
+子类变量 
+
+Java代码 
+class ParentClass {   
+    public String field = &quot;父类变量&quot;;   
+}   
+
+public class SubClass extends ParentClass {   
+    protected String field = &quot;子类变量&quot;;   
+
+    public static void main(String[] args) {   
+        SubClass subClass = new SubClass();   
+        System.out.println(subClass.field);   
+    }   
+}  
+
+运行结果： 
+
+子类变量 
+</code></pre><p>上面两段不同的代码，输出结果确是相同的。事实上，我们可以将父类和子类属性前的访问修饰符在friendly、protected和public之间任意切换，得到的结果都是相同的。也就是说访问修饰符并不影响属性的覆盖，关于这一点大家可以自行编写测试代码验证。 </p>
+<p>对于静态变量和常量又会怎样呢？我们继续来看：</p>
+<pre><code>class ParentClass {   
+    public static String staticField = &quot;父类静态变量&quot;;   
+
+    public final String finalField = &quot;父类常量&quot;;   
+
+    public static final String staticFinalField = &quot;父类静态常量&quot;;   
+}   
+
+public class SubClass extends ParentClass {   
+    public static String staticField = &quot;子类静态变量&quot;;   
+
+    public final String finalField = &quot;子类常量&quot;;   
+
+    public static final String staticFinalField = &quot;子类静态常量&quot;;   
+
+    public static void main(String[] args) {   
+        SubClass subClass = new SubClass();   
+        System.out.println(SubClass.staticField);   
+        System.out.println(subClass.finalField);   
+        System.out.println(SubClass.staticFinalField);   
+    }   
+}  
+
+运行结果如下： 
+
+子类静态变量 
+子类常量 
+子类静态常量 
+</code></pre><p>虽然上面的结果中包含“子类静态变量”和“子类静态常量”，但这并不表示父类的“静态变量”和“静态常量”可以被子类覆盖，因为它们都是属于类，而不属于对象。  </p>
+<p>最后，我们来做个总结。通过以上测试，可以得出一下结论： </p>
+<pre><code>由于private变量受访问权限的限制，它不能被覆盖。 
+属性的值取父类还是子类并不取决于我们创建对象的类型，而是取决于我们定义的变量的类型。 
+friendly、protected和public修饰符并不影响属性的覆盖。 
+静态变量和静态常量属于类，不属于对象，因此它们不能被覆盖。 
+常量可以被覆盖。 
+对于基本类型和对象，它们适用同样的覆盖规律。 
+</code></pre><p>##2、Java方法重写<br>重载（也叫过载）时只与方法特征有关，但重写（覆写）是会进一步检查两个方法的返回类型是否相同、访问修饰权限是否缩小（假设public-&gt;protected方向是缩小，反之叫扩大）和抛出的异常范围是否扩大。那么什么是方式特征呢？一个方法的特征（也可叫方法签名）仅包括方法的名字、参数的个数、类型、顺序（实质上就是参数列表），而不包括方法的返回类型、访问修饰权限与所抛出的异常。</p>
+<pre><code>public class A {   
+    public void overwrite(int i) throws IOException {}   
+}   
+
+class B extends A {   
+    // !! 编译通不过，不能缩小访问权限   
+    //    void overwrite(int i) throws IOException {}   
+
+    // !! 编译通不过，不能扩大异常范围   
+    //    public void overwrite(int i) throws Exception {}   
+
+    // 正常，编译没问题，可以不抛出异常   
+    // public void overwrite(int i) {}   
+
+    // 覆写父类方法   
+    public void overwrite(int i) throws IOException {}   
+
+    protected void overload(int i) {}   
+
+    //重载上面的方法   
+    int overload(long i) throws IOException {   
+        return 0;   
+    }   
+}  
+</code></pre><p>另外，要补充说明的是重载一般是指在同一个类中多个方法间，但也可重载父类的的方法，而重写只发生面父子与子类的方法间。</p>
+<p>2、非私有非静态方法不能被任何静态方法覆写，如果子类中试着以静态方式（不管访问权限修饰符是什么）来覆写父类的方法，编译时会报错。</p>
+<pre><code>public class A {   
+    void f() {}   
+}   
+
+class B extends A {   
+    // !! 编译出错，下面错误都一样   
+    //    static void f(){};   
+    //    private static void f(){};   
+    //    protected static void f(){};   
+    //    public static void f(){};   
+}  
+</code></pre><p>3、非私有静态方法不能被任何非静态方法覆写，如果子类中试着以非静态方式（不管访问权限修饰符是什么）来覆写父类的方法，编译时会报错。</p>
+<pre><code>public class A {   
+    public static void f() {}   
+}   
+
+class B extends A {   
+    // !! 编译出错，下面错误都一样   
+    //    public void f(){}   
+    //    protected void f() {}   
+    //    void f() {}   
+    //    private void f() {}   
+}  
+</code></pre><p>4、子类与父类中有方法特征相同的静态方法时，覆写规则与非静态方法覆写规则一样，但一般我们不把静态方法的覆写叫覆写，虽然语法规则上与非静态方法相同。</p>
+<pre><code>public class A {  
+    public static void overwrite(int i) throws IOException {  
+        System.out.println(&quot;父类静态方法...&quot;);  
+    }  
+}  
+
+class B extends A {  
+    // !! 编译通不过，不能缩小访问权限  
+    //    static void overwrite(int i) throws IOException {}  
+
+    // !! 编译通不过，不能扩大异常范围  
+    //    public static void overwrite(int i) throws Exception {}  
+
+    // 正常，编译没问题，可以不抛出异常  
+    // public static void overwrite(int i) {}  
+
+    // 覆写父类静态方法  
+    public static void overwrite(int i) throws IOException {  
+        System.out.println(&quot;子类静态方法...&quot;);  
+    }  
+
+    public static void main(String[] args) throws IOException {  
+        A a = new B();  
+        //覆写静态在语法上是合法的，但没有多态效果  
+        a.overwrite(0);//print: 父类静态方法...  
+        A.overwrite(0);//print: 父类静态方法...  
+        B.overwrite(0);//print: 子类静态方法...  
+    }  
+}  
+</code></pre><p>上面重写了父类的静态方法，但却没有多态作用，也就是说，静态方法不存在重写这一说，只不过在语法规则上与非静态方法一样罢了。</p>
+<p>5、私有方法对子类同名方法不产生任何影响，也就是说私有方法不能被重写，即使试着在子类覆写了父类的私有方法，不管访问权限修饰符是什么，在编译时也不会报错。原因就是私有方法对子类也是不可见的。</p>
+<pre><code>public class A {  
+    private void f() {  
+    }  
+
+    // 加上static修饰符，其结果都一样  
+    // private static void f() {}  
+}  
+
+class B extends A {  
+    // 尝试每个方式，都会编译能过  
+    // private void f() {}  
+    // void f() {}  
+    // protected void f() {}  
+    // public void f() {}  
+
+    // private static void f() {}  
+    // static void f() {}  
+    // protected static void f() {}  
+    public static void f() {}  
+}  
+</code></pre>
       
     </div>
     
@@ -303,13 +514,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/">“java之构造函数，默认构造函数及构造函数的重载</a></p>
+        <p><span>本文标题:</span><a href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年09月24日 - 10时58分</p>
-        <p><span>最后更新:</span>2016年09月24日 - 12时15分</p>
+        <p><span>发布时间:</span>2016年09月25日 - 10时47分</p>
+        <p><span>最后更新:</span>2016年09月25日 - 11时23分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/" title="“java之构造函数，默认构造函数及构造函数的重载">http://yunnigu.dropsec.xyz/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/" title="Java之继承中的方法重写与属性覆盖">http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -322,18 +533,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2016/09/24/java之getters和setters/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          java之getters和setters
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">IDEA编程检验java中的四种修饰符的访问权限</div>
+    <a href="/2016/09/24/java之包的概念及其意义/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">java之包的概念及其意义</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -392,7 +594,7 @@
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/" data-title="“java之构造函数，默认构造函数及构造函数的重载" data-url="http://yunnigu.dropsec.xyz/2016/09/24/“java之构造函数，默认构造函数及构造函数的重载/"></div>
+    <div class="ds-thread" data-thread-key="2016/09/25/Java之继承中的方法重写与属性覆盖/" data-title="Java之继承中的方法重写与属性覆盖" data-url="http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -415,13 +617,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/09/24/java之getters和setters/" title="上一篇: java之getters和setters">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/09/23/IDEA编程检验java中的四种修饰符的访问权限/" title="下一篇: IDEA编程检验java中的四种修饰符的访问权限">
+            <a href="/2016/09/24/java之包的概念及其意义/" title="下一篇: java之包的概念及其意义">
                 <i class="fa fa-angle-right"></i>
             </a>
         
