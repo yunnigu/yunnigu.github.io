@@ -3,18 +3,36 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Java之继承中的方法重写与属性覆盖 | YungGong</title>
+  <title>30个java基础程序 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#Java之继承中的方法重写与属性覆盖">
+  <meta name="description" content="#30个java基础程序这段时间为了熟悉java基础语法，就顺手写了30个java基础程序，这里很大家分享一下，有什么不足的地方欢迎大家随时指出。
+1.数字排列
+public static void main(String[] args)
+  {
+      int i,j,k;
+      System.out.println(&amp;quot;\n&amp;quot;);
+      for(i=1;i&amp;l">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java之继承中的方法重写与属性覆盖">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/index.html">
+<meta property="og:title" content="30个java基础程序">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/25/30个java基础程序/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#Java之继承中的方法重写与属性覆盖">
-<meta property="og:updated_time" content="2016-09-25T03:23:09.862Z">
+<meta property="og:description" content="#30个java基础程序这段时间为了熟悉java基础语法，就顺手写了30个java基础程序，这里很大家分享一下，有什么不足的地方欢迎大家随时指出。
+1.数字排列
+public static void main(String[] args)
+  {
+      int i,j,k;
+      System.out.println(&amp;quot;\n&amp;quot;);
+      for(i=1;i&amp;l">
+<meta property="og:updated_time" content="2016-09-25T06:51:56.108Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java之继承中的方法重写与属性覆盖">
-<meta name="twitter:description" content="#Java之继承中的方法重写与属性覆盖">
+<meta name="twitter:title" content="30个java基础程序">
+<meta name="twitter:description" content="#30个java基础程序这段时间为了熟悉java基础语法，就顺手写了30个java基础程序，这里很大家分享一下，有什么不足的地方欢迎大家随时指出。
+1.数字排列
+public static void main(String[] args)
+  {
+      int i,j,k;
+      System.out.println(&amp;quot;\n&amp;quot;);
+      for(i=1;i&amp;l">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -225,11 +243,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-Java之继承中的方法重写与属性覆盖" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-30个java基础程序" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/09/25/Java之继承中的方法重写与属性覆盖/" class="article-date">
-      <time datetime="2016-09-25T02:47:28.000Z" itemprop="datePublished">2016-09-25</time>
+      <a href="/2016/09/25/30个java基础程序/" class="article-date">
+      <time datetime="2016-09-25T06:45:11.000Z" itemprop="datePublished">2016-09-25</time>
 </a>
     </div>
   
@@ -242,7 +260,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Java之继承中的方法重写与属性覆盖
+      30个java基础程序
     </h1>
   
 
@@ -253,7 +271,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/编程/">编程</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -263,251 +281,505 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#Java之继承中的方法重写与属性覆盖<br><a id="more"></a></p>
-<p>##1、Java继承中属性覆盖</p>
-<p>变量，或者叫做类的属性，在继承的情况下，如果父类和子类存在同名的变量会出现变量（属性）的覆盖。 </p>
-<p>这个问题虽然简单，但是情况却比较复杂。因为我们不仅要考虑变量、静态变量和常量三种情况，还要考虑private、friendly（即不加访问修饰符）、protected和public四种访问权限下对属性的不同影响。 </p>
-<p>我们先从普通变量说起。先来看一段代码：</p>
-<pre><code>class ParentClass {   
-    private String privateField = &quot;父类变量--private&quot;;   
+        <p>#30个java基础程序<br>这段时间为了熟悉java基础语法，就顺手写了30个java基础程序，这里很大家分享一下，有什么不足的地方欢迎大家随时指出。</p>
+<p>1.数字排列</p>
+<pre><code>public static void main(String[] args)
+  {
+      int i,j,k;
+      System.out.println(&quot;\n&quot;);
+      for(i=1;i&lt;5;i++)
+          for(j=1;j&lt;5;j++)
+              for(k=1;k&lt;5;k++)
+              {
+                  if(i!=k&amp;&amp;i!=j&amp;&amp;j!=k)
+                      System.out.println(i+&quot;&quot;+j+&quot;&quot;+k);
+              }
+  }
+</code></pre><p>2.奖金分配问题</p>
+<pre><code>public static void main(String[] args)
+{
+    Scanner in=new Scanner(System.in);
+    long  i;
+    double a,b,c,d,e,bonus;
+    i=in.nextInt();
+    a=100000*0.1;
+    b=100000*0.075;
+    c=a+200000*0.05;
+    d=c+200000*0.03;
+    e=d+400000*0.015;
+    if(i&lt;=100000)
+        bonus=i*0.1;
+    else if(i&lt;=200000)
+        bonus=a=(i-100000)*0.75;
+    else if(i&lt;=400000)
+        bonus=b+(i-200000)*0.05;
+    else if(i&lt;=600000)
+        bonus=c+(i-400000)*0.03;
+    else if(i&lt;=1000000)
+        bonus=d+(i-600000)*0.015;
+    else
+        bonus=e+(i-1000000)*0.01;
+    System.out.println(bonus);
+}
+</code></pre><p>3.已知条件求解整数</p>
+<pre><code>public static void main(String[] args)
+   {
+       int i;
+       long x,y;
+       for(i=1;i&lt;=100000;i++)
+       {
+           x=(int)Math.sqrt(i+100);
+           y=(int)Math.sqrt(i+268);
+           if(x*x==i+100&amp;&amp;y*y==i+268)
+               System.out.println(x);
+       }
+   }
+</code></pre><p>4.输入日期判断第几天</p>
+<pre><code>public static void main(String[] args)
+    {
+        Scanner in=new Scanner(System.in);
+       int day,month,year,sum=0,leap;
+        System.out.println(&quot;\nplesse input your year.month,day\n&quot;);
+        year=in.nextInt();
+        month=in.nextInt();
+        day=in.nextInt();
+        switch(month)
+        {
+            case 1:sum=0;break;
+            case 2:sum=31;break;
+            case 3:sum=59;break;
+            case 4:sum=90;break;
+            case 5:sum=120;break;
+            case 6:sum=151;break;
+            case 7:sum=181;break;
+            case 8:sum=212;break;
+            case 9:sum=243;break;
+            case 10:sum=273;break;
+            case 11:sum=304;break;
+            case 12:sum=334;break;
+            default:System.out.println(&quot;data error&quot;);break;
+        }
+        sum=sum+day;
+        if(year%400==0||(year%4==0&amp;&amp;year%100!=0))
+            leap=1;
+        else
+            leap=0;
+        if(leap==1&amp;&amp;month&gt;2)/*如果是闰年且月份大于2,总天数应该加一天*/
+            sum++;
+        System.out.println(&quot;it is the &quot;+sum);
+    }
+</code></pre><p>5.输入整数进行排序    </p>
+<pre><code>public static void main(String[] args)
+ {
+     Scanner in=new Scanner(System.in);
+     int x,y,z,t;
+     x=in.nextInt();
+     y=in.nextInt();
+     z=in.nextInt();
+     if(x&gt;y){
+         t=x;x=y;y=t;
+     }
+     if(x&gt;z){
+         t=z;z=x;x=t;
+     }
+     if(y&gt;z){
+         t=y;y=z;z=t;
+     }
+     System.out.println(&quot;small to big &quot;+x+&quot; &quot;+y+&quot; &quot;+z);
+ }
+</code></pre><p>6.打印九九口诀</p>
+<pre><code>public static void main(String[] args)
+    {
+        System.out.println(&quot;\n&quot;);
+        int i,j,result;
+        for(i=1;i&lt;=9;i++)
+        {
+            for(j=1;j&lt;=i;j++)
+            {
+                result=i*j;
+                System.out.printf(&quot;%d*%d=%-3d&quot;,i,j,result,&quot;\t&quot;);
+            }
+            System.out.println();
+        }
+    }
+</code></pre><p>7.输出国际象棋棋盘    </p>
+<pre><code>public static void main(String[] args)
+  {
+      int i,j;
+      for(i=0;i&lt;8;i++)
+      {
+      for(j=0;j&lt;8;j++)
+        if((i+j)%2==0)
+      System.out.printf(&quot;%c%c&quot;,219,219);
+      else
+      System.out.printf(&quot; &quot;);
+      System.out.printf(&quot;\n&quot;);
+      }
+  }
+</code></pre><p>8.经典兔子问题</p>
+<pre><code>public static void main(String[] args)
+{
+    System.out.println(&quot;第一个月的兔子对数： 1&quot;);
+    System.out.println(&quot;第二个月的兔子对数： 1&quot;);
+    int f1=1,f2=1,f,M=24;
+    for(int i=3;i&lt;M;i++){
+        f=f2;
+        f2=f1+f2;
+        f1=f;
+        System.out.println(&quot;第&quot;+i+&quot;个月的兔子对数&quot;+f2);
+    }
+}
+</code></pre><p>9.判断素数</p>
+<pre><code>public static void main(String[] args)
+    {
+        int count = 0;
+        for(int i=101; i&lt;200; i+=2) {
+            boolean b = false;
+            for(int j=2; j&lt;=Math.sqrt(i); j++)
+            {
+                if(i % j == 0) { b = false; break;
+                }
+                else
+                {
+                    b = true;
+                }
+            }
+            if(b == true) {count ++;System.out.println(i );
+            }
+        }
+        System.out.println( &quot;素数个数是: &quot; + count);
+    }
+</code></pre><p>10.水仙花数问题    </p>
+<pre><code>public static void main(String[] args) {
+        int x = 0;        //定义水仙花数的个数
+        for(int i=100;i&lt;=999;i++){
+            int b = i/100;        //取得百位数
+            int s = (i-100*b)/10;        //取得十位数
+            int g = (i-s*10-b*100);        //取得个位数
 
-    /* friendly */String friendlyField = &quot;父类变量--friendly&quot;;   
+            if(i==g*g*g+s*s*s+b*b*b){
+                x++;    //每次符合水仙花数条件，则x+1;
+                System.out.print(i+&quot; &quot;);    //输出符合条件的数
+        }
+        }System.out.println();        //换行
+        System.out.println(&quot;水仙花数总共有&quot;+x+&quot;个&quot;);    //输出水仙花数的总数
+    }
+</code></pre><p>11.正整数分解质因数</p>
+<pre><code>public static void main(String[] args) {
+    Scanner in=new Scanner(System.in);
+    int n,i;
+    System.out.println(&quot;\nplease input a number:\n&quot;);
+    n=in.nextInt();
+    System.out.print(n+&quot;=&quot;);
+    for(i=2;i&lt;=n;i++) {
+        while(n!=i) {
+            if(n%i==0) {
+                System.out.print(i+&quot;*&quot;);
+                n=n/i;
+            }
+            else
+                break;
+        }
+    }
+    System.out.print(n);
+}
+</code></pre><p>12.学习成绩划分</p>
+<pre><code>public static void main(String[] args) {
+    Scanner in =new Scanner(System.in);
+    int score;
+    char grade;
+    System.out.print(&quot;please input a score\n&quot;);
+    score=in.nextInt();;
+    grade=score&gt;=90?&apos;a&apos;:(score&gt;=60?&apos;b&apos;:&apos;c&apos;);
+    System.out.print(score+&quot;  &quot;+&quot;  &quot;+grade);
+}
+</code></pre><p>13.正整数求其最大公约数和最小公倍数</p>
+<pre><code>public static void main(String[] args) {
+        Scanner in= new Scanner(System.in);
+        int m,n;
+        System.out.print(&quot;请输入一个数：&quot;);
+        m= in.nextInt();
+        System.out.print(&quot;请输入另一个数：&quot;);
+        n= in.nextInt();
+        System.out.println(gongyue(m, n));
+        System.out.println(gongbei(m, n));
+    }
 
-    protected String protectedField = &quot;父类变量--protected&quot;;   
+    // a与b的最大公约数
+    public static int gongyue(int m, int n) {
+        while(n%m!=0){
+            int temp=m%m;
+            n=m;
+            m=temp;
+        }
+        return m;
+    }
 
-    public String publicField = &quot;父类变量--public&quot;;   
-
-    // private的变量无法直接访问，因此我们给他增加了一个访问方法   
-    public String getPrivateFieldValue() {   
-        return privateField;   
-    }   
-}   
-
-public class SubClass extends ParentClass {   
-    private String privateField = &quot;子类变量--private&quot;;   
-
-    * friendly */String friendlyField = &quot;子类变量--friendly&quot;;   
-
-    protected String protectedField = &quot;子类变量--protected&quot;;   
-
-    public String publicField = &quot;子类变量--public&quot;;   
-
-    // private的变量无法直接访问，因此我们给他增加了一个访问方法   
-    public String getPrivateFieldValue() {   
-        return privateField;   
-    }   
-
-public static void main(String[] args) {   
-        // 为了便于查阅，我们统一按照private、friendly、protected、public的顺序   
-        // 输出下列三种情况中变量的值   
-
-        // ParentClass类型，ParentClass对象   
-        ParentClass parentClass = new ParentClass();   
-        System.out.println(&quot;ParentClass parentClass = new ParentClass();&quot;);   
-        System.out.println(parentClass.getPrivateFieldValue());   
-        System.out.println(parentClass.friendlyField);   
-        System.out.println(parentClass.protectedField);   
-        System.out.println(parentClass.publicField);   
-
-        System.out.println();   
-
-        // ParentClass类型，SubClass对象   
-        ParentClass subClass = new SubClass();   
-        System.out.println(&quot;ParentClass subClass = new SubClass();&quot;);   
-        System.out.println(subClass.getPrivateFieldValue());   
-        System.out.println(subClass.friendlyField);   
-        System.out.println(subClass.protectedField);   
-        System.out.println(subClass.publicField);   
-
-        System.out.println();   
-
-        // SubClass类型，SubClass对象   
-        SubClass subClazz = new SubClass();   
-        System.out.println(&quot;SubClass subClazz = new SubClass();&quot;);   
-        System.out.println(subClazz.getPrivateFieldValue());   
-        System.out.println(subClazz.friendlyField);   
-        System.out.println(subClazz.protectedField);   
-        System.out.println(subClazz.publicField);   
-    }   
-}  
-</code></pre><p>从上面的结果中可以看出，private的变量与其它三种访问权限变量的不同，这是由于方法的重写（override）而引起的。关于重写知识下面会有，这里我们来看一下其它三种访问权限下变量的覆盖情况。 </p>
-<p>分析上面的输出结果就会发现，变量的值取决于我们定义的变量的类型，而不是创建的对象的类型。 </p>
-<p>在上面的例子中，同名的变量访问权限也是相同的，那么对于名称相同但是访问权限不同的变量，情况又会怎样呢？由于private变量的特殊性，在接下来的实验中我们都把它排除在外，不予考虑。 </p>
-<p>由于上面的例子已经说明了，当变量类型是父类（ParentClass）时，不管我们创建的对象是父类（ParentClass）的还是子类（SubClass）的，都不存在属性覆盖的问题，因此接下来我们也只考虑变量类型和创建对象都是子类（SubClass）的情况。</p>
-<pre><code>class ParentClass {   
-    /* friendly */String field = &quot;父类变量&quot;;   
-}   
-
-public class SubClass extends ParentClass {   
-    protected String field = &quot;子类变量&quot;;   
-
-    public static void main(String[] args) {   
-        SubClass subClass = new SubClass();   
-        System.out.println(subClass.field);   
-    }   
-}  
-
-运行结果： 
-
-子类变量 
-
-Java代码 
-class ParentClass {   
-    public String field = &quot;父类变量&quot;;   
-}   
-
-public class SubClass extends ParentClass {   
-    protected String field = &quot;子类变量&quot;;   
-
-    public static void main(String[] args) {   
-        SubClass subClass = new SubClass();   
-        System.out.println(subClass.field);   
-    }   
-}  
-
-运行结果： 
-
-子类变量 
-</code></pre><p>上面两段不同的代码，输出结果确是相同的。事实上，我们可以将父类和子类属性前的访问修饰符在friendly、protected和public之间任意切换，得到的结果都是相同的。也就是说访问修饰符并不影响属性的覆盖，关于这一点大家可以自行编写测试代码验证。 </p>
-<p>对于静态变量和常量又会怎样呢？我们继续来看：</p>
-<pre><code>class ParentClass {   
-    public static String staticField = &quot;父类静态变量&quot;;   
-
-    public final String finalField = &quot;父类常量&quot;;   
-
-    public static final String staticFinalField = &quot;父类静态常量&quot;;   
-}   
-
-public class SubClass extends ParentClass {   
-    public static String staticField = &quot;子类静态变量&quot;;   
-
-    public final String finalField = &quot;子类常量&quot;;   
-
-    public static final String staticFinalField = &quot;子类静态常量&quot;;   
-
-    public static void main(String[] args) {   
-        SubClass subClass = new SubClass();   
-        System.out.println(SubClass.staticField);   
-        System.out.println(subClass.finalField);   
-        System.out.println(SubClass.staticFinalField);   
-    }   
-}  
-
-运行结果如下： 
-
-子类静态变量 
-子类常量 
-子类静态常量 
-</code></pre><p>虽然上面的结果中包含“子类静态变量”和“子类静态常量”，但这并不表示父类的“静态变量”和“静态常量”可以被子类覆盖，因为它们都是属于类，而不属于对象。  </p>
-<p>最后，我们来做个总结。通过以上测试，可以得出一下结论： </p>
-<pre><code>由于private变量受访问权限的限制，它不能被覆盖。 
-属性的值取父类还是子类并不取决于我们创建对象的类型，而是取决于我们定义的变量的类型。 
-friendly、protected和public修饰符并不影响属性的覆盖。 
-静态变量和静态常量属于类，不属于对象，因此它们不能被覆盖。 
-常量可以被覆盖。 
-对于基本类型和对象，它们适用同样的覆盖规律。 
-</code></pre><p>##2、Java方法重写<br>重载（也叫过载）时只与方法特征有关，但重写（覆写）是会进一步检查两个方法的返回类型是否相同、访问修饰权限是否缩小（假设public-&gt;protected方向是缩小，反之叫扩大）和抛出的异常范围是否扩大。那么什么是方式特征呢？一个方法的特征（也可叫方法签名）仅包括方法的名字、参数的个数、类型、顺序（实质上就是参数列表），而不包括方法的返回类型、访问修饰权限与所抛出的异常。</p>
-<pre><code>public class A {   
-    public void overwrite(int i) throws IOException {}   
-}   
-
-class B extends A {   
-    // !! 编译通不过，不能缩小访问权限   
-    //    void overwrite(int i) throws IOException {}   
-
-    // !! 编译通不过，不能扩大异常范围   
-    //    public void overwrite(int i) throws Exception {}   
-
-    // 正常，编译没问题，可以不抛出异常   
-    // public void overwrite(int i) {}   
-
-    // 覆写父类方法   
-    public void overwrite(int i) throws IOException {}   
-
-    protected void overload(int i) {}   
-
-    //重载上面的方法   
-    int overload(long i) throws IOException {   
-        return 0;   
-    }   
-}  
-</code></pre><p>另外，要补充说明的是重载一般是指在同一个类中多个方法间，但也可重载父类的的方法，而重写只发生面父子与子类的方法间。</p>
-<p>2、非私有非静态方法不能被任何静态方法覆写，如果子类中试着以静态方式（不管访问权限修饰符是什么）来覆写父类的方法，编译时会报错。</p>
-<pre><code>public class A {   
-    void f() {}   
-}   
-
-class B extends A {   
-    // !! 编译出错，下面错误都一样   
-    //    static void f(){};   
-    //    private static void f(){};   
-    //    protected static void f(){};   
-    //    public static void f(){};   
-}  
-</code></pre><p>3、非私有静态方法不能被任何非静态方法覆写，如果子类中试着以非静态方式（不管访问权限修饰符是什么）来覆写父类的方法，编译时会报错。</p>
-<pre><code>public class A {   
-    public static void f() {}   
-}   
-
-class B extends A {   
-    // !! 编译出错，下面错误都一样   
-    //    public void f(){}   
-    //    protected void f() {}   
-    //    void f() {}   
-    //    private void f() {}   
-}  
-</code></pre><p>4、子类与父类中有方法特征相同的静态方法时，覆写规则与非静态方法覆写规则一样，但一般我们不把静态方法的覆写叫覆写，虽然语法规则上与非静态方法相同。</p>
-<pre><code>public class A {  
-    public static void overwrite(int i) throws IOException {  
-        System.out.println(&quot;父类静态方法...&quot;);  
-    }  
-}  
-
-class B extends A {  
-    // !! 编译通不过，不能缩小访问权限  
-    //    static void overwrite(int i) throws IOException {}  
-
-    // !! 编译通不过，不能扩大异常范围  
-    //    public static void overwrite(int i) throws Exception {}  
-
-    // 正常，编译没问题，可以不抛出异常  
-    // public static void overwrite(int i) {}  
-
-    // 覆写父类静态方法  
-    public static void overwrite(int i) throws IOException {  
-        System.out.println(&quot;子类静态方法...&quot;);  
-    }  
-
-    public static void main(String[] args) throws IOException {  
-        A a = new B();  
-        //覆写静态在语法上是合法的，但没有多态效果  
-        a.overwrite(0);//print: 父类静态方法...  
-        A.overwrite(0);//print: 父类静态方法...  
-        B.overwrite(0);//print: 子类静态方法...  
-    }  
-}  
-</code></pre><p>上面重写了父类的静态方法，但却没有多态作用，也就是说，静态方法不存在重写这一说，只不过在语法规则上与非静态方法一样罢了。</p>
-<p>5、私有方法对子类同名方法不产生任何影响，也就是说私有方法不能被重写，即使试着在子类覆写了父类的私有方法，不管访问权限修饰符是什么，在编译时也不会报错。原因就是私有方法对子类也是不可见的。</p>
-<pre><code>public class A {  
-    private void f() {  
-    }  
-
-    // 加上static修饰符，其结果都一样  
-    // private static void f() {}  
-}  
-
-class B extends A {  
-    // 尝试每个方式，都会编译能过  
-    // private void f() {}  
-    // void f() {}  
-    // protected void f() {}  
-    // public void f() {}  
-
-    // private static void f() {}  
-    // static void f() {}  
-    // protected static void f() {}  
-    public static void f() {}  
-}  
+    // a与b的最小公倍数
+    public static int gongbei(int m, int n) {
+        return m* n / gongyue(m, n);
+    }
+</code></pre><p>14.统计英文字母/空格/数字个数</p>
+<pre><code>public static void main(String[] args) {
+        int num=0,chartra=0,blak=0,other=0;
+        Scanner  s=new Scanner(System.in);
+        System.out.println(&quot;请输出字符串&quot;);
+        String   result=s.nextLine();
+        char x[]=result.toCharArray();
+        for(int i=0;i&lt;x.length;i++){
+            if(Character.isDigit(x[i])){
+                num++;
+            }else if(Character.isLetter(x[i])){
+                chartra++;
+            }else if(Character.isSpace(x[i])){
+                blak++;
+            }
+            else{
+                other++;
+            }
+            System.out.println(x.length);
+        }
+        System.out.println(&quot;数字的个数是&quot;+num);
+        System.out.println(&quot;字符的个数是&quot;+chartra);
+        System.out.println(&quot;空值的个数是&quot;+blak);
+        System.out.println(&quot;其他的个数是&quot;+other);
+    }    
+</code></pre><p>15.求s=a+aa+aaa+aa…a的值</p>
+<pre><code>public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    System.out.println(&quot;用哪个数循环？：&quot;);
+    int _temp = sc.nextInt();
+    System.out.println(&quot;循环相加多少次？：&quot;);
+    int temp = sc.nextInt();
+    int newNumber = 0; // 每次生成的新数
+    int total = 0; // 计算结果
+    for (int i = 0; i &lt; temp; i++) {
+        newNumber = newNumber * 10 + _temp;
+        System.out.println(newNumber);
+        total = total + newNumber;
+    }
+    System.out.println(&quot;计算结果:&quot; + total);
+}
+</code></pre><p>16.求解”完数”</p>
+<pre><code>public static void main(String[] args) {
+        int i,j;
+        for(i=1;i&lt;=1000;i++){
+            int sum=0;
+            for(j=1;j&lt;i;j++){
+                if(i%j==0)
+                    sum=sum+j;
+            }
+            if(sum==i)
+                System.out.print(i+&quot;  &quot;);
+        }
+    }
+</code></pre><p>17.球体自由落下物理问题</p>
+<pre><code>public static void main(String[] args) {
+        double sn=100,hn=sn/2;
+        int n;
+        for(n=2;n&lt;=10;n++)
+        {
+            sn=sn+2*hn;/*第n次落地时共经过的米数*/
+            hn=hn/2; /*第n次反跳高度*/
+            }
+        System.out.print(&quot;the total of road is &quot;+sn);
+        System.out.print(&quot;the tenth is &quot;+hn);
+    }
+</code></pre><p>18.猴子吃桃问题</p>
+<pre><code>public static void main(String[] args) {
+        int today=1;
+        for(int i=1;i&lt;=9;i++)
+        {
+            today=(1+today)*2;
+        }
+        System.out.println(today);
+    }    
+</code></pre><p>19.乒乓球比赛抽签问题</p>
+<pre><code>public static void main(String[] args) {
+    char i,j,k;/*i是a的对手，j是b的对手，k是c的对手*/
+    for(i=&apos;x&apos;;i&lt;=&apos;z&apos;;i++)
+    for(j=&apos;x&apos;;j&lt;=&apos;z&apos;;j++) {
+        if(i!=j)
+        for(k=&apos;x&apos;;k&lt;=&apos;z&apos;;k++) {
+            if(i!=k&amp;&amp;j!=k) {
+                if(i!=&apos;x&apos;&amp;&amp;k!=&apos;x&apos;&amp;&amp;k!=&apos;z&apos;)
+                System.out.printf(&quot;order is a--%c\tb--%c\tc--%c\n&quot;,i,j,k);
+            }
+        }
+    }
+}
+</code></pre><p>20.打印菱形图案</p>
+<pre><code>public static void main(String[] args) {
+    int i,j,k;
+    for(i=0;i&lt;=3;i++)
+    {
+        for(j=0;j&lt;=2-i;j++)
+        System.out.print(&quot; &quot;);
+        for(k=0;k&lt;=2*i;k++)
+            System.out.print(&quot;*&quot;);
+        System.out.print(&quot;\n&quot;);
+        }
+    for(i=0;i&lt;=2;i++)
+    {
+        for(j=0;j&lt;=i;j++)
+            System.out.print(&quot; &quot;);
+        for(k=0;k&lt;=4-2*i;k++)
+            System.out.print(&quot;*&quot;);
+        System.out.print(&quot;\n&quot;);
+        }
+}
+</code></pre><p>21.分数数列求和</p>
+<pre><code>public static void main(String[] args) {
+        int n,t,number=20,a=2,b=1;
+        float s=0;
+        for(n=1;n&lt;=number;n++)
+        {
+            s=s+a/b;
+            t=a;
+            a=a+b;
+            b=t;
+            }
+        System.out.print(&quot;sum is \n&quot;+s);
+    }
+</code></pre><p>22.求1+2!+3!+…+20!的和</p>
+<pre><code>public static void main(String[] args) {
+        int n,s=0,t=1;
+        for(n=1;n&lt;=20;n++)
+        {
+            t*=n;
+            s+=t;
+            }
+        System.out.print(&quot;1+2!+3!...+20!=\n&quot;+s);
+    }
+</code></pre><p>23.利用递归方法求5!</p>
+<pre><code>public static void main(String[] args) {
+        int x = 5;
+        long rs = Fac(x);
+        System.out.println(&quot;&quot; + x + &quot;! = &quot; + rs);
+    }
+    public static long Fac(int x) {
+        if (x &gt; 1)
+            return (x * Fac(x - 1));
+        else
+            return 1;
+    }
+</code></pre><p>24.将输入字符以相反顺序打印</p>
+<pre><code>public static void main(String[] args) {
+        String originalString = &quot;abcdefg&quot;;
+        String resultString = &quot;&quot;;
+        char[] charArray = originalString.toCharArray();
+        for (int i = charArray.length-1; i&gt;=0; i--){
+            resultString +=charArray[i];
+        }
+        System.out.println(resultString);
+    }    
+</code></pre><p>25.岁数问题</p>
+<pre><code>public static void main(String[] args) {
+        int n;
+        int a=age(5);
+        System.out.print(age(5));
+    }
+    public static int age(int n) {
+        int c;
+        if(n==1) c=10;
+        else c=age(n-1)+2;
+        return(c);
+    }
+</code></pre><p>26.求解正整数位数</p>
+<pre><code>public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    int n = sc.nextInt();
+    int count = 0;
+    while(true)
+    {
+        count++;
+        n = n/10;
+        if(n==0)
+            break;
+    }
+    System.out.println(&quot;用while循环求其字符串的长度len=&quot;+count);
+}
+</code></pre><p>27.判断回文数</p>
+<pre><code>public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println(&quot;Please input the number: &quot;);
+        String word = sc.next();
+        int i = word.length();
+        int j = 0;
+        while (j &lt;= (i / 2) -1 &amp;&amp; word.charAt(j) == word.charAt(i - j - 1))
+            j++;
+        if (j == i / 2)
+            System.out.println(&quot;Yes it is HuiWen.&quot;);
+        else
+            System.out.println(&quot;No it is not HuiWen.&quot;);
+        sc.close();
+    }
+</code></pre><p>28.求100之内的素数</p>
+<pre><code>public static void main(String[] args)
+    {
+        int count = 0;
+        for(int i=1; i&lt;100; i+=2) {
+            boolean b = false;
+            for(int j=2; j&lt;=Math.sqrt(i); j++)
+            {
+                if(i % j == 0) { b = false; break;
+                }
+                else
+                {
+                    b = true;
+                }
+            }
+            if(b == true) {count ++;System.out.println(i );
+            }
+        }
+        System.out.println( &quot;素数个数是: &quot; + count);
+    }
+</code></pre><p>29.求3*3矩阵对角线元素之和</p>
+<pre><code>public static void main(String[] args) {
+        double sum=0;
+        int array[][]={{1,2,3},{4,5, 6},{7,7,8}};
+        for(int i=0;i&lt;3;i++)
+            for(int j=0;j&lt;3;j++){
+                if(i==j)
+                    sum=sum + array[i][j];
+            }
+        System.out.println( sum);
+    }    
+</code></pre><p>30.数字插入数组重新排序</p>
+<pre><code>public static void main(String[] args) {
+        int[] b={1,2,3,4,5,6,7,8,9};
+        insert(6, b);
+    }
+    public static void insert(int a,int[] b ){
+        int size;
+        size=b.length;
+        int l=size;
+        int[] c=new int[size+1];
+        for(int i=0;i&lt;size;i++){
+            if(a&lt;b[i]) {
+                l=i;
+                break;
+            }
+        }
+        for(int i=0;i&lt;l;i++){
+            c[i]=b[i];  //将比a小的前面的值放在新的数组c中
+        }
+        c[l]=a;//将a放在 l 的位置上
+        for(int i=l;i&lt;b.length;i++){
+            c[i+1]=b[i];    //将比a大的值放在l位置后的数组c中
+        }
+        System.out.print(&quot;原数组 ：&quot;);
+        for(int i=0;i&lt;b.length;i++) {
+            System.out.print(b[i]);
+        }
+        System.out.println(&quot;\n&quot;);
+        System.out.println(&quot;插入数字 ：\t&quot; +a);
+        System.out.println();
+        System.out.print(&quot;插入后新数组 ：&quot;);
+        for(int i=0;i&lt;c.length;i++) {
+            System.out.print(c[i]);
+        }
+    }    
 </code></pre>
       
     </div>
@@ -516,13 +788,13 @@ class B extends A {
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></p>
+        <p><span>本文标题:</span><a href="/2016/09/25/30个java基础程序/">30个java基础程序</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年09月25日 - 10时47分</p>
-        <p><span>最后更新:</span>2016年09月25日 - 11时23分</p>
+        <p><span>发布时间:</span>2016年09月25日 - 14时45分</p>
+        <p><span>最后更新:</span>2016年09月25日 - 14时51分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/" title="Java之继承中的方法重写与属性覆盖">http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2016/09/25/30个java基础程序/" title="30个java基础程序">http://yunnigu.dropsec.xyz/2016/09/25/30个java基础程序/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/25/30个java基础程序/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -535,18 +807,9 @@ class B extends A {
 
 <nav id="article-nav">
   
-    <a href="/2016/09/25/基类子类对象间的替换/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          基类子类对象间的替换
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/09/24/java之包的概念及其意义/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">java之包的概念及其意义</div>
+    <a href="/2016/09/25/java之抽象类与接口/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">java之抽象类与接口</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -605,7 +868,7 @@ class B extends A {
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/09/25/Java之继承中的方法重写与属性覆盖/" data-title="Java之继承中的方法重写与属性覆盖" data-url="http://yunnigu.dropsec.xyz/2016/09/25/Java之继承中的方法重写与属性覆盖/"></div>
+    <div class="ds-thread" data-thread-key="2016/09/25/30个java基础程序/" data-title="30个java基础程序" data-url="http://yunnigu.dropsec.xyz/2016/09/25/30个java基础程序/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -628,13 +891,11 @@ class B extends A {
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/09/25/基类子类对象间的替换/" title="上一篇: 基类子类对象间的替换">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/09/24/java之包的概念及其意义/" title="下一篇: java之包的概念及其意义">
+            <a href="/2016/09/25/java之抽象类与接口/" title="下一篇: java之抽象类与接口">
                 <i class="fa fa-angle-right"></i>
             </a>
         
