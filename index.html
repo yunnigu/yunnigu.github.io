@@ -256,102 +256,8 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#java之Tostring、equals和HashCode方法的重写</p>
-<p>##0x00为什么要重写toString()方法和hashcode()方法<br>一、toString():</p>
-<p>在Object类里面定义toString（）方法的时候返回的对象的哈希code码，这个hashcode码不能简单明了的表示出对象的属性。所以要重写toString（）方法。<br>当需要将一个对象输出到显示器时,通常要调用他的toString()方法,将对象的内容转换为字符串.java中的所有类默认都有一个toString()方法。</p>
-<pre><code> public String toString() {
-    return getClass().getName() + &quot;@&quot; + Integer.toHexString(hashCode());
-}
-</code></pre><p>默认情况下 System.out.println(对象名)或者System.out.println(对象名.toString())输出的是此对象的类名和此对象对应内存的首地址如果想自定义输出信息必须重写toString()方法。</p>
-<p>注意事项：</p>
-<pre><code>1.必须被声明为public
-2.返回类型为String
-3.方法的名称必须为toString,且无参数
-4.方法体中不要使用输出方法System.out.println()
-</code></pre><p>二、equals()和hashCode():</p>
-<p>在Object类里面定义的equals比较的是对象的引用是否指向同一块内存地址。  一般情况下比较两个对象时比较他的值是否一致，所以要进行重写。重写之后是为了比较两个对象的value值是否相等。 特别指出，利用equals比较八大包装对象（如int，float等）和String类（因为该类已重写了equals和hashcode方法）对象时，默认比较的是值，在比较其它对象都是比较的引用地址。生成两个对象同时，会生成对应的散列码，当需要比较两个对象时，java先比较他们的hashCode，若不同，则两个对象就不同，若相同，再比较equals（）方法，判断是否相同。因此在重写equals的时候一定要重写hashCode</p>
-<p>注意事项：<br>1.自反性：对于任意的引用值x，x.equals(x)一定为true<br>2.对称性：对于任意的引用值x 和 y，当x.equals(y)返回true，y.equals(x)也一定返回true<br>3.传递性：对于任意的引用值x、y和ｚ，如果x.equals(y)返回true，并且y.equals(z)也返回true，那么x.equals(z)也一定返   回 true<br>4.一致性：对于任意的引用值x 和 y，如果用于equals比较的对象信息没有被修改，多次调用x.equals(y)要么一致地返回true，要么一致地返回false<br>5.非空性：对于任意的非空引用值x，x.equals(null)一定返回false</p>
-<p>##Tostring、equals和HashCode方法的重写<br>一、toString()方法的重写<br>首先，我们先来创建一个Persion类，它只简单的包含 firstname 和 lastname，当然，加上它的setter 和 getter 法。放在com.Collection1包下：</p>
-<p><img src="http://p1.bqimg.com/567571/ac768509e2549f61.png" alt=""></p>
-<p> 接下来，新建一个类，名为Test，让它包含main函数：</p>
-<p><img src="http://p1.bqimg.com/567571/ba24032a2cc032a5.png" alt=""></p>
-<pre><code>运行结果是com.Collection1.Persion@140e19d
-</code></pre><p> 但是我们想要的结果并不是这样，因为object类的toString()方法总是返回对象的实现类类名 + @ + hashCode值。这显然不能满足我们的需求。像这里，我们是希望能打印出p的全名出来，这时，就需要重写toString()方法，因为重写了toString()之后，那么p在调用toString()方法的时候，会优先调用自己类里的toString()方法。</p>
-<p>修改后的类如下：</p>
-<p><img src="http://p1.bpimg.com/567571/c69b98e11c2eabd6.png" alt=""></p>
-<p>运行结果变为我们想要的</p>
-<pre><code>Fire-Water@21029277
-</code></pre><p>二、equals()和hashCode()的重写</p>
-<p>先写一个student类，比较输入的属性age是否相等，如果相等则返回ture，由此objec默认的equals()方法就不再适用于此s，因此需要重写equals()和hashCode()方法。</p>
-<pre><code>public class student {
-    private String name;
-    private String id;
-    private int age=25;
-
-    public student() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        student student = (student) o;
-
-        return age == student.age;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return age;
-    }
-}
-</code></pre><p>在上一个Test类中添加验证</p>
-<pre><code>import com.Collection1.Persion;
-import com.equalsoverride.student;
-
-public class Test {
-    public static void main(String[] args) {
-
-        Persion p = new Persion();
-        student s = new student();
-        p.setFirstname(&quot;Fire&quot;);
-        p.setLastname(&quot;Water&quot;);
-        System.out.println(s.hashCode());
-        System.out.println(s.equals(s));
-        System.out.println(s.equals(24));
-        System.out.println(p.toString());
-    }
-
-}
-</code></pre><p>输出结果：</p>
-<p><img src="http://p1.bpimg.com/567571/a57a8582146b4f05.png" alt=""></p>
-
+              <p>#java之Tostring、equals和HashCode方法的重写<br>
+          
       
     </div>
     
@@ -364,6 +270,10 @@ public class Test {
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/10/20/java之Tostring和HashCode方法的重写/#more">大航海 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
