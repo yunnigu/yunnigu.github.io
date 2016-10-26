@@ -3,21 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java之getters和setters | YungGong</title>
+  <title>memset函数的用法 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#java编程之getters和setters">
+  <meta name="description" content="#memset函数的用法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java之getters和setters">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/24/java之getters和setters/index.html">
+<meta property="og:title" content="memset函数的用法">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/10/26/memset函数的用法/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#java编程之getters和setters">
-<meta property="og:image" content="http://i1.piimg.com/567571/3399fe6565688807.png">
-<meta property="og:image" content="http://i1.piimg.com/567571/8a3fcb309647035a.png">
-<meta property="og:updated_time" content="2016-09-24T10:10:34.266Z">
+<meta property="og:description" content="#memset函数的用法">
+<meta property="og:updated_time" content="2016-10-26T16:06:55.049Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java之getters和setters">
-<meta name="twitter:description" content="#java编程之getters和setters">
-<meta name="twitter:image" content="http://i1.piimg.com/567571/3399fe6565688807.png">
+<meta name="twitter:title" content="memset函数的用法">
+<meta name="twitter:description" content="#memset函数的用法">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -228,11 +225,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-java之getters和setters" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-memset函数的用法" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/09/24/java之getters和setters/" class="article-date">
-      <time datetime="2016-09-24T09:26:25.000Z" itemprop="datePublished">2016-09-24</time>
+      <a href="/2016/10/26/memset函数的用法/" class="article-date">
+      <time datetime="2016-10-26T15:40:54.000Z" itemprop="datePublished">2016-10-26</time>
 </a>
     </div>
   
@@ -245,7 +242,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      java之getters和setters
+      memset函数的用法
     </h1>
   
 
@@ -256,7 +253,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDEA/">IDEA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面向对象/">面向对象</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDA/">IDA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/函数/">函数</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -266,21 +263,94 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#java编程之getters和setters<br><a id="more"></a><br>网上搜索了很多关于getters和setters的文章，找到一片自己感觉讲的详细的给大家分享：<br>getter和setter的那些事<a href="http://insights.thoughtworkers.org/why-getter-and-setter/" target="_blank" rel="external"></a></p>
-<p><img src="http://i1.piimg.com/567571/3399fe6565688807.png" alt=""></p>
-<p>IDEA里面自动生成getters和setters的快捷键是alt+Ins</p>
-<p><img src="http://i1.piimg.com/567571/8a3fcb309647035a.png" alt=""></p>
-<p>public String getName(){<br>    return name;<br>}</p>
-<p>生成规则：</p>
-<pre><code>1、方法返回值类型为属性类型，如上为String
-2、方法名生成为get + 第一个字母大写的属性名，如getName，其中属性名name的第一个字母为大写。
-3、方法体中的代码为:  return 属性名；setter方法例子如下：
-</code></pre><p>public void setName(String name){<br>    this.name = name;<br>}</p>
-<p>生成规则：</p>
-<pre><code>1、返回值类型为void
-2、方法名为：set+第一个字母大写了的属性名
-3、形参和属性声明一致
-4、方法体代码为： this.属性名 = 属性名；
+        <p>#memset函数的用法<br><a id="more"></a><br>在通过IDA逆向伪代码分析程序的时候，经常会遇到memset()这个函数，格式一般如下所示：</p>
+<pre><code>memset(&amp;v1, 0, 0x80u);
+</code></pre><p>一直以为是开辟一个堆栈空间，知道今天专门看了别人写的博客才知道自己大错特错，接下来就我学习到的相关知识做一个总结。</p>
+<p>memset()的函数， 它可以一字节一字节地把整个数组设置为一个指定的值。 </p>
+<pre><code>#include &lt;mem.h&gt; 
+void* memset(void* s, int c, size_t n)
+{
+    unsigned char* p = (unsigned char*) s;
+    while (n &gt; 0) {
+    *p++ = (unsigned char) c;
+    --n;
+    }
+    return s;
+} 
+</code></pre><p>memset()函数在mem.h头文件中声明，它把数组的起始地址作为其第一个参数，第二个参数是设置数组每个字节的值，第三个参数是数组的长度(字节数，不是元素个数)。</p>
+<p>其函数原型为：</p>
+<pre><code>void *memset(void*，int，unsigned)；其中void*表示地址。
+</code></pre><p>　　例如，下面的代码用数组做参数传递给标准函数memset()，以让其将数组设置成全0：</p>
+<pre><code>　#include&lt;mem.h&gt;
+　void main()
+　{
+　　int ia1[50]；
+　　int ia2[500]；
+　　memset(iai,0,50*sizeof(int))；
+　　memset(ia2,0,500*sizeof(int))；
+　　//
+　}
+</code></pre><p>　　memset()的第一个实参是数组名，数组名作参数即数组作参数，它仅仅只是一个数组的起始地址而已。</p>
+<p>　　在函数memset()栈区，从返回地址往上依次为第1，2，3个参数。第1个参数中的内容是main()函数中定义的数组ia1的起始地址。第2个参数是给数组设置的值(0)，第3个参数是数组的长度(50*2)。函数返回时，main()函数的数组中内容全置为0。</p>
+<pre><code>0x00、void *memset(void *s,int c,size_t n)
+总的作用：将已开辟内存空间 s 的首 n 个字节的值设为值 c。
+
+0x01、例子
+＃include
+
+void main(){
+char *s=&quot;Golden Global View&quot;;
+
+clrscr();
+
+memset(s,&apos;G&apos;,6);
+printf(&quot;%s&quot;,s);
+
+getchar();
+return 0;
+}　
+
+0x02、memset() 函数常用于内存空间初始化。如：
+char str[100];
+memset(str,0,100);
+
+0x03、memset()的深刻内涵：用来对一段内存空间全部设置为某个字
+符，一般用在对定义的字符串进行初始化为‘ ’或‘\0’；
+例:char a[100];memset(a, &apos;\0&apos;, sizeof(a));
+
+memcpy用来做内存拷贝，你可以拿它拷贝任何数据类型的对象，可以
+指定拷贝的数据长度；例：char a[100],b[50]; memcpy(b, a, sizeof(b));
+注意如用sizeof(a)，会造成b的内存地址溢出。
+
+strcpy就只能拷贝字符串了，它遇到&apos;\0&apos;就结束拷贝；
+例：char a[100],b[50];strcpy(a,b);如用strcpy(b,a)，
+要注意a中的字符串长度（第一个‘\0’之前）是否超过50位，如超过，则会造成b的内存地址溢出。
+
+0x04、memset可以方便的清空一个结构类型的变量或数组。
+
+如：
+struct sample_struct
+{
+char csName[16];
+int iSeq;
+int iType;
+};
+
+对于变量
+struct sample_strcut stTest;
+
+一般情况下，清空stTest的方法：
+stTest.csName[0]=&apos;\0&apos;;
+stTest.iSeq=0;
+stTest.iType=0;
+
+用memset就非常方便：
+memset(&amp;stTest,0,sizeof(struct sample_struct));
+
+如果是数组：
+struct sample_struct TEST[10];
+则
+memset(TEST,0,sizeof(struct sample_struct)*10);
 </code></pre>
       
     </div>
@@ -289,13 +359,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/09/24/java之getters和setters/">java之getters和setters</a></p>
+        <p><span>本文标题:</span><a href="/2016/10/26/memset函数的用法/">memset函数的用法</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年09月24日 - 17时26分</p>
-        <p><span>最后更新:</span>2016年09月24日 - 18时10分</p>
+        <p><span>发布时间:</span>2016年10月26日 - 23时40分</p>
+        <p><span>最后更新:</span>2016年10月27日 - 00时06分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/09/24/java之getters和setters/" title="java之getters和setters">http://yunnigu.dropsec.xyz/2016/09/24/java之getters和setters/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/24/java之getters和setters/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2016/10/26/memset函数的用法/" title="memset函数的用法">http://yunnigu.dropsec.xyz/2016/10/26/memset函数的用法/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/10/26/memset函数的用法/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -308,18 +378,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2016/09/24/java之包的概念及其意义/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          java之包的概念及其意义
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">java之构造函数，默认构造函数及构造函数的重载</div>
+    <a href="/2016/10/20/java之Tostring和HashCode方法的重写/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">java之Tostring、equals和HashCode方法的重写</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -378,7 +439,7 @@
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/09/24/java之getters和setters/" data-title="java之getters和setters" data-url="http://yunnigu.dropsec.xyz/2016/09/24/java之getters和setters/"></div>
+    <div class="ds-thread" data-thread-key="2016/10/26/memset函数的用法/" data-title="memset函数的用法" data-url="http://yunnigu.dropsec.xyz/2016/10/26/memset函数的用法/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -401,13 +462,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/09/24/java之包的概念及其意义/" title="上一篇: java之包的概念及其意义">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/" title="下一篇: java之构造函数，默认构造函数及构造函数的重载">
+            <a href="/2016/10/20/java之Tostring和HashCode方法的重写/" title="下一篇: java之Tostring、equals和HashCode方法的重写">
                 <i class="fa fa-angle-right"></i>
             </a>
         
