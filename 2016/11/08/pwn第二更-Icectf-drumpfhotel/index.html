@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>pwn第二更-Icectf_drumpfhotel | YungGong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="#pwn第二更-Icectf_drumpfhotel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn第二更-Icectf_drumpfhotel">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/08/pwn第二更-Icectf-drumpfhotel/index.html">
+<meta property="og:site_name" content="YungGong">
+<meta property="og:description" content="#pwn第二更-Icectf_drumpfhotel">
+<meta property="og:image" content="http://i1.piimg.com/567571/c39519fd2ec3421e.png">
+<meta property="og:image" content="http://i1.piimg.com/567571/14380bddf3869ff4.png">
+<meta property="og:updated_time" content="2016-11-08T11:02:59.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pwn第二更-Icectf_drumpfhotel">
+<meta name="twitter:description" content="#pwn第二更-Icectf_drumpfhotel">
+<meta name="twitter:image" content="http://i1.piimg.com/567571/c39519fd2ec3421e.png">
+  
+    <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/Night_Elf.jpg">
+  
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/Night_Elf.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/">Yun</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/about">留言打卡</a></li>
+                        
+                            <li><a href="/tags">标签云</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/yunnigu" title="github">github</a>
+                            
+                                <a class="fl weibo" target="_blank" href="http://weibo.com/lishangmou" title="weibo">weibo</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 14px;">python</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://byd.dropsec.xyz/">老毕</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://zt.dropsec.xyz/">小光头</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lyx.dropsec.xyz/">翔哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://zjw.dropsec.xyz/">伟哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lzx.dropsec.xyz/">小崽崽</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lyh.dropsec.xyz/">魂道</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://wkh.dropsec.xyz/">洪哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://fgp.dropsec.xyz/">鹏哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://spd.dropsec.xyz/">东哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://cq.dropsec.xyz/">陈奇奇</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">纯海迷、爱运动、爱交友、爱旅行、喜欢接触新鲜事物、迎接新的挑战，更爱游离于错综复杂的编码与逻辑中</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Yun</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/Night_Elf.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Yun</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/about">留言打卡</a></li>
+                
+                    <li><a href="/tags">标签云</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://github.com/yunnigu" title="github">github</a>
+                    
+                        <a class="weibo" target="_blank" href="http://weibo.com/lishangmou" title="weibo">weibo</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-pwn第二更-Icectf-drumpfhotel" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/" class="article-date">
+      <time datetime="2016-11-08T09:39:00.000Z" itemprop="datePublished">2016-11-08</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      pwn第二更-Icectf_drumpfhotel
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>#pwn第二更-Icectf_drumpfhotel<br><a id="more"></a></p>
+<p>最近在刷题的时候发现的一道相对简单的溢出题目，但是可能对堆溢出方面知识涉及的不多，导致花了不少时间去研究原理，感觉还有有不少收获的。</p>
+<p>代开界面就是一个简单的宾馆预定系统</p>
+<p><img src="http://i1.piimg.com/567571/c39519fd2ec3421e.png" alt=""></p>
+<p>使用IDA分析函数，主要的函数包括mian(),book_suite(),book_room(),delete_booking(),print_booking()还有最主要的flag().</p>
+<p>首先在main函数里会给个五个选择，预定suite、room，删除预定，打印预定，退出。</p>
+<p>首先分析book_suite(),大致的情形就是在堆上申请了264个字节的空间，前四个字节储存print_name()函数，256个字节储存name，另外四个存储suite nummber。</p>
+<pre><code>Dump of assembler code for function book_suite:
+   0x0804873b &lt;+0&gt;: push   %ebp
+   0x0804873c &lt;+1&gt;: mov    %esp,%ebp
+   0x0804873e &lt;+3&gt;: push   %ebx
+   0x0804873f &lt;+4&gt;: sub    $0x34,%esp
+   0x08048742 &lt;+7&gt;: mov    %gs:0x14,%eax
+   0x08048748 &lt;+13&gt;: mov    %eax,-0xc(%ebp)
+   0x0804874b &lt;+16&gt;: xor    %eax,%eax
+   0x0804874d &lt;+18&gt;: movl   $0x108,(%esp)   --&gt;Allocate 264 bytes in heap memory
+   0x08048754 &lt;+25&gt;: call   0x80484e0 &lt;malloc@plt&gt; --&gt; return ptr to memory in eax
+   0x08048759 &lt;+30&gt;: mov    %eax,0x804b088  --&gt; assign ptr to variable suite
+   0x0804875e &lt;+35&gt;: movl   $0x8049688,(%esp)
+   0x08048765 &lt;+42&gt;: call   0x8048490 &lt;printf@plt&gt; --&gt; print &quot;Name:&quot;
+   0x0804876a &lt;+47&gt;: mov    0x804b080,%eax
+   0x0804876f &lt;+52&gt;: mov    %eax,(%esp)
+   0x08048772 &lt;+55&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x08048777 &lt;+60&gt;: mov    0x804b060,%eax
+   0x0804877c &lt;+65&gt;: mov    0x804b088,%edx  --&gt; variable suite
+   0x08048782 &lt;+71&gt;: add    $0x4,%edx
+   0x08048785 &lt;+74&gt;: mov    %eax,0x8(%esp)
+   0x08048789 &lt;+78&gt;: movl   $0x100,0x4(%esp)--&gt; length 0x100(256 bytes)
+   0x08048791 &lt;+86&gt;: mov    %edx,(%esp)   
+   0x08048794 &lt;+89&gt;: call   0x80484c0 &lt;fgets@plt&gt;--&gt; read from stdin, store name at address suite+4, length 0x100(256 bytes)
+   0x08048799 &lt;+94&gt;: mov    0x804b088,%eax  --&gt; var suite into eax
+   0x0804879e &lt;+99&gt;: movl   $0x8048a84,(%eax)--&gt; store address of print_name function(0x8048a84) into memory location at suite
+   0x080487a4 &lt;+105&gt;: movl   $0x804968f,(%esp)     --&gt;&quot;Suite number:&quot;
+   0x080487ab &lt;+112&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x080487b0 &lt;+117&gt;: mov    0x804b080,%eax
+   0x080487b5 &lt;+122&gt;: mov    %eax,(%esp)
+   0x080487b8 &lt;+125&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x080487bd &lt;+130&gt;: mov    0x804b060,%eax   --&gt;stdin
+   0x080487c2 &lt;+135&gt;: mov    %eax,0x8(%esp)   --&gt;push stdin stream
+   0x080487c6 &lt;+139&gt;: movl   $0x10,0x4(%esp)  --&gt;read only 16bytes from stdin. *Cannot stack overflow*
+   0x080487ce &lt;+147&gt;: lea    -0x1c(%ebp),%eax --&gt;store in stack starting at $ebp-0x1c (28bytes away from base of stack)
+   0x080487d1 &lt;+150&gt;: mov    %eax,(%esp)
+   0x080487d4 &lt;+153&gt;: call   0x80484c0 &lt;fgets@plt&gt; --&gt; get suite number from stdin and store in stack
+   0x080487d9 &lt;+158&gt;: mov    0x804b088,%ebx   --&gt; pointer suite
+   0x080487df &lt;+164&gt;: lea    -0x1c(%ebp),%eax
+   0x080487e2 &lt;+167&gt;: mov    %eax,(%esp)      
+   0x080487e5 &lt;+170&gt;: call   0x8048530 &lt;atoi@plt&gt;
+   0x080487ea &lt;+175&gt;: mov    %eax,0x104(%ebx)--&gt; save integer result into  suite+0x104
+   0x080487f0 &lt;+181&gt;: movl   $0x804969e,(%esp)  --&gt; &quot;Booked a suite!&quot;
+   0x080487f7 &lt;+188&gt;: call   0x80484f0 &lt;puts@plt&gt;
+   0x080487fc &lt;+193&gt;: mov    0x804b080,%eax
+   0x08048801 &lt;+198&gt;: mov    %eax,(%esp)
+   0x08048804 &lt;+201&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x08048809 &lt;+206&gt;: mov    -0xc(%ebp),%eax  --&gt;Stack canary
+   0x0804880c &lt;+209&gt;: xor    %gs:0x14,%eax
+   0x08048813 &lt;+216&gt;: je     0x804881a &lt;book_suite+223&gt;
+   0x08048815 &lt;+218&gt;: call   0x80484d0 &lt;__stack_chk_fail@plt&gt;
+   0x0804881a &lt;+223&gt;: add    $0x34,%esp
+   0x0804881d &lt;+226&gt;: pop    %ebx
+   0x0804881e &lt;+227&gt;: pop    %ebp
+   0x0804881f &lt;+228&gt;: ret    
+End of assembler dump.
+</code></pre><p>使用gdb查看堆地址分配，第一个地址就是print_name()函数的地址。</p>
+<pre><code>(gdb) x/100wx suite
+0x804c008: 0x08048a84(func) 0x62626262 0x00000a62 0x00000000
+0x804c018: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c028: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c038: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c048: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c058: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c068: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c078: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c088: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c098: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0a8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0b8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0c8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0d8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0e8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0f8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c108: 0x00000000 0x0804863d(int) 0x00000000 0x00020ef1
+0x804c118: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c128: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c138: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c148: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c158: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c168: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c178: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c188: 0x00000000 0x00000000 0x00000000 0x00000000
+</code></pre><p>接下里是book_room函数，分配了大小为260的堆内存，256大小的向内存储存name，剩下4个字节储存room_nummber.</p>
+<pre><code>(gdb) disass book_room
+Dump of assembler code for function book_room:
+   0x08048820 &lt;+0&gt;: push   %ebp
+   0x08048821 &lt;+1&gt;: mov    %esp,%ebp
+   0x08048823 &lt;+3&gt;: push   %ebx
+   0x08048824 &lt;+4&gt;: sub    $0x34,%esp
+   0x08048827 &lt;+7&gt;: mov    %gs:0x14,%eax
+   0x0804882d &lt;+13&gt;: mov    %eax,-0xc(%ebp)
+   0x08048830 &lt;+16&gt;: xor    %eax,%eax
+   0x08048832 &lt;+18&gt;: movl   $0x104,(%esp)   
+   0x08048839 &lt;+25&gt;: call   0x80484e0 &lt;malloc@plt&gt;--&gt; allocate 260 bytes in heap
+   0x0804883e &lt;+30&gt;: mov    %eax,0x804b08c  --&gt; save pointer to variable room 
+   0x08048843 &lt;+35&gt;: movl   $0x8049688,(%esp) --&gt; &quot;Name: &quot;
+   0x0804884a &lt;+42&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x0804884f &lt;+47&gt;: mov    0x804b080,%eax
+   0x08048854 &lt;+52&gt;: mov    %eax,(%esp)
+   0x08048857 &lt;+55&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x0804885c &lt;+60&gt;: mov    0x804b060,%eax
+   0x08048861 &lt;+65&gt;: mov    0x804b08c,%edx --&gt; variable room
+   0x08048867 &lt;+71&gt;: add    $0x4,%edx
+   0x0804886a &lt;+74&gt;: mov    %eax,0x8(%esp)
+   0x0804886e &lt;+78&gt;: movl   $0x100,0x4(%esp)
+   0x08048876 &lt;+86&gt;: mov    %edx,(%esp)
+   0x08048879 &lt;+89&gt;: call   0x80484c0 &lt;fgets@plt&gt; --&gt; read from stdin, store name at address room+4, length 0x100(256 bytes)
+   0x0804887e &lt;+94&gt;: movl   $0x80496ae,(%esp)  --&gt; &quot;Room Number: &quot;
+   0x08048885 &lt;+101&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x0804888a &lt;+106&gt;: mov    0x804b080,%eax
+   0x0804888f &lt;+111&gt;: mov    %eax,(%esp)
+   0x08048892 &lt;+114&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x08048897 &lt;+119&gt;: mov    0x804b060,%eax
+   0x0804889c &lt;+124&gt;: mov    %eax,0x8(%esp)
+   0x080488a0 &lt;+128&gt;: movl   $0x10,0x4(%esp)  --&gt; read 16 bytes
+   0x080488a8 &lt;+136&gt;: lea    -0x1c(%ebp),%eax 
+   0x080488ab &lt;+139&gt;: mov    %eax,(%esp)
+   0x080488ae &lt;+142&gt;: call   0x80484c0 &lt;fgets@plt&gt;
+   0x080488b3 &lt;+147&gt;: mov    0x804b08c,%ebx
+   0x080488b9 &lt;+153&gt;: lea    -0x1c(%ebp),%eax
+   0x080488bc &lt;+156&gt;: mov    %eax,(%esp)
+   0x080488bf &lt;+159&gt;: call   0x8048530 &lt;atoi@plt&gt;
+   0x080488c4 &lt;+164&gt;: mov    %eax,(%ebx)  --&gt; save room number into address room
+   0x080488c6 &lt;+166&gt;: movl   $0x80496bc,(%esp)
+   0x080488cd &lt;+173&gt;: call   0x80484f0 &lt;puts@plt&gt; &quot;Booked a room!&quot;
+   0x080488d2 &lt;+178&gt;: mov    0x804b080,%eax
+   0x080488d7 &lt;+183&gt;: mov    %eax,(%esp)
+   0x080488da &lt;+186&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x080488df &lt;+191&gt;: mov    -0xc(%ebp),%eax
+   0x080488e2 &lt;+194&gt;: xor    %gs:0x14,%eax
+   0x080488e9 &lt;+201&gt;: je     0x80488f0 &lt;book_room+208&gt;
+   0x080488eb &lt;+203&gt;: call   0x80484d0 &lt;__stack_chk_fail@plt&gt;
+   0x080488f0 &lt;+208&gt;: add    $0x34,%esp
+   0x080488f3 &lt;+211&gt;: pop    %ebx
+   0x080488f4 &lt;+212&gt;: pop    %ebp
+   0x080488f5 &lt;+213&gt;: ret    
+End of assembler dump.
+(gdb) 
+</code></pre><p>查看堆结构，发现前四个字节储存的就是room_nummber</p>
+<pre><code>(gdb) x/100wx room
+0x804c008: 0x00000001(int) 0x61616161 0x00000a61 0x00000000
+0x804c018: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c028: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c038: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c048: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c058: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c068: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c078: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c088: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c098: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0a8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0b8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0c8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0d8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0e8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c0f8: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c108: 0x00000000 0x00020ef9 0x00000000 0x00000000
+0x804c118: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c128: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c138: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c148: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c158: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c168: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c178: 0x00000000 0x00000000 0x00000000 0x00000000
+0x804c188: 0x00000000 0x00000000 0x00000000 0x00000000
+</code></pre><p>主要的问题在print_booking中，这个函数里调用了print_name函数</p>
+<pre><code>(gdb) disass print_booking
+Dump of assembler code for function print_booking:
+   0x080489a5 &lt;+0&gt;: push   %ebp
+   0x080489a6 &lt;+1&gt;: mov    %esp,%ebp
+   0x080489a8 &lt;+3&gt;: sub    $0x28,%esp
+   0x080489ab &lt;+6&gt;: mov    %gs:0x14,%eax
+   0x080489b1 &lt;+12&gt;: mov    %eax,-0xc(%ebp)
+   0x080489b4 &lt;+15&gt;: xor    %eax,%eax
+   0x080489b6 &lt;+17&gt;: mov    0x804b088,%eax  --&gt; pointer suite
+   0x080489bb &lt;+22&gt;: test   %eax,%eax
+   0x080489bd &lt;+24&gt;: jne    0x80489e6 &lt;print_booking+65&gt;
+   0x080489bf &lt;+26&gt;: mov    0x804b08c,%eax
+   0x080489c4 &lt;+31&gt;: test   %eax,%eax
+   0x080489c6 &lt;+33&gt;: jne    0x80489e6 &lt;print_booking+65&gt;
+   0x080489c8 &lt;+35&gt;: movl   $0x80496cb,(%esp)
+   0x080489cf &lt;+42&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x080489d4 &lt;+47&gt;: mov    0x804b080,%eax
+   0x080489d9 &lt;+52&gt;: mov    %eax,(%esp)
+   0x080489dc &lt;+55&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x080489e1 &lt;+60&gt;: jmp    0x8048a71 &lt;print_booking+204&gt;
+   0x080489e6 &lt;+65&gt;: mov    0x804b088,%eax --&gt; pointer suite
+   0x080489eb &lt;+70&gt;: test   %eax,%eax
+   0x080489ed &lt;+72&gt;: je     0x8048a2c &lt;print_booking+135&gt;
+   0x080489ef &lt;+74&gt;: mov    0x804b088,%eax
+   0x080489f4 &lt;+79&gt;: mov    (%eax),%eax --&gt;address of print_name function in suite
+   0x080489f6 &lt;+81&gt;: mov    0x804b088,%edx
+   0x080489fc &lt;+87&gt;: add    $0x4,%edx
+   0x080489ff &lt;+90&gt;: mov    %edx,(%esp) --&gt; location of string for suite name
+   0x08048a02 &lt;+93&gt;: call   *%eax --&gt; call print_name function giving it location of suite name **Need to overwrite value of print_name function in suite with address of function flag()
+   0x08048a04 &lt;+95&gt;: mov    0x804b088,%eax
+   0x08048a09 &lt;+100&gt;: mov    0x104(%eax),%eax
+   0x08048a0f &lt;+106&gt;: mov    %eax,0x4(%esp)
+   0x08048a13 &lt;+110&gt;: movl   $0x804970a,(%esp)
+   0x08048a1a &lt;+117&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x08048a1f &lt;+122&gt;: mov    0x804b080,%eax
+   0x08048a24 &lt;+127&gt;: mov    %eax,(%esp)
+   0x08048a27 &lt;+130&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x08048a2c &lt;+135&gt;: mov    0x804b08c,%eax
+   0x08048a31 &lt;+140&gt;: test   %eax,%eax
+   0x08048a33 &lt;+142&gt;: je     0x8048a71 &lt;print_booking+204&gt;
+   0x08048a35 &lt;+144&gt;: mov    0x804b08c,%eax
+   0x08048a3a &lt;+149&gt;: add    $0x4,%eax
+   0x08048a3d &lt;+152&gt;: mov    %eax,0x4(%esp)
+   0x08048a41 &lt;+156&gt;: movl   $0x804971c,(%esp)
+   0x08048a48 &lt;+163&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x08048a4d &lt;+168&gt;: mov    0x804b08c,%eax
+   0x08048a52 &lt;+173&gt;: mov    (%eax),%eax
+   0x08048a54 &lt;+175&gt;: mov    %eax,0x4(%esp)
+   0x08048a58 &lt;+179&gt;: movl   $0x804970a,(%esp)
+   0x08048a5f &lt;+186&gt;: call   0x8048490 &lt;printf@plt&gt;
+   0x08048a64 &lt;+191&gt;: mov    0x804b080,%eax
+   0x08048a69 &lt;+196&gt;: mov    %eax,(%esp)
+   0x08048a6c &lt;+199&gt;: call   0x80484a0 &lt;fflush@plt&gt;
+   0x08048a71 &lt;+204&gt;: mov    -0xc(%ebp),%eax
+   0x08048a74 &lt;+207&gt;: xor    %gs:0x14,%eax
+   0x08048a7b &lt;+214&gt;: je     0x8048a82 &lt;print_booking+221&gt;
+   0x08048a7d &lt;+216&gt;: call   0x80484d0 &lt;__stack_chk_fail@plt&gt;
+   0x08048a82 &lt;+221&gt;: leave  
+   0x08048a83 &lt;+222&gt;: ret    
+End of assembler dump.
+(gdb)  
+</code></pre><p>之后的delete_booking()函数主要是free()堆块，利用过程就是首先为suite申请堆块，然后free掉，之后为room申请堆块，nummber处输入flag()地址的十进制，这样suite和room的前四个字节都指向同一个地址，造成room前四个字节地址指针混乱，而suite()的print_name()函数地址被转换为flag()地址。</p>
+<p><img src="http://i1.piimg.com/567571/14380bddf3869ff4.png" alt=""></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
+        <p><span>发布时间:</span>2016年11月08日 - 17时39分</p>
+        <p><span>最后更新:</span>2016年11月08日 - 19时02分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/" title="pwn第二更-Icectf_drumpfhotel">http://yunnigu.dropsec.xyz/2016/11/08/pwn第二更-Icectf-drumpfhotel/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/08/pwn第二更-Icectf-drumpfhotel/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/2016/11/19/pwn学习rop之x86篇/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          pwn学习rop之x86篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/01/pwn第一更-L-CTFpwn100/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">pwn第一更-L-CTFpwn100</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="2016/11/08/pwn第二更-Icectf-drumpfhotel/" data-title="pwn第二更-Icectf_drumpfhotel" data-url="http://yunnigu.dropsec.xyz/2016/11/08/pwn第二更-Icectf-drumpfhotel/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"null"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = '/js/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    <!-- 多说公共JS代码 end -->
+</div>
+
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2016/11/19/pwn学习rop之x86篇/" title="上一篇: pwn学习rop之x86篇">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2016/11/01/pwn第一更-L-CTFpwn100/" title="下一篇: pwn第一更-L-CTFpwn100">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2016 Yun
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
