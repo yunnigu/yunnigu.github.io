@@ -5,20 +5,20 @@
   
   <title>java之Tostring、equals和HashCode方法的重写 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#java之Tostring、equals和HashCode方法的重写">
+  <meta name="description" content="java之Tostring、equals和HashCode方法的重写">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java之Tostring、equals和HashCode方法的重写">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#java之Tostring、equals和HashCode方法的重写">
+<meta property="og:description" content="java之Tostring、equals和HashCode方法的重写">
 <meta property="og:image" content="http://p1.bqimg.com/567571/ac768509e2549f61.png">
 <meta property="og:image" content="http://p1.bqimg.com/567571/ba24032a2cc032a5.png">
 <meta property="og:image" content="http://p1.bpimg.com/567571/c69b98e11c2eabd6.png">
 <meta property="og:image" content="http://p1.bpimg.com/567571/a57a8582146b4f05.png">
-<meta property="og:updated_time" content="2016-10-20T08:24:09.618Z">
+<meta property="og:updated_time" content="2016-11-28T12:46:20.747Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java之Tostring、equals和HashCode方法的重写">
-<meta name="twitter:description" content="#java之Tostring、equals和HashCode方法的重写">
+<meta name="twitter:description" content="java之Tostring、equals和HashCode方法的重写">
 <meta name="twitter:image" content="http://p1.bqimg.com/567571/ac768509e2549f61.png">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
@@ -142,7 +142,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 14px;">python</a> <a href="/tags/reverse/" style="font-size: 10px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 16px;">python</a> <a href="/tags/reverse/" style="font-size: 12px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -268,8 +268,8 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#java之Tostring、equals和HashCode方法的重写<br><a id="more"></a></p>
-<p>##0x00为什么要重写toString()方法和hashcode()方法<br>一、toString():</p>
+        <h1 id="java之Tostring、equals和HashCode方法的重写"><a href="#java之Tostring、equals和HashCode方法的重写" class="headerlink" title="java之Tostring、equals和HashCode方法的重写"></a>java之Tostring、equals和HashCode方法的重写</h1><a id="more"></a>
+<h2 id="0x00为什么要重写toString-方法和hashcode-方法"><a href="#0x00为什么要重写toString-方法和hashcode-方法" class="headerlink" title="0x00为什么要重写toString()方法和hashcode()方法"></a>0x00为什么要重写toString()方法和hashcode()方法</h2><p>一、toString():</p>
 <p>在Object类里面定义toString（）方法的时候返回的对象的哈希code码，这个hashcode码不能简单明了的表示出对象的属性。所以要重写toString（）方法。<br>当需要将一个对象输出到显示器时,通常要调用他的toString()方法,将对象的内容转换为字符串.java中的所有类默认都有一个toString()方法。</p>
 <pre><code> public String toString() {
     return getClass().getName() + &quot;@&quot; + Integer.toHexString(hashCode());
@@ -283,7 +283,7 @@
 </code></pre><p>二、equals()和hashCode():</p>
 <p>在Object类里面定义的equals比较的是对象的引用是否指向同一块内存地址。  一般情况下比较两个对象时比较他的值是否一致，所以要进行重写。重写之后是为了比较两个对象的value值是否相等。 特别指出，利用equals比较八大包装对象（如int，float等）和String类（因为该类已重写了equals和hashcode方法）对象时，默认比较的是值，在比较其它对象都是比较的引用地址。生成两个对象同时，会生成对应的散列码，当需要比较两个对象时，java先比较他们的hashCode，若不同，则两个对象就不同，若相同，再比较equals（）方法，判断是否相同。因此在重写equals的时候一定要重写hashCode</p>
 <p>注意事项：<br>1.自反性：对于任意的引用值x，x.equals(x)一定为true<br>2.对称性：对于任意的引用值x 和 y，当x.equals(y)返回true，y.equals(x)也一定返回true<br>3.传递性：对于任意的引用值x、y和ｚ，如果x.equals(y)返回true，并且y.equals(z)也返回true，那么x.equals(z)也一定返   回 true<br>4.一致性：对于任意的引用值x 和 y，如果用于equals比较的对象信息没有被修改，多次调用x.equals(y)要么一致地返回true，要么一致地返回false<br>5.非空性：对于任意的非空引用值x，x.equals(null)一定返回false</p>
-<p>##Tostring、equals和HashCode方法的重写<br>一、toString()方法的重写<br>首先，我们先来创建一个Persion类，它只简单的包含 firstname 和 lastname，当然，加上它的setter 和 getter 法。放在com.Collection1包下：</p>
+<h2 id="Tostring、equals和HashCode方法的重写"><a href="#Tostring、equals和HashCode方法的重写" class="headerlink" title="Tostring、equals和HashCode方法的重写"></a>Tostring、equals和HashCode方法的重写</h2><p>一、toString()方法的重写<br>首先，我们先来创建一个Persion类，它只简单的包含 firstname 和 lastname，当然，加上它的setter 和 getter 法。放在com.Collection1包下：</p>
 <p><img src="http://p1.bqimg.com/567571/ac768509e2549f61.png" alt=""></p>
 <p> 接下来，新建一个类，名为Test，让它包含main函数：</p>
 <p><img src="http://p1.bqimg.com/567571/ba24032a2cc032a5.png" alt=""></p>
@@ -374,7 +374,7 @@ public class Test {
         <p><span>本文标题:</span><a href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年10月20日 - 13时21分</p>
-        <p><span>最后更新:</span>2016年10月20日 - 16时24分</p>
+        <p><span>最后更新:</span>2016年11月28日 - 20时46分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/10/20/java之Tostring和HashCode方法的重写/" title="java之Tostring、equals和HashCode方法的重写">http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/10/20/java之Tostring和HashCode方法的重写/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -412,7 +412,7 @@ public class Test {
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java之Tostring、equals和HashCode方法的重写"><span class="toc-number">1.</span> <span class="toc-text">java之Tostring、equals和HashCode方法的重写</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00为什么要重写toString-方法和hashcode-方法"><span class="toc-number">1.1.</span> <span class="toc-text">0x00为什么要重写toString()方法和hashcode()方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tostring、equals和HashCode方法的重写"><span class="toc-number">1.2.</span> <span class="toc-text">Tostring、equals和HashCode方法的重写</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -494,7 +494,7 @@ public class Test {
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");

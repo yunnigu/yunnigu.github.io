@@ -5,12 +5,12 @@
   
   <title>reverse之第一更 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#reverse之第一更">
+  <meta name="description" content="reverse之第一更">
 <meta property="og:type" content="article">
 <meta property="og:title" content="reverse之第一更">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/24/reverse之第一更/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#reverse之第一更">
+<meta property="og:description" content="reverse之第一更">
 <meta property="og:image" content="http://i1.piimg.com/567571/48e62b98d413ba71.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/b04277ea32ef526b.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/dd5a5a9841e8d0f7.png">
@@ -19,10 +19,10 @@
 <meta property="og:image" content="http://p1.bpimg.com/567571/682095dce0bc838f.png">
 <meta property="og:image" content="http://p1.bpimg.com/567571/1092fbf6a48a9228.png">
 <meta property="og:image" content="http://p1.bpimg.com/567571/fd7fc0c2c97012fc.png">
-<meta property="og:updated_time" content="2016-11-24T12:17:27.245Z">
+<meta property="og:updated_time" content="2016-11-28T12:51:16.212Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="reverse之第一更">
-<meta name="twitter:description" content="#reverse之第一更">
+<meta name="twitter:description" content="reverse之第一更">
 <meta name="twitter:image" content="http://i1.piimg.com/567571/48e62b98d413ba71.png">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
@@ -146,7 +146,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 14px;">python</a> <a href="/tags/reverse/" style="font-size: 10px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 16px;">python</a> <a href="/tags/reverse/" style="font-size: 12px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -272,7 +272,8 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#reverse之第一更<br><a id="more"></a><br>今天在刷题的时候，遇到一道比较有意思的reverse，以前并没有见过，认真研究过学会了通过OD对程序patch，接下来通过这个题目和大家交流一下：</p>
+        <h1 id="reverse之第一更"><a href="#reverse之第一更" class="headerlink" title="reverse之第一更"></a>reverse之第一更</h1><a id="more"></a>
+<p>今天在刷题的时候，遇到一道比较有意思的reverse，以前并没有见过，认真研究过学会了通过OD对程序patch，接下来通过这个题目和大家交流一下：</p>
 <p>本题是CFF2016的一个reverse100，使用IDA打开分析流程就是在你输入password之后父进程会创建一个子进程。</p>
 <p><img src="http://i1.piimg.com/567571/48e62b98d413ba71.png" alt=""></p>
 <p>然后通过WriteProcessMemory()函数实现改写。通过OD调试发现改写内容如下：</p>
@@ -306,7 +307,7 @@ flag = &apos;&apos;for i in xrange(len(table)):
         <p><span>本文标题:</span><a href="/2016/11/24/reverse之第一更/">reverse之第一更</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年11月24日 - 19时34分</p>
-        <p><span>最后更新:</span>2016年11月24日 - 20时17分</p>
+        <p><span>最后更新:</span>2016年11月28日 - 20时51分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/11/24/reverse之第一更/" title="reverse之第一更">http://yunnigu.dropsec.xyz/2016/11/24/reverse之第一更/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/24/reverse之第一更/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -322,6 +323,15 @@ flag = &apos;&apos;for i in xrange(len(table)):
 
 <nav id="article-nav">
   
+    <a href="/2016/11/28/python基于numpy解方程组/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          python基于numpy解方程组
+        
+      </div>
+    </a>
+  
   
     <a href="/2016/11/24/pwn学习rop之x64/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">pwn学习rop之x64</div>
@@ -335,7 +345,7 @@ flag = &apos;&apos;for i in xrange(len(table)):
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#reverse之第一更"><span class="toc-number">1.</span> <span class="toc-text">reverse之第一更</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -406,7 +416,9 @@ flag = &apos;&apos;for i in xrange(len(table)):
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2016/11/28/python基于numpy解方程组/" title="上一篇: python基于numpy解方程组">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
@@ -415,7 +427,7 @@ flag = &apos;&apos;for i in xrange(len(table)):
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");

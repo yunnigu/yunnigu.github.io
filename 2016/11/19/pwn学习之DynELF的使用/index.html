@@ -5,18 +5,18 @@
   
   <title>pwn学习之DynELF的使用 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#pwn学习之DynELF的使用">
+  <meta name="description" content="pwn学习之DynELF的使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn学习之DynELF的使用">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="#pwn学习之DynELF的使用">
+<meta property="og:description" content="pwn学习之DynELF的使用">
 <meta property="og:image" content="http://p1.bpimg.com/567571/3762473d4048536f.png">
 <meta property="og:image" content="http://p1.bpimg.com/567571/a96448cc65b852d0.png">
-<meta property="og:updated_time" content="2016-11-21T08:44:04.433Z">
+<meta property="og:updated_time" content="2016-11-28T12:50:31.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn学习之DynELF的使用">
-<meta name="twitter:description" content="#pwn学习之DynELF的使用">
+<meta name="twitter:description" content="pwn学习之DynELF的使用">
 <meta name="twitter:image" content="http://p1.bpimg.com/567571/3762473d4048536f.png">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
@@ -140,7 +140,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 14px;">python</a> <a href="/tags/reverse/" style="font-size: 10px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 16px;">python</a> <a href="/tags/reverse/" style="font-size: 12px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -266,11 +266,9 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>#pwn学习之DynELF的使用</p>
-<a id="more"></a>
+        <h1 id="pwn学习之DynELF的使用"><a href="#pwn学习之DynELF的使用" class="headerlink" title="pwn学习之DynELF的使用"></a>pwn学习之DynELF的使用</h1><a id="more"></a>
 <p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。</p>
-<p>##0x00 leak函数</p>
-<pre><code>#!python
+<h2 id="0x00-leak函数"><a href="#0x00-leak函数" class="headerlink" title="0x00 leak函数"></a>0x00 leak函数</h2><pre><code>#!python
 def leak(address):
     payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
     p.send(payload1)
@@ -278,8 +276,7 @@ def leak(address):
     print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
 return data
 </code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<p>##0x01 寻找地址</p>
-<p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
+<h2 id="0x01-寻找地址"><a href="#0x01-寻找地址" class="headerlink" title="0x01 寻找地址"></a>0x01 寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
 <p><img src="http://p1.bpimg.com/567571/3762473d4048536f.png" alt=""></p>
 <p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
 <p><img src="http://p1.bpimg.com/567571/a96448cc65b852d0.png" alt=""></p>
@@ -341,7 +338,7 @@ p.interactive()
         <p><span>本文标题:</span><a href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年11月19日 - 15时54分</p>
-        <p><span>最后更新:</span>2016年11月21日 - 16时44分</p>
+        <p><span>最后更新:</span>2016年11月28日 - 20时50分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/11/19/pwn学习之DynELF的使用/" title="pwn学习之DynELF的使用">http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -357,11 +354,11 @@ p.interactive()
 
 <nav id="article-nav">
   
-    <a href="/2016/11/21/pwn学习rop之x64篇/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/11/24/pwn学习rop之x64/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          pwn学习rop之x64篇
+          pwn学习rop之x64
         
       </div>
     </a>
@@ -379,7 +376,7 @@ p.interactive()
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn学习之DynELF的使用"><span class="toc-number">1.</span> <span class="toc-text">pwn学习之DynELF的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-leak函数"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 leak函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-寻找地址"><span class="toc-number">1.2.</span> <span class="toc-text">0x01 寻找地址</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -450,7 +447,7 @@ p.interactive()
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/11/21/pwn学习rop之x64篇/" title="上一篇: pwn学习rop之x64篇">
+            <a href="/2016/11/24/pwn学习rop之x64/" title="上一篇: pwn学习rop之x64">
                 <i class="fa fa-angle-left"></i>
             </a>
         
@@ -461,7 +458,7 @@ p.interactive()
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
