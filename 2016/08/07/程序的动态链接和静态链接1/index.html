@@ -5,14 +5,24 @@
   
   <title>程序的动态链接和静态链接 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="程序的静态链接，动态链接和装载参考自：This is an http://www.xuebuyuan.com/1730287.html
-一、程序编译链接的整体流程二、目标文件的样子（以linux下的elf文件格式为例）三、静态链接四、装载五、动态链接">
+  <meta name="description" content="#程序的静态链接，动态链接和装载
+参考自：This is an http://www.xuebuyuan.com/1730287.html
+##一、程序编译链接的整体流程
+##二、目标文件的样子（以linux下的elf文件格式为例）
+##三、静态链接
+##四、装载
+##五、动态链接">
 <meta property="og:type" content="article">
 <meta property="og:title" content="程序的动态链接和静态链接">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/08/07/程序的动态链接和静态链接1/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="程序的静态链接，动态链接和装载参考自：This is an http://www.xuebuyuan.com/1730287.html
-一、程序编译链接的整体流程二、目标文件的样子（以linux下的elf文件格式为例）三、静态链接四、装载五、动态链接">
+<meta property="og:description" content="#程序的静态链接，动态链接和装载
+参考自：This is an http://www.xuebuyuan.com/1730287.html
+##一、程序编译链接的整体流程
+##二、目标文件的样子（以linux下的elf文件格式为例）
+##三、静态链接
+##四、装载
+##五、动态链接">
 <meta property="og:image" content="http://smilejay.b0.upaiyun.com/wp-content/uploads/2012/01/gcc_compilation_stages.jpg">
 <meta property="og:image" content="http://smilejay.b0.upaiyun.com/wp-content/uploads/2012/01/linking.jpg">
 <meta property="og:image" content="http://img.my.csdn.net/uploads/201302/02/1359777256_5685.jpg">
@@ -22,11 +32,16 @@
 <meta property="og:image" content="http://images2015.cnblogs.com/blog/376860/201608/376860-20160806161516825-542579710.png">
 <meta property="og:image" content="http://images2015.cnblogs.com/blog/376860/201608/376860-20160806163246840-1854978573.png">
 <meta property="og:image" content="http://images2015.cnblogs.com/blog/376860/201608/376860-20160806164350590-605002435.png">
-<meta property="og:updated_time" content="2016-11-28T12:53:03.139Z">
+<meta property="og:updated_time" content="2016-08-19T11:59:36.503Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="程序的动态链接和静态链接">
-<meta name="twitter:description" content="程序的静态链接，动态链接和装载参考自：This is an http://www.xuebuyuan.com/1730287.html
-一、程序编译链接的整体流程二、目标文件的样子（以linux下的elf文件格式为例）三、静态链接四、装载五、动态链接">
+<meta name="twitter:description" content="#程序的静态链接，动态链接和装载
+参考自：This is an http://www.xuebuyuan.com/1730287.html
+##一、程序编译链接的整体流程
+##二、目标文件的样子（以linux下的elf文件格式为例）
+##三、静态链接
+##四、装载
+##五、动态链接">
 <meta name="twitter:image" content="http://smilejay.b0.upaiyun.com/wp-content/uploads/2012/01/gcc_compilation_stages.jpg">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
@@ -150,7 +165,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 16px;">python</a> <a href="/tags/reverse/" style="font-size: 12px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 16px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 16px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 12px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 14px;">python</a> <a href="/tags/reverse/" style="font-size: 10px;">reverse</a> <a href="/tags/writeup/" style="font-size: 14px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 12px;">工具</a> <a href="/tags/漏洞/" style="font-size: 12px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 14px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -276,16 +291,24 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="程序的静态链接，动态链接和装载"><a href="#程序的静态链接，动态链接和装载" class="headerlink" title="程序的静态链接，动态链接和装载"></a>程序的静态链接，动态链接和装载</h1><p>参考自：This is an <a href="http://www.xuebuyuan.com/1730287.html" target="_blank" rel="external">http://www.xuebuyuan.com/1730287.html</a></p>
-<h2 id="一、程序编译链接的整体流程"><a href="#一、程序编译链接的整体流程" class="headerlink" title="一、程序编译链接的整体流程"></a><strong>一、程序编译链接的整体流程</strong></h2><h2 id="二、目标文件的样子（以linux下的elf文件格式为例）"><a href="#二、目标文件的样子（以linux下的elf文件格式为例）" class="headerlink" title="二、目标文件的样子（以linux下的elf文件格式为例）"></a><strong>二、目标文件的样子（以linux下的elf文件格式为例）</strong></h2><h2 id="三、静态链接"><a href="#三、静态链接" class="headerlink" title="三、静态链接"></a><strong>三、静态链接</strong></h2><h2 id="四、装载"><a href="#四、装载" class="headerlink" title="四、装载"></a><strong>四、装载</strong></h2><h2 id="五、动态链接"><a href="#五、动态链接" class="headerlink" title="五、动态链接"></a><strong>五、动态链接</strong></h2><a id="more"></a> 
-<h3 id="一、程序编译链接的整体流程-1"><a href="#一、程序编译链接的整体流程-1" class="headerlink" title="一、程序编译链接的整体流程"></a>一、程序编译链接的整体流程</h3><p>通常我们使用gcc来生成可执行程序，命令为：gcc hello.c，默认生成可执行文件a.out</p>
+        <p>#程序的静态链接，动态链接和装载</p>
+<p>参考自：This is an <a href="http://www.xuebuyuan.com/1730287.html" target="_blank" rel="external">http://www.xuebuyuan.com/1730287.html</a></p>
+<p>##<strong>一、程序编译链接的整体流程</strong></p>
+<p>##<strong>二、目标文件的样子（以linux下的elf文件格式为例）</strong></p>
+<p>##<strong>三、静态链接</strong></p>
+<p>##<strong>四、装载</strong></p>
+<p>##<strong>五、动态链接</strong></p>
+<a id="more"></a> 
+<p>###一、程序编译链接的整体流程</p>
+<p>通常我们使用gcc来生成可执行程序，命令为：gcc hello.c，默认生成可执行文件a.out</p>
 <p>其实编译（包括链接）的命令：gcc hello.c 可分解为如下4个大的步骤：</p>
 <pre><code>预处理(Preprocessing)
 编译(Compilation)
 汇编(Assembly)
 链接(Linking)
 </code></pre><p><img src="http://smilejay.b0.upaiyun.com/wp-content/uploads/2012/01/gcc_compilation_stages.jpg" alt=""><br>gcc compilation</p>
-<h4 id="1-预处理-Preproceessing"><a href="#1-预处理-Preproceessing" class="headerlink" title="1.       预处理(Preproceessing)"></a>1.       预处理(Preproceessing)</h4><pre><code>预处理的过程主要处理包括以下过程：
+<p>####1.       预处理(Preproceessing)</p>
+<pre><code>预处理的过程主要处理包括以下过程：
 将所有的#define删除，并且展开所有的宏定义
 处理所有的条件预编译指令，比如#if #ifdef #elif #else #endif等
 处理#include 预编译指令，将被包含的文件插入到该预编译指令的位置。
@@ -297,17 +320,20 @@
 <p>参数-E表示只进行预处理 或者也可以使用以下指令完成预处理过程</p>
 <p>cpp hello.c &gt; hello.i      /<em>  cpp – The C Preprocessor  </em>/</p>
 <p>直接cat hello.i 你就可以看到预处理后的代码</p>
-<h4 id="2-编译-Compilation"><a href="#2-编译-Compilation" class="headerlink" title="2.       编译(Compilation)"></a>2.       编译(Compilation)</h4><p>编译过程就是把预处理完的文件进行一系列的词法分析，语法分析，语义分析及优化后生成相应的汇编代码。</p>
+<p>####2.       编译(Compilation)</p>
+<p>编译过程就是把预处理完的文件进行一系列的词法分析，语法分析，语义分析及优化后生成相应的汇编代码。</p>
 <p>$gcc –S hello.i –o hello.s</p>
 <p>或者</p>
 <p>$ /usr/lib/gcc/i486-linux-gnu/4.4/cc1 hello.c</p>
 <p>注：现在版本的GCC把预处理和编译两个步骤合成一个步骤，用cc1工具来完成。gcc其实是后台程序的一些包装，根据不同参数去调用其他的实际处理程序，比如：预编译编译程序cc1、汇编器as、连接器ld</p>
-<h4 id="3-汇编-Assembly"><a href="#3-汇编-Assembly" class="headerlink" title="3.       汇编(Assembly)"></a>3.       汇编(Assembly)</h4><p>汇编器是将汇编代码转变成机器可以执行的命令，每一个汇编语句几乎都对应一条机器指令。汇编相对于编译过程比较简单，根据汇编指令和机器指令的对照表一一翻译即可。</p>
+<p>####3.       汇编(Assembly)</p>
+<p>汇编器是将汇编代码转变成机器可以执行的命令，每一个汇编语句几乎都对应一条机器指令。汇编相对于编译过程比较简单，根据汇编指令和机器指令的对照表一一翻译即可。</p>
 <p>$ gcc –c hello.c –o hello.o</p>
 <p>或者</p>
 <p>$ as hello.s –o hello.co</p>
 <p>由于hello.o的内容为机器码，不能以普通文本形式的查看（vi 打开看到的是乱码）。</p>
-<h4 id="4-链接-Linking"><a href="#4-链接-Linking" class="headerlink" title="4.       链接(Linking)"></a>4.       链接(Linking)</h4><p>通过调用链接器ld来链接程序运行需要的一大堆目标文件，以及所依赖的其它库文件，最后生成可执行文件。</p>
+<p>####4.       链接(Linking)</p>
+<p>通过调用链接器ld来链接程序运行需要的一大堆目标文件，以及所依赖的其它库文件，最后生成可执行文件。</p>
 <p>ld -static crt1.o crti.o crtbeginT.o hello.o -start-group -lgcc -lgcc_eh -lc-end-group crtend.o crtn.o (省略了文件的路径名)。</p>
 <p>helloworld的大体编译和链接过程就是这样了，那么编译器和链接器到底做了什么呢？</p>
 <p>编译过程可分为6步：扫描（词法分析）、语法分析、语义分析、源代码优化、代码生成、目标代码优化。</p>
@@ -325,7 +351,7 @@
 <p>静态链接的大致过程如下图所示：</p>
 <p><img src="http://smilejay.b0.upaiyun.com/wp-content/uploads/2012/01/linking.jpg" alt=""></p>
 <p>static linking</p>
-<h3 id="二、目标文件的样子（以linux下的elf文件格式为例）-1"><a href="#二、目标文件的样子（以linux下的elf文件格式为例）-1" class="headerlink" title="二、目标文件的样子（以linux下的elf文件格式为例）"></a>二、目标文件的样子（以linux下的elf文件格式为例）</h3><p><img src="http://img.my.csdn.net/uploads/201302/02/1359777256_5685.jpg" alt=""></p>
+<p>###二、目标文件的样子（以linux下的elf文件格式为例）<br><img src="http://img.my.csdn.net/uploads/201302/02/1359777256_5685.jpg" alt=""></p>
 <p>夹在ELF头和节头部表之间的都是节。一个典型的ELF可重定位目标文件包含下面几个节：</p>
 <pre><code>.text：已编译程序的机器代码。
 .rodata：只读数据，比如printf语句中的格式串和开关（switch）语句的跳转表。
@@ -339,17 +365,18 @@
 .strtab：一个字符串表，其内容包括.symtab和.debug节中的符号表，以及节头部中的节名字。字符串表就是以null结尾的字符串序列。
 </code></pre><p>旁注：为什么未初始化的数据称为.bss?</p>
 <p>用术语.bss来表示未初始化的数据是很普遍的。它起始于IBM 704汇编语言（大约在1957年）中”块存储开始（Block Storage Start）“指令的首字母缩写，并沿用至今。一个记住区分.data和.bss节的简单方法是把“bss”看成是“更好地节省空间（Better Save Space）！“的缩写。</p>
-<h3 id="三、静态链接-1"><a href="#三、静态链接-1" class="headerlink" title="三、静态链接"></a>三、静态链接</h3><p>虚拟存储器是建立在主存–辅存物理结构基础上，有附加的硬件装置及操作系统存储管理软件组成的一种存储体系。</p>
+<p>###三、静态链接</p>
+<p>虚拟存储器是建立在主存–辅存物理结构基础上，有附加的硬件装置及操作系统存储管理软件组成的一种存储体系。</p>
 <p><img src="http://hi.csdn.net/attachment/201011/28/0_1290943844z9zN.gif" alt=""></p>
 <p>顾名思义，虚拟存储器是虚拟的存储器，它其实是不存在的，而仅仅是由一些硬件和软件管理的一种“系统”。他提供了三个重要的能力：<br>1，它将主存看成一个存储在磁盘上的地址空间的高速缓存，在主存中只保存活动区域，并根据需要在磁盘和主存之间来回传送数据（这里存在“交换空间”以及“页面调度”等概念），通过这种方式，高效地利用主存；2，它为每个进程提供了统一的地址空间（以虚拟地址编址），从而简化了存储器管理；3，操作系统会为每个进程提供独立的地址空间，从而保护了每个进程的地址空间不被其他进程破坏。 </p>
 <p>虚拟存储器与虚拟地址空间是两个不同的概念：虚拟存储器是假想的存储器，而虚拟存储空间是假想的内存。它们之间的关系应该与主存储器与内存空间之间的关系类似。</p>
 <p>链接部分：</p>
 <p>链接就是将不同部分的代码和数据收集和组合成一个单一文件的过程，也就是把不同目标文件合并成最终可执行文件的过程。当然，务必知道：这个过程不涉及内存。</p>
-<h5 id="链接可以分为三种情形："><a href="#链接可以分为三种情形：" class="headerlink" title="链接可以分为三种情形："></a>链接可以分为三种情形：</h5><pre><code>1，编译时链接，也就是我们常说的静态链接；
-2，装载时链接；
-3，运行时链接。装载时链接和运行时链接合称为动态链接。在此，我们的链接部分将主要讲述静态链接，而装载时链接我们放在装载部分讲，运行时链接忽略。
-</code></pre><h4 id="1、什么是静态链接？"><a href="#1、什么是静态链接？" class="headerlink" title="1、什么是静态链接？"></a>1、什么是静态链接？</h4><p>静态链接就是将多个目标文件组合在一起形成一个可执行文件，如将a.o 和 b.o 链接在一起形成 可执行文件ab。</p>
-<h4 id="2、静态链接的过程包括哪几个部分？"><a href="#2、静态链接的过程包括哪几个部分？" class="headerlink" title="2、静态链接的过程包括哪几个部分？"></a>2、静态链接的过程包括哪几个部分？</h4><pre><code>静态链接包括两个大部分：一是空间和地址的分配；二是符号解析和重定位
+<p>#####链接可以分为三种情形：<br>    1，编译时链接，也就是我们常说的静态链接；<br>    2，装载时链接；<br>    3，运行时链接。装载时链接和运行时链接合称为动态链接。在此，我们的链接部分将主要讲述静态链接，而装载时链接我们放在装载部分讲，运行时链接忽略。</p>
+<p>####1、什么是静态链接？</p>
+<p>静态链接就是将多个目标文件组合在一起形成一个可执行文件，如将a.o 和 b.o 链接在一起形成 可执行文件ab。</p>
+<p>####2、静态链接的过程包括哪几个部分？</p>
+<pre><code>静态链接包括两个大部分：一是空间和地址的分配；二是符号解析和重定位
 </code></pre><p>#####（1）空间和地址的分配</p>
 <p>编译器在将a.o 和 b.o 是如何合并在一起的？？</p>
 <p>第二种方法就是 相似段合并：顾名思义 就是把不同目标文件的相同名字的段合并成一个段，如下图：</p>
@@ -410,7 +437,8 @@ void swap(int *a,int *b)
 <p>0x102b + 0xFD5 = 0x2000，刚好是swap函数的地址。</p>
 <p><img src="http://hi.csdn.net/attachment/201011/28/0_1290945325g9vI.gif" alt=""></p>
 <p>以上内容没有涉及到c标准库，仅仅是自己实现的两个c语言程序之间的链接状况，也就是“程序里面的printf怎么处理”没有说明。这里，我们就要提及“静态库”的概念。其实一个静态库可以简单地看成一组目标文件的集合，即很多目标文件经过压缩打包后形成的一个文件。与静态库链接的过程是这样的：ld链接器自动查找全局符号表，找到那些为决议的符号，然后查出它们所在的目标文件，将这些目标文件从静态库中“解压”出来，最终将它们链接在一起成为一个可执行文件。也就是说只有少数几个库和目标文件被链接入了最终的可执行文件，而非所有的库一股脑地被链接进了可执行文件。</p>
-<h3 id="四、装载："><a href="#四、装载：" class="headerlink" title="四、装载："></a>四、装载：</h3><p>以Linux内核装载ELF为例简述一下装载过程。当我们在Linux系统的bash下输入一个命令执行某个ELF程序时，在用户层面，bash进程会调用fork()系统调用创建一个新的进程，然后新的进程调用execve()来执行指定的ELF文件，原先的bash进程继续返回等待刚才启动时新进程结束，然后继续等待用户输入命令。这里需注意，随着一个新进程的出现，操作系统会为它创建一个独立的虚拟地址空间。</p>
+<p>###四、装载：</p>
+<p>以Linux内核装载ELF为例简述一下装载过程。当我们在Linux系统的bash下输入一个命令执行某个ELF程序时，在用户层面，bash进程会调用fork()系统调用创建一个新的进程，然后新的进程调用execve()来执行指定的ELF文件，原先的bash进程继续返回等待刚才启动时新进程结束，然后继续等待用户输入命令。这里需注意，随着一个新进程的出现，操作系统会为它创建一个独立的虚拟地址空间。</p>
 <p>【创建虚拟地址空间】我们知道一个虚拟空间由一组映射函数将虚拟空间的各个页映射到相应的物理空间，那么创建一个虚拟空间实际上并不是创建空间而是创建映射函数所需要的数据结构。举例来说，在x86的Linux下创建虚拟地址空间实际上只是分配一个页目录（页表）就可以了，甚至不设置页映射关系，这些映射关系等到后面程序发生“缺页”时在进行设置。</p>
 <p>在进入execve()系统调用之后，Linux内核就开始进行真正的装载工作。在内核中，execve()系统调用相应的入口是sys_execve(),作用：参数的检查复制；调用do_execve(),流程：查找被执行的文件，读取文件的前128个字节以判断文件的格式是elf还是其它；调用search_binary_handle(),流程：通过判断文件头部的魔数确定文件的格式，并且调用相应的装载处理程序。ELF可执行文件的装载处理过程叫load_elf_binary(),它的主要步骤如下：</p>
 <p>1，检查ELF可执行文件格式的有效性，比如魔数、程序头表中段的数量。</p>
@@ -423,7 +451,8 @@ void swap(int *a,int *b)
 <p>当load_elf_binary()执行完毕，返回至do_execve()在返回至sys_execve()时，系统调用的返回地址已经被改写成了被装载的ELF程序的入口地址了。所以，当sys_execve()系统调用从内核态返回到用户态时，EIP寄存器直接跳转到ELF程序的入口地址。此时，ELF可执行文件装载完成。接下来就是动态链接器对程序进行动态链接了。</p>
 <p>进程的虚拟空间：</p>
 <p><img src="http://images2015.cnblogs.com/blog/376860/201608/376860-20160806161516825-542579710.png" alt=""></p>
-<h3 id="五、动态链接-1"><a href="#五、动态链接-1" class="headerlink" title="五、动态链接"></a>五、动态链接</h3><p>动态链接ELF文件的生成过程</p>
+<p>###五、动态链接</p>
+<p>动态链接ELF文件的生成过程</p>
 <p><img src="http://images2015.cnblogs.com/blog/376860/201608/376860-20160806163246840-1854978573.png" alt=""></p>
 <p>主要原因有两个：第一，考虑内存和磁盘空间。静态链接极大地浪费内存空间。因为在静态链接的情况下，假设有两个程序共享一个模块，那么在静态链接后输出的两个可执行文件中各有一个共享模块的副本。如果同时运行这两个可执行文件，那么这个共享模块将在磁盘和内存中都有两个副本，对磁盘和内存造成极大地浪费；第二，程序的更新。一旦程序中的一个模块被修改，那么整个程序都要重新链接、发布给用户。如果这个程序相当的大，那么后果就会更加严重！</p>
 <p> 对于一个共享对象（linux下共享的模块），要实现被其他程序之间的共享，就要使其代码和数据分开，每个程序都会有该模块的数据部分的副本，代码部分是共享的。</p>
@@ -440,12 +469,15 @@ void swap(int *a,int *b)
 </code></pre><p>动态链接重定位时修改GOT中的值就实现了对变量的正确访问。</p>
 <p>动态链接的ELF文件启动过程</p>
 <p>动态链接基本分为三步：先是启动动态链接器本身，然后装载所有需要的共享对象，最后重定位和初始化。</p>
-<h4 id="1，动态链接器自举"><a href="#1，动态链接器自举" class="headerlink" title="1，动态链接器自举"></a>1，动态链接器自举</h4><p>就我们所知道的，对普通的共享对象文件来说，它的重定位工作是由动态链接器来完成；它也可以依赖于其他共享对象，其中被依赖的共享对象由动态链接器负责链接和装载。那么，对于动态链接器本身呢，它也是一个共享对象，它的重定位工作由谁完成？它是否可以依赖于其他的共享对象文件？</p>
+<p>####1，动态链接器自举</p>
+<p>就我们所知道的，对普通的共享对象文件来说，它的重定位工作是由动态链接器来完成；它也可以依赖于其他共享对象，其中被依赖的共享对象由动态链接器负责链接和装载。那么，对于动态链接器本身呢，它也是一个共享对象，它的重定位工作由谁完成？它是否可以依赖于其他的共享对象文件？</p>
 <p>动态链接器有其自身的特殊性：首先，动态链接器本身不可以依赖其他任何共享对象（人为控制）；其次动态链接器本身所需要的全局和静态变量的重定位工作由它自身完成（自举代码）。</p>
 <p>我们知道，在Linux下，动态链接器ld.so实际上也是一个共享对象，操作系统同样通过映射的方式将它加载到进程的地址空间中。操作系统在加载完动态链接器之后，就将控制权交给动态链接器。动态链接器入口地址即是自举代码的入口。动态链接器启动后，它的自举代码即开始执行。自举代码首先会找到它自己的GOT(全局偏移表，记录每个段的偏移位置）。而GOT的第一个入口保存的就是“.dynamic”段的偏移地址，由此找到动态链接器本身的“.dynamic”段。通过“.dynamic”段中的信息，自举代码便可以获得动态链接器本身的重定位表和符号表等，从而得到动态链接器本身的重定位入口，然后将它们重定位。完成自举后，就可以自由地调用各种函数和全局变量。</p>
-<h4 id="2，装载共享对象"><a href="#2，装载共享对象" class="headerlink" title="2，装载共享对象"></a>2，装载共享对象</h4><p>完成自举后，动态链接器将可执行文件和链接器本身的符号表都合并到一个符号表当中，称之为“全局符号表”。然后链接器开始寻找可执行文件所依赖的共享对象：从“.dynamic”段中找到DT_NEEDED类型，它所指出的就是可执行文件所依赖的共享对象。由此，动态链接器可以列出可执行文件所依赖的所有共享对象，并将这些共享对象的名字放入到一个装载集合中。然后链接器开始从集合中取出一个所需要的共享对象的名字，找到相应的文件后打开该文件，读取相应的ELF文件头和“.dynamic”，然后将它相应的代码段和数据段映射到进程空间中。如果这个ELF共享对象还依赖于其他共享对象，那么将依赖的共享对象的名字放到装载集合中。如此循环，直到所有依赖的共享对象都被装载完成为止。</p>
+<p>####2，装载共享对象</p>
+<p>完成自举后，动态链接器将可执行文件和链接器本身的符号表都合并到一个符号表当中，称之为“全局符号表”。然后链接器开始寻找可执行文件所依赖的共享对象：从“.dynamic”段中找到DT_NEEDED类型，它所指出的就是可执行文件所依赖的共享对象。由此，动态链接器可以列出可执行文件所依赖的所有共享对象，并将这些共享对象的名字放入到一个装载集合中。然后链接器开始从集合中取出一个所需要的共享对象的名字，找到相应的文件后打开该文件，读取相应的ELF文件头和“.dynamic”，然后将它相应的代码段和数据段映射到进程空间中。如果这个ELF共享对象还依赖于其他共享对象，那么将依赖的共享对象的名字放到装载集合中。如此循环，直到所有依赖的共享对象都被装载完成为止。</p>
 <p>当一个新的共享对象被装载进来的时候，它的符号表会被合并到全局符号表中。所以当所有的共享对象都被装载进来的时候，全局符号表里面将包含动态链接器所需要的所有符号。</p>
-<h4 id="3，重定位和初始化"><a href="#3，重定位和初始化" class="headerlink" title="3，重定位和初始化"></a>3，重定位和初始化</h4><p>当上述两步完成以后，动态链接器开始重新遍历可执行文件和每个共享对象的重定位表，将表中每个需要重定位的位置进行修正，原理同前。</p>
+<p>####3，重定位和初始化</p>
+<p>当上述两步完成以后，动态链接器开始重新遍历可执行文件和每个共享对象的重定位表，将表中每个需要重定位的位置进行修正，原理同前。</p>
 <p>重定位完成以后，如果某个共享对象有“.init”段，那么动态链接器会执行“.init”段中的代码，用以实现共享对象特有的初始化过程。</p>
 <p>此时，所有的共享对象都已经装载并链接完成了，动态链接器的任务也到此结束。同时装载链接部分也将告一段落！接下来便是程序的执行了。。。</p>
 
@@ -459,7 +491,7 @@ void swap(int *a,int *b)
         <p><span>本文标题:</span><a href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
         <p><span>发布时间:</span>2016年08月07日 - 11时39分</p>
-        <p><span>最后更新:</span>2016年11月28日 - 20时53分</p>
+        <p><span>最后更新:</span>2016年08月19日 - 19时59分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/08/07/程序的动态链接和静态链接1/" title="程序的动态链接和静态链接">http://yunnigu.dropsec.xyz/2016/08/07/程序的动态链接和静态链接1/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/08/07/程序的动态链接和静态链接1/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -492,7 +524,7 @@ void swap(int *a,int *b)
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#程序的静态链接，动态链接和装载"><span class="toc-number">1.</span> <span class="toc-text">程序的静态链接，动态链接和装载</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、程序编译链接的整体流程"><span class="toc-number">1.1.</span> <span class="toc-text">一、程序编译链接的整体流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、目标文件的样子（以linux下的elf文件格式为例）"><span class="toc-number">1.2.</span> <span class="toc-text">二、目标文件的样子（以linux下的elf文件格式为例）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、静态链接"><span class="toc-number">1.3.</span> <span class="toc-text">三、静态链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、装载"><span class="toc-number">1.4.</span> <span class="toc-text">四、装载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、动态链接"><span class="toc-number">1.5.</span> <span class="toc-text">五、动态链接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、程序编译链接的整体流程-1"><span class="toc-number">1.5.1.</span> <span class="toc-text">一、程序编译链接的整体流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-预处理-Preproceessing"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">1.       预处理(Preproceessing)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-编译-Compilation"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">2.       编译(Compilation)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-汇编-Assembly"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">3.       汇编(Assembly)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-链接-Linking"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">4.       链接(Linking)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、目标文件的样子（以linux下的elf文件格式为例）-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">二、目标文件的样子（以linux下的elf文件格式为例）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、静态链接-1"><span class="toc-number">1.5.3.</span> <span class="toc-text">三、静态链接</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#链接可以分为三种情形："><span class="toc-number">1.5.3.0.1.</span> <span class="toc-text">链接可以分为三种情形：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1、什么是静态链接？"><span class="toc-number">1.5.3.1.</span> <span class="toc-text">1、什么是静态链接？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、静态链接的过程包括哪几个部分？"><span class="toc-number">1.5.3.2.</span> <span class="toc-text">2、静态链接的过程包括哪几个部分？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X86基本重定位类型"><span class="toc-number">1.6.</span> <span class="toc-text">X86基本重定位类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#宏定义-值-重定位修正方法"><span class="toc-number">1.7.</span> <span class="toc-text">宏定义                    值             重定位修正方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#R-386-32-1-绝对寻址修正S-A"><span class="toc-number">1.8.</span> <span class="toc-text">R_386_32                  1             绝对寻址修正S + A</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#R-386-PC32-2-相对寻址修正S-A-P"><span class="toc-number">1.9.</span> <span class="toc-text">R_386_PC32                2             相对寻址修正S + A - P</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#四、装载："><span class="toc-number">1.9.1.</span> <span class="toc-text">四、装载：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、动态链接-1"><span class="toc-number">1.9.2.</span> <span class="toc-text">五、动态链接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1，动态链接器自举"><span class="toc-number">1.9.2.1.</span> <span class="toc-text">1，动态链接器自举</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2，装载共享对象"><span class="toc-number">1.9.2.2.</span> <span class="toc-text">2，装载共享对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3，重定位和初始化"><span class="toc-number">1.9.2.3.</span> <span class="toc-text">3，重定位和初始化</span></a></li></ol></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#X86基本重定位类型"><span class="toc-number">1.</span> <span class="toc-text">X86基本重定位类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#宏定义-值-重定位修正方法"><span class="toc-number">2.</span> <span class="toc-text">宏定义                    值             重定位修正方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#R-386-32-1-绝对寻址修正S-A"><span class="toc-number">3.</span> <span class="toc-text">R_386_32                  1             绝对寻址修正S + A</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#R-386-PC32-2-相对寻址修正S-A-P"><span class="toc-number">4.</span> <span class="toc-text">R_386_PC32                2             相对寻址修正S + A - P</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -572,7 +604,7 @@ void swap(int *a,int *b)
             <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/pwn学习rop之x64/">pwn学习rop之x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
