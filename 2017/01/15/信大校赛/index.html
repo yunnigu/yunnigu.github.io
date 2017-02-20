@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>信大校赛 | YungGong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="信大校赛writeup">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信大校赛">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/01/15/信大校赛/index.html">
+<meta property="og:site_name" content="YungGong">
+<meta property="og:description" content="信大校赛writeup">
+<meta property="og:updated_time" content="2017-01-24T04:23:43.690Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="信大校赛">
+<meta name="twitter:description" content="信大校赛writeup">
+  
+    <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/Night_Elf.jpg">
+  
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/Night_Elf.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/">Yun</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/about">留言打卡</a></li>
+                        
+                            <li><a href="/tags">标签云</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/yunnigu" title="github">github</a>
+                            
+                                <a class="fl weibo" target="_blank" href="http://weibo.com/lishangmou" title="weibo">weibo</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 14.29px;">IDEA</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/java/" style="font-size: 15.71px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 14.29px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 11.43px;">liunx</a> <a href="/tags/pwn/" style="font-size: 17.14px;">pwn</a> <a href="/tags/python/" style="font-size: 14.29px;">python</a> <a href="/tags/reverse/" style="font-size: 18.57px;">reverse</a> <a href="/tags/wrieteup/" style="font-size: 10px;">wrieteup</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 11.43px;">工具</a> <a href="/tags/漏洞/" style="font-size: 11.43px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 12.86px;">面向对象</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://byd.dropsec.xyz/">老毕</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://zt.dropsec.xyz/">小光头</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lyx.dropsec.xyz/">翔哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://zjw.dropsec.xyz/">伟哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lzx.dropsec.xyz/">小崽崽</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lyh.dropsec.xyz/">魂道</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://wkh.dropsec.xyz/">洪哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://fgp.dropsec.xyz/">鹏哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://spd.dropsec.xyz/">东哥</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://cq.dropsec.xyz/">陈奇奇</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">纯海迷、爱运动、爱交友、爱旅行、喜欢接触新鲜事物、迎接新的挑战，更爱游离于错综复杂的编码与逻辑中</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Yun</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/Night_Elf.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Yun</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/about">留言打卡</a></li>
+                
+                    <li><a href="/tags">标签云</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://github.com/yunnigu" title="github">github</a>
+                    
+                        <a class="weibo" target="_blank" href="http://weibo.com/lishangmou" title="weibo">weibo</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-信大校赛" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/01/15/信大校赛/" class="article-date">
+      <time datetime="2017-01-15T08:06:58.000Z" itemprop="datePublished">2017-01-15</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      信大校赛
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="信大校赛writeup"><a href="#信大校赛writeup" class="headerlink" title="信大校赛writeup"></a>信大校赛writeup</h1><a id="more"></a>
+<h1 id="0x00-Android"><a href="#0x00-Android" class="headerlink" title="0x00 Android"></a>0x00 Android</h1><p>题目比较简单，使用反编译工具查看java代码如下：</p>
+<pre><code>import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.Toast;
+
+class a
+  implements View.OnClickListener
+{
+  a(MainActivity paramMainActivity, EditText paramEditText, Context paramContext) {}
+
+  public void onClick(View paramView)
+  {
+    if (this.a.getText().toString().equals(String.format(&quot;flag{%s}&quot;, new Object[] { MainActivity.m.substring(12, 24) })))
+    {
+      Toast.makeText(this.b, &quot;You are right!&quot;, 1).show();
+      return;
+    }
+    Toast.makeText(this.b, &quot;You are wrong!&quot;, 1).show();
+  }
+}
+</code></pre><p>程序的主要算法流程是将<br>gUID<em>P@Rt}T10n</em>$C#3m3Gu]d_par7|t)On<em>SCH3M3<br>这个字符串经过substring(12, 24)变化之后得到新的字符串，substring() 方法用于提取字符串中介于两个指定下标之间的字符，也就是说将下标12到下标20之间的字符串提取出来，结果是0n</em>$C#3m3Gu]。</p>
+<h1 id="0x01-warmup-re"><a href="#0x01-warmup-re" class="headerlink" title="0x01 warmup-re"></a>0x01 warmup-re</h1><p>拖到IDA里看一下伪代码：</p>
+<pre><code>// local variable allocation has failed, the output may be wrong!
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  __int64 v3; // rax@1
+  __int64 v4; // rdx@1
+  __int64 v5; // rax@1
+  __int64 v6; // rbx@1
+  __int64 v7; // rdx@1
+  __int64 v8; // rax@1
+  __int64 v9; // rdx@1
+  __int64 v10; // rax@2
+  __int64 v11; // rdx@2
+  int result; // eax@2
+  __int64 v13; // rax@5
+  __int64 v14; // rdx@5
+  unsigned __int64 v15; // rbx@7
+  unsigned __int64 v16; // rax@7
+  __int64 v17; // rax@8
+  __int64 v18; // rdx@8
+  char v19[48]; // [sp+20h] [bp-60h]@1
+  char v20[48]; // [sp+50h] [bp-30h]@1
+  char v21[48]; // [sp+80h] [bp+0h]@4
+  int v22; // [sp+B0h] [bp+30h]@1
+  int v23; // [sp+B4h] [bp+34h]@1
+  int v24; // [sp+B8h] [bp+38h]@1
+  int v25; // [sp+BCh] [bp+3Ch]@1
+  int v26; // [sp+C0h] [bp+40h]@1
+  int v27; // [sp+C4h] [bp+44h]@1
+  int v28; // [sp+C8h] [bp+48h]@1
+  int v29; // [sp+CCh] [bp+4Ch]@1
+  int v30; // [sp+D0h] [bp+50h]@1
+  int v31; // [sp+D4h] [bp+54h]@1
+  int v32; // [sp+D8h] [bp+58h]@1
+  int v33; // [sp+DCh] [bp+5Ch]@1
+  int v34; // [sp+E0h] [bp+60h]@1
+  int v35; // [sp+E4h] [bp+64h]@1
+  int v36; // [sp+E8h] [bp+68h]@1
+  int v37; // [sp+ECh] [bp+6Ch]@1
+  int v38; // [sp+F0h] [bp+70h]@1
+  int v39; // [sp+F4h] [bp+74h]@1
+  int v40; // [sp+F8h] [bp+78h]@1
+  int v41; // [sp+FCh] [bp+7Ch]@1
+  int v42; // [sp+100h] [bp+80h]@1
+  char v43; // [sp+10Ah] [bp+8Ah]@4
+  char v44; // [sp+10Bh] [bp+8Bh]@4
+  int i; // [sp+10Ch] [bp+8Ch]@3
+
+  _main();
+  v22 = 86;
+  v23 = 30;
+  v24 = 24;
+  v25 = 1;
+  v26 = 21;
+  v27 = 90;
+  v28 = 27;
+  v29 = 29;
+  v30 = 6;
+  v31 = 29;
+  v32 = 76;
+  v33 = 84;
+  v34 = 22;
+  v35 = 20;
+  v36 = 85;
+  v37 = 28;
+  v38 = 22;
+  v39 = 21;
+  v40 = 30;
+  v41 = 29;
+  v42 = 23;
+  LODWORD(v3) = std::operator&gt;&gt;&lt;char,std::char_traits&lt;char&gt;&gt;(*(_QWORD *)&amp;argc, argv, v19, refptr__ZSt3cin);
+  std::operator&gt;&gt;&lt;char,std::char_traits&lt;char&gt;&gt;(*(_QWORD *)&amp;argc, argv, v20, v3);
+  LODWORD(v5) = strlen(*(_QWORD *)&amp;argc, argv, v4, v19);
+  v6 = v5;
+  LODWORD(v8) = strlen(*(_QWORD *)&amp;argc, argv, v7, v20);
+  if ( v6 == v8 )
+  {
+    for ( i = 0; ; ++i )
+    {
+      v15 = i;
+      LODWORD(v16) = strlen(*(_QWORD *)&amp;argc, argv, v9, v19);
+      if ( v15 &gt;= v16 )
+        break;
+      v44 = v19[i];
+      v43 = v20[i];
+      v21[i] = v43 ^ v44;
+      v9 = (unsigned int)v21[i];
+      if ( (_DWORD)v9 != *(&amp;v22 + i) )
+      {
+        LODWORD(v13) = std::operator&lt;&lt;&lt;std::char_traits&lt;char&gt;&gt;(*(_QWORD *)&amp;argc, argv, &quot;key error&quot;, refptr__ZSt4cout);
+        std::ostream::operator&lt;&lt;(
+          *(_QWORD *)&amp;argc,
+          argv,
+          refptr__ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_,
+          v13);
+        system(*(_QWORD *)&amp;argc, argv, v14, &quot;pause&quot;);
+        return 0;
+      }
+    }
+    LODWORD(v17) = std::operator&lt;&lt;&lt;std::char_traits&lt;char&gt;&gt;(
+                     *(_QWORD *)&amp;argc,
+                     argv,
+                     &quot;Yes!input is flag&quot;,
+                     refptr__ZSt4cout);
+    std::ostream::operator&lt;&lt;(
+      *(_QWORD *)&amp;argc,
+      argv,
+      refptr__ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_,
+      v17);
+    system(*(_QWORD *)&amp;argc, argv, v18, &quot;pause&quot;);
+    result = 0;
+  }
+  else
+  {
+    LODWORD(v10) = std::operator&lt;&lt;&lt;std::char_traits&lt;char&gt;&gt;(*(_QWORD *)&amp;argc, argv, &quot;lenth error&quot;, refptr__ZSt4cout);
+    std::ostream::operator&lt;&lt;(
+      *(_QWORD *)&amp;argc,
+      argv,
+      refptr__ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_,
+      v10);
+    system(*(_QWORD *)&amp;argc, argv, v11, &quot;pause&quot;);
+    result = 0;
+  }
+  return result;
+}
+</code></pre><p>程序的意思就是输入两个长度相等的字符串之后进行异或运算，将运算结果和程序给出的v22的数组中的内容比较，提示给出其中一个字符串是goodgoodstudydaydayup，解密脚本如下：</p>
+<pre><code>v1=[86,30,24,1,21,90,27,29,6,29,76,84,22,20,85,28,22,21,30,29,23]
+v2=[103,111,111,100,103,111,111,100,115,116,117,100,121,100,97,121,100,97,121,117,112]
+flag=[]
+for i in xrange(0,21):
+    flag+=chr(list(v1)[i]^list(v2)[i])
+print(flag)
+</code></pre><p>结果是</p>
+<pre><code>[&apos;1&apos;, &apos;q&apos;, &apos;w&apos;, &apos;e&apos;, &apos;r&apos;, &apos;5&apos;, &apos;t&apos;, &apos;y&apos;, &apos;u&apos;, &apos;i&apos;, &apos;9&apos;, &apos;0&apos;, &apos;o&apos;, &apos;p&apos;, &apos;4&apos;, &apos;e&apos;, &apos;r&apos;, &apos;t&apos;, &apos;g&apos;, &apos;h&apos;, &apos;g&apos;]
+</code></pre><h1 id="0x02-reverse1"><a href="#0x02-reverse1" class="headerlink" title="0x02 reverse1"></a>0x02 reverse1</h1><p>使用IDA分析，关键函数是encrypt()</p>
+<pre><code>       v19 = 0;
+  LODWORD(v16) = std::string::operator[](a2, 0LL);
+  while ( *v16 )
+  {
+    LODWORD(v2) = std::string::operator[](a2, v19);
+    v3 = *v2;
+    LODWORD(v4) = std::vector&lt;int,std::allocator&lt;int&gt;&gt;::operator[](&amp;primos, v19);
+    v18 = v3 + *v4;
+    LODWORD(v5) = std::string::operator[](a2, v19);
+    if ( (unsigned __int8)is_lower(*v5) )
+    {
+      v6 = 122;
+    }
+    else
+    {
+      LODWORD(v7) = std::string::operator[](a2, v19);
+      if ( (unsigned __int8)is_upper(*v7) )
+      {
+        v6 = 90;
+      }
+      else
+      {
+        LODWORD(v8) = std::string::operator[](a2, v19);
+        v6 = *v8;
+      }
+    }
+    while ( v18 &gt; v6 )
+      v18 -= 26;
+    LODWORD(v9) = std::string::operator[](a2, v19);
+    v10 = v9;
+    LODWORD(v11) = std::string::operator[](a2, v19);
+    if ( *v11 == 123 )
+    {
+      v14 = 125;
+    }
+    else
+    {
+      LODWORD(v12) = std::string::operator[](a2, v19);
+      if ( *v12 == 125 )
+      {
+        v14 = 123;
+      }
+      else
+      {
+        LODWORD(v13) = std::string::operator[](a2, v19);
+        if ( (unsigned __int8)is_alphabet(*v13) )
+        {
+          v14 = v18;
+        }
+        else
+        {
+          LODWORD(v15) = std::string::operator[](a2, v19);
+          v14 = *v15;
+        }
+      }
+    }
+    *v10 = v14;
+    LODWORD(v16) = std::string::operator[](a2, ++v19);
+  }
+  std::string::string(a1, a2);
+  return a1;
+}
+</code></pre><p>查找字符串还找到了个flag</p>
+<pre><code>LNLNGW}o3A3g5Z_1b_Xv5d_WbzgGnbG{
+</code></pre><p>程序流程是将你输入的正确的flag，每一位加上prime[]相应位置的值，如果是{}的话，{换成｝，｝换成｛。如果是字母，判断大小写运算后是否超出范围，如果超出范围就减去26直到符合大小写范围为止，然后逆推算法就可以了。比较麻烦的是prime[]是什么，程序里还有一个initial()</p>
+<pre><code>  for ( i = 2; i &lt;= 1023; ++i )
+    ehprimo[(signed __int64)i] = (i &amp; 1) != 0;
+  for ( j = 3; ; j += 2 )
+  {
+    result = j;
+    if ( (signed int)j &gt; 1023 )
+      break;
+    if ( ehprimo[(signed __int64)(signed int)j] )
+    {
+      std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;primos, &amp;j);
+      for ( k = j * j; (signed int)k &lt;= 1023; k += j )
+        ehprimo[(signed __int64)(signed int)k] = 0;
+    }
+  }
+  return result;
+}
+</code></pre><p>这个函数是求0~1024之间的素数，不包括2作为prime[]的数据。</p>
+<p>最后逆推出来flag为IIECTF{r3V3r5E_1s_Ea5y_DeadBeeF}</p>
+<h1 id="0x03-CrackMe"><a href="#0x03-CrackMe" class="headerlink" title="0x03 CrackMe"></a>0x03 CrackMe</h1><p>IDA反编译发现想要获得flag需要通过4个check函数：</p>
+<p>第一个cheack</p>
+<pre><code>signed int check1(void)
+{
+  signed int v1; // [sp+10h] [bp-8h]@7
+
+  puts(&quot;Give me your favourite prime number&quot;);
+  scanf(&quot;%lld&quot;, &amp;n);
+  a = 0x100000LL;
+  b = 0LL;
+  c = 0LL;
+  while ( !(a &amp; 1) )
+  {
+    a /= 2LL;
+    ++b;
+  }
+  while ( !(b &amp; 1) )
+  {
+    b /= 2LL;
+    ++c;
+  }
+  if ( c == n )
+  {
+    flag += n;
+    v1 = 1;
+  }
+  else
+  {
+    puts(&quot;^^^^Your math is bad^^^^&quot;);
+    v1 = 0;
+  }
+  return v1;
+}
+</code></pre><p>python跑出来符合条件的数是2</p>
+<pre><code>a=1048576
+b=0
+c=0
+var=a&amp;1
+while var==0:
+    a=a/2
+    var=a&amp;1
+    b=b+1
+print(b)
+vbr=b&amp;1
+while vbr==0:
+    b=b/2
+    vbr=b&amp;1
+    c=c+1
+print(c)
+</code></pre><p>chack2</p>
+<pre><code>signed int check2(void)
+{
+  signed int v1; // [sp+24h] [bp-14h]@10
+  __int64 v2; // [sp+28h] [bp-10h]@1
+
+  puts(&quot;Do you know how to calculate the number&quot;);
+  puts(&quot;please enter a number&quot;);
+  scanf(&quot;%lld&quot;, &amp;n);
+  v2 = n;
+  if ( tmpans != n * tmp % mod || n &gt; 999999 )
+    goto LABEL_15;
+  while ( n )
+  {
+    x[++pos] = n % 10;
+    n /= 10LL;
+  }
+  if ( dword_448044 &gt;= dword_448048
+    || dword_448048 &gt;= dword_44804C
+    || dword_44804C &gt;= dword_448050
+    || dword_448050 &gt;= dword_448054
+    || dword_448054 &gt;= dword_448058 )
+  {
+LABEL_15:
+    puts(&quot;You do not know how to calculate the mod~~~~&quot;);
+    v1 = 0;
+  }
+  else
+  {
+    flag += v2;
+    v1 = 1;
+  }
+  return v1;
+}
+</code></pre><p>python代码得出符合条件的数是654321</p>
+<pre><code>tmpans=779852816
+tmp=123456
+mod=1000000007
+i=1
+for i in xrange(1,1000000):
+    if(i*tmp%mod==tmpans):
+        print(i)
+</code></pre><p>check3</p>
+<p>python脚本得出符合条件的字符串是Lcont=gpfoog`q</p>
+<pre><code>str1=[]
+for i in range(14):
+    j=i%6+1
+    str1.append(j)
+print(str1)
+
+v18=&quot;MerryChristmas&quot;
+list=list(v18)
+for i in range(len(list)):
+    list[i]=ord(list[i])
+print(list)
+
+flag=[]
+for i in range(14):
+    flag.append(list[i]-str1[i])
+print(flag)
+
+flag1=&quot;&quot;
+for i in range(14):
+    flag1+=chr(flag[i])
+print(flag1)
+</code></pre><p>check4</p>
+<p>在OD里动态调试修改跳转最后一个符合条件的数字是176455667</p>
+<p>四关都过了，最后将每一关的key输入就可以了。<br>flag is:176455667HqGpGpFoFoEnGpHqBk</p>
+<h1 id="0x04-61dre"><a href="#0x04-61dre" class="headerlink" title="0x04 61dre"></a>0x04 61dre</h1><pre><code>int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  bool v3; // r13@2
+  int v4; // eax@5
+  const char *v5; // rdi@11
+  size_t v6; // rax@11
+  size_t v7; // rax@15
+  char *v8; // rcx@15
+  const char *v9; // rsi@15
+  bool v10; // di@17
+  const char **v12; // [sp+0h] [bp-80h]@2
+  unsigned __int64 v13; // [sp+8h] [bp-78h]@11
+  int v14; // [sp+14h] [bp-6Ch]@5
+  char *s1; // [sp+18h] [bp-68h]@2
+  const char **v16; // [sp+20h] [bp-60h]@2
+  const char ***v17; // [sp+28h] [bp-58h]@2
+  bool v18; // [sp+37h] [bp-49h]@2
+  int *v19; // [sp+38h] [bp-48h]@2
+  const char ***v20; // [sp+40h] [bp-40h]@2
+  const char **v21; // [sp+48h] [bp-38h]@1
+  int v22; // [sp+54h] [bp-2Ch]@1
+
+  v22 = argc;
+  v21 = argv;
+  if ( !(((unsigned __int8)((y &lt; 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) | (y &lt; 10
+                                                                               &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) &amp; 1) )
+    goto LABEL_20;
+  while ( 1 )
+  {
+    v12 = v21;
+    v3 = (((_BYTE)x - 106 + 105) * (_BYTE)x &amp; 1) == 0;
+    v20 = &amp;v12 - 2;
+    v19 = (int *)&amp;v12;
+    v18 = (_DWORD)v21 != 2;
+    v17 = &amp;v12;
+    v16 = (const char **)&amp;v12;
+    s1 = (char *)(&amp;v12 - 6);
+    if ( ((y &lt; 10 &amp;&amp; v3) | (unsigned __int8)((y &lt; 10) ^ v3)) &amp; 1 )
+      break;
+LABEL_20:
+    LODWORD(v12) = 0;
+    *((_DWORD *)&amp;v12 - 4) = v22;
+    *(&amp;v12 - 2) = v21;
+  }
+  if ( v18 )
+  {
+    while ( !(((unsigned __int8)((y &lt; 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) | (y &lt; 10
+                                                                                    &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) &amp; 1) )
+      ;
+LABEL_5:
+    v4 = printf(&quot;Usage: %s flag\n&quot;, **v17, v12);
+    *v19 = 0;
+    v14 = v4;
+    return *v19;
+  }
+  *v16 = (const char *)&amp;unk_400E54;
+  if ( strlen((*v17)[1]) != 32 )
+  {
+    while ( !(((y &lt; 10 &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0) | (unsigned __int8)((y &gt;= 10) ^ ((((_BYTE)x - 1)
+                                                                                                * (_BYTE)x &amp; 1) != 0))) &amp; 1) )
+      ;
+    goto LABEL_5;
+  }
+  if ( !(((y &lt; 10 &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0) | (unsigned __int8)((y &gt;= 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) != 0))) &amp; 1) )
+    goto LABEL_23;
+  while ( 1 )
+  {
+    *(_DWORD *)v20 = 0;
+    if ( ((y &lt; 10 &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0) | (unsigned __int8)((y &gt;= 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) != 0))) &amp; 1 )
+      break;
+LABEL_23:
+    *(_DWORD *)v20 = 0;
+  }
+  while ( 1 )
+  {
+    v5 = (*v17)[1];
+    v13 = *(_DWORD *)v20;
+    v6 = strlen(v5);
+    if ( v13 &gt;= v6 )
+      break;
+    if ( !(((unsigned __int8)((y &lt; 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) | (y &lt; 10
+                                                                                 &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) &amp; 1) )
+      goto LABEL_24;
+    while ( 1 )
+    {
+      s1[*(_DWORD *)v20] = (*(_BYTE *)v20 &amp; 0x89 | ~*(_BYTE *)v20 &amp; 0x76) ^ ((*v17)[1][*(_DWORD *)v20] &amp; 0x89 | ~(*v17)[1][*(_DWORD *)v20] &amp; 0x76);
+      if ( ((unsigned __int8)((y &lt; 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) | (y &lt; 10
+                                                                                 &amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) &amp; 1 )
+        break;
+LABEL_24:
+      s1[*(_DWORD *)v20] = (*(_BYTE *)v20 &amp; 0x38 | ~*(_BYTE *)v20 &amp; 0xC7) ^ ((*v17)[1][*(_DWORD *)v20] &amp; 0x38 | ~(*v17)[1][*(_DWORD *)v20] &amp; 0xC7);
+    }
+    *(_DWORD *)v20 = *(_DWORD *)v20 - 403331085 + 403331086;
+  }
+  v7 = strlen((*v17)[1]);
+  v8 = s1;
+  s1[v7] = 0;
+  v9 = *v16;
+  if ( !strcmp(v8, *v16) )
+    HIDWORD(v12) = printf(&quot;yes\n&quot;, v9, v12);
+  do
+    v10 = (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0;
+  while ( !(((y &lt; 10 &amp;&amp; v10) | (unsigned __int8)((y &lt; 10) ^ v10)) &amp; 1) );
+  *v19 = 0;
+  return *v19;
+}
+</code></pre><p>代码很多，猛地一看肯定有点蒙，我也是看了人家的writeup才懂。。。<br>关键就在</p>
+<pre><code>(((unsigned __int8)((y &lt; 10) ^ ((((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) | (y&lt; 10&amp;&amp; (((_BYTE)x - 1) * (_BYTE)x &amp; 1) == 0)) &amp; 1)
+</code></pre><p>这段代码里的通过动态调试x，y一直都是0，这个条件始终为真。<br>那么算法逻辑接下来就是</p>
+<pre><code>s1[*(_DWORD *)v20] = (*(_BYTE *)v20 &amp; 0x89 | ~*(_BYTE *)v20 &amp; 0x76) ^ ((*v17
+)[1][*(_DWORD *)v20] &amp; 0x89 | ~(*v17)[1][*(_DWORD *)v20] &amp; 0x76);
+</code></pre><p>最后s1与</p>
+<pre><code>0x36,0x62,0x76,0x65,0x7F,0x6D,0x63,0x6B,0x64,0x66,0x55,0x7C,0x63,0x7
+F,0x62,0x6B,0x4F,0x65,0x7A,0x76,0x4B,0x7A,0x74,0x71,0x79,0x6A,0x79,0x7A,0x68
+,0x72,0x6C,0x62]
+</code></pre><p>这串字符比较，爆破脚本如下：</p>
+<pre><code>    str=[ 0x36,0x62,0x76,0x65,0x7F,0x6D,0x63,0x6B,
+      0x64,0x66,0x55,0x7C,0x63,0x7F,0x62,0x6B,
+      0x4F,0x65,0x7A,0x76,0x4B,0x7A,0x74,0x71,
+      0x79,0x6A,0x79,0x7A,0x68,0x72,0x6C,0x62]
+flag=&quot;&quot;
+for i in range(len(str)):
+    for j in xrange(32,128):
+        if((j&amp;0x89 | ~j&amp;0x76)^(i&amp;0x89 | ~i&amp;0x76)==str[i]):
+            flag=flag+chr(j)
+print(flag)
+</code></pre>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/01/15/信大校赛/">信大校赛</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
+        <p><span>发布时间:</span>2017年01月15日 - 16时06分</p>
+        <p><span>最后更新:</span>2017年01月24日 - 12时23分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/01/15/信大校赛/" title="信大校赛">http://yunnigu.dropsec.xyz/2017/01/15/信大校赛/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2017/01/15/信大校赛/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/2017/01/19/reverse之第三更/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          reverse之第三更
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/12/05/reverse第二更之问鼎杯2106-6-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">reverse第二更之问鼎杯2106-6-2</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#信大校赛writeup"><span class="toc-number">1.</span> <span class="toc-text">信大校赛writeup</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-Android"><span class="toc-number">2.</span> <span class="toc-text">0x00 Android</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-warmup-re"><span class="toc-number">3.</span> <span class="toc-text">0x01 warmup-re</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-reverse1"><span class="toc-number">4.</span> <span class="toc-text">0x02 reverse1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-CrackMe"><span class="toc-number">5.</span> <span class="toc-text">0x03 CrackMe</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-61dre"><span class="toc-number">6.</span> <span class="toc-text">0x04 61dre</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="2017/01/15/信大校赛/" data-title="信大校赛" data-url="http://yunnigu.dropsec.xyz/2017/01/15/信大校赛/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"null"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = '/js/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    <!-- 多说公共JS代码 end -->
+</div>
+
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2017/01/19/reverse之第三更/" title="上一篇: reverse之第三更">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2016/12/05/reverse第二更之问鼎杯2106-6-2/" title="下一篇: reverse第二更之问鼎杯2106-6-2">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/02/05/reverse之第十更/">reverse之第十更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/04/reverse之第九更/">reverse之第九更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/30/reverse之第八更/">reverse之第八更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/26/reverse之第七更/">reverse之第七更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/24/reverse之第六更/">reverse之第六更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/24/reverse之第五更/">reverse之第五更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/20/reverse之第四更/">reverse之第四更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/19/reverse之第三更/">reverse之第三更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/15/信大校赛/">信大校赛</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/05/reverse第二更之问鼎杯2106-6-2/">reverse第二更之问鼎杯2106-6-2</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/29/pwn之第三更SUCTF2016/">pwn之第三更SUCTF2016</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2017 Yun
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
