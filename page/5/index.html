@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2016/8 | YungGong</title>
+  <title>YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Yun’s Bolg">
 <meta property="og:type" content="website">
 <meta property="og:title" content="YungGong">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/archives/2016/08/index.html">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/page/5/index.html">
 <meta property="og:site_name" content="YungGong">
 <meta property="og:description" content="Yun’s Bolg">
 <meta name="twitter:card" content="summary">
@@ -27,6 +27,9 @@
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
+    
+    
+  
   
       <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   
@@ -37,9 +40,9 @@
       var yiliaConfig = {
           fancybox: true,
           animate: true,
-          isHome: false,
+          isHome: true,
           isPost: false,
-          isArchive: true,
+          isArchive: false,
           isTag: false,
           isCategory: false,
           open_in_new: false
@@ -226,145 +229,144 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-pwn之-数组下标越界" class="article article-type-post" itemscope itemprop="blogPost">
   
+    <div class="article-meta">
+      <a href="/2016/08/09/pwn之-数组下标越界/" class="article-date">
+      <time datetime="2016-08-09T07:05:05.000Z" itemprop="datePublished">2016-08-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h1 id="数组的下标越界"><a href="#数组的下标越界" class="headerlink" title="数组的下标越界"></a>数组的下标越界</h1><p><strong>下标越界</strong></p>
+<p>在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:</p>
+<pre><code>C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
+数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
+的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代
+码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
+为了程序的运行效率，C / C++才不检查下标是否越界。发现如果数组下标越
+界了，那么它会自动接着那块内存往后写。 
+</code></pre>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/" class="archive-article-date">
-      <time datetime="2016-08-20T03:08:35.000Z" itemprop="datePublished">08-20</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a>
-    </h1>
-  
 
-        <div class="article-info info-on-archive">
-          
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2016/08/19/RSAtools使用方法/" class="archive-article-date">
-      <time datetime="2016-08-19T11:14:40.000Z" itemprop="datePublished">08-19</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/密码学/">密码学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具/">工具</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2016/08/09/pwn之-数组下标越界/" class="archive-article-date">
-      <time datetime="2016-08-09T07:05:05.000Z" itemprop="datePublished">08-09</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-
-          
+      
     <div class="article-tag tagcloud">
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/漏洞/">漏洞</a></li></ul>
     </div>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+        <p class="article-more-link">
+          <a  href="/2016/08/09/pwn之-数组下标越界/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
   </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2016/08/07/程序的动态链接和静态链接1/" class="archive-article-date">
-      <time datetime="2016-08-07T03:39:07.000Z" itemprop="datePublished">08-07</time>
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-程序的动态链接和静态链接1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/07/程序的动态链接和静态链接1/" class="article-date">
+      <time datetime="2016-08-07T03:39:07.000Z" itemprop="datePublished">2016-08-07</time>
 </a>
-        </div>
-         
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a>
+      <a class="article-title" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a>
     </h1>
   
 
-        <div class="article-info info-on-archive">
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
           
+              <h1 id="程序的静态链接，动态链接和装载"><a href="#程序的静态链接，动态链接和装载" class="headerlink" title="程序的静态链接，动态链接和装载"></a>程序的静态链接，动态链接和装载</h1><p>参考自：This is an <a href="http://www.xuebuyuan.com/1730287.html">http://www.xuebuyuan.com/1730287.html</a></p>
+<h2 id="一、程序编译链接的整体流程"><a href="#一、程序编译链接的整体流程" class="headerlink" title="一、程序编译链接的整体流程"></a><strong>一、程序编译链接的整体流程</strong></h2><h2 id="二、目标文件的样子（以linux下的elf文件格式为例）"><a href="#二、目标文件的样子（以linux下的elf文件格式为例）" class="headerlink" title="二、目标文件的样子（以linux下的elf文件格式为例）"></a><strong>二、目标文件的样子（以linux下的elf文件格式为例）</strong></h2><h2 id="三、静态链接"><a href="#三、静态链接" class="headerlink" title="三、静态链接"></a><strong>三、静态链接</strong></h2><h2 id="四、装载"><a href="#四、装载" class="headerlink" title="四、装载"></a><strong>四、装载</strong></h2><h2 id="五、动态链接"><a href="#五、动态链接" class="headerlink" title="五、动态链接"></a><strong>五、动态链接</strong></h2>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
 
-          
+      
     <div class="article-tag tagcloud">
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ELF/">ELF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/liunx/">liunx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/动态链接/">动态链接</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/静态链接/">静态链接</a></li></ul>
     </div>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
+      
+        <p class="article-more-link">
+          <a  href="/2016/08/07/程序的动态链接和静态链接1/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
     
+  </div>
+  
+</article>
 
+
+
+
+
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    </nav>
+  
 </div>
       <footer id="footer">
     <div class="outer">
@@ -429,17 +431,6 @@
         };
     })
 </script>
-
-    <button class="hide-labels">TAG 开关</button>
-    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js">
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("button").click(function() {
-                $(".article-info").toggle(200);
-            });
-        });
-    </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
