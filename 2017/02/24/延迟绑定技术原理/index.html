@@ -3,54 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>python中的ord，chr函数 | YungGong</title>
+  <title>延迟绑定技术原理 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="python中的ord，chr函数通过help 查看相关函数的帮助文档
-
-
-
-help (chr)
-
-
-
-chr(…)
-chr(i) -&amp;gt; character    
-
-Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
-参数是0 - 256 的一个整数，返回值是当前整数对应的ascii字符。参数可以是10">
+  <meta name="description" content="延迟绑定技术原理">
 <meta property="og:type" content="article">
-<meta property="og:title" content="python中的ord，chr函数">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/index.html">
+<meta property="og:title" content="延迟绑定技术原理">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/24/延迟绑定技术原理/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="python中的ord，chr函数通过help 查看相关函数的帮助文档
-
-
-
-help (chr)
-
-
-
-chr(…)
-chr(i) -&amp;gt; character    
-
-Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
-参数是0 - 256 的一个整数，返回值是当前整数对应的ascii字符。参数可以是10">
-<meta property="og:updated_time" content="2016-11-28T12:48:08.940Z">
+<meta property="og:description" content="延迟绑定技术原理">
+<meta property="og:updated_time" content="2017-02-24T05:51:43.686Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="python中的ord，chr函数">
-<meta name="twitter:description" content="python中的ord，chr函数通过help 查看相关函数的帮助文档
-
-
-
-help (chr)
-
-
-
-chr(…)
-chr(i) -&amp;gt; character    
-
-Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
-参数是0 - 256 的一个整数，返回值是当前整数对应的ascii字符。参数可以是10">
+<meta name="twitter:title" content="延迟绑定技术原理">
+<meta name="twitter:description" content="延迟绑定技术原理">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -261,11 +225,11 @@ Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-PCTF2016-FindKey之python中的ord，chr函数" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-延迟绑定技术原理" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/" class="article-date">
-      <time datetime="2016-08-20T03:08:35.000Z" itemprop="datePublished">2016-08-20</time>
+      <a href="/2017/02/24/延迟绑定技术原理/" class="article-date">
+      <time datetime="2017-02-24T05:32:45.000Z" itemprop="datePublished">2017-02-24</time>
 </a>
     </div>
   
@@ -278,7 +242,7 @@ Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
         
   
     <h1 class="article-title" itemprop="name">
-      python中的ord，chr函数
+      延迟绑定技术原理
     </h1>
   
 
@@ -289,7 +253,7 @@ Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/System/">System</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -299,103 +263,61 @@ Return a string of one character with ordinal i; 0 &amp;lt;= i &amp;lt; 256.
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="python中的ord，chr函数"><a href="#python中的ord，chr函数" class="headerlink" title="python中的ord，chr函数"></a>python中的ord，chr函数</h1><p>通过help 查看相关函数的帮助文档</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>help (chr)</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>chr(…)</p>
-<pre><code>chr(i) -&gt; character    
+        <h1 id="延迟绑定技术原理"><a href="#延迟绑定技术原理" class="headerlink" title="延迟绑定技术原理"></a>延迟绑定技术原理</h1><a id="more"></a>
+<p>动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。<br>主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。<br>另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。</p>
+<p>延迟绑定的实现步骤如下：</p>
+<p>建立一个 GOT.PLT 表，该表用来放全局函数的实际地址，但最开始时，该里面放的不是真实的地址而是一个跳转，接下来会讲。<br>对每一个全局函数，链接器生成一个与之相对应的影子函数，如 fun@plt。<br>所有对 fun 的调用，都换成对 fun@plt 的调用，每个fun@plt 长成如下样子：</p>
+<pre><code>fun@plt:
+jmp *(fun@got.plt)
+push index
+jmp _init
+</code></pre><p>其中第一条指令直接从 got.plt 中去拿真实的函数地址，如果已经之前已经发生过调用，got.plt 就已经保存了真实的地址，如果是第一次调用，则 got.plt 中放的是 fun@plt 中的第二条指令，这就使得当执行第一次调用时，fun@plt中的第一条指令其实什么事也没做，直接继续往下执行，第二条指令的作用是把当前要调用的函数在 got.plt 中的编号作为参数传给 _init()，而 _init() 这个函数则用于把 fun 进行重定位，然后把结果写入到 got.plt 相应的地方，最后直接跳过去该函数。</p>
+<p>仍然是使用前面的例子，我们看看 g_func2 是怎样调用 g_func 的:</p>
+<pre><code>0000052f &lt;g_func2&gt;:
+ 52f:   55                      push   %ebp
+ 530:   89 e5                   mov    %esp,%ebp
+ 532:   53                      push   %ebx
+ 533:   83 ec 14                sub    $0x14,%esp
+ 536:   e8 00 00 00 00          call   53b &lt;g_func2+0xc&gt;
+ 53b:   5b                      pop    %ebx
+ 53c:   81 c3 91 11 00 00       add    $0x1191,%ebx
+ 542:   c7 45 f8 02 00 00 00    movl   $0x2,0xfffffff8(%ebp) // a = 2
+ 549:   83 ec 0c                sub    $0xc,%esp
+ 54c:   6a 03                   push   $0x3 // push argument 3 for g_func.
+ 54e:   e8 d5 fe ff ff          call   428 &lt;g_func@plt&gt;
+ 553:   83 c4 10                add    $0x10,%esp
+ 556:   89 45 f4                mov    %eax,0xfffffff4(%ebp)
+ 559:   8b 45 f4                mov    0xfffffff4(%ebp),%eax
+ 55c:   03 45 f8                add    0xfffffff8(%ebp),%eax
+ 55f:   8b 5d fc                mov    0xfffffffc(%ebp),%ebx
+ 562:   c9                      leave  
+ 563:   c3                      ret 
+</code></pre><p>如上汇编，指令 536, 53b, 53c, 用于计算 got.plt 的具体位置，计算方式与前面对数据的访问原理是一样的，经计算此时, %ebx = 0x53b + 0x1191 = 0x16cc, 注意指令 54e， 该指令调用了函数 g_func@plt:</p>
+<pre><code>00000428 &lt;g_func@plt&gt;:
+ 428:   ff a3 0c 00 00 00       jmp    *0xc(%ebx)
+ 42e:   68 00 00 00 00          push   $0x0
+ 433:   e9 e0 ff ff ff          jmp    418 &lt;_init+0x18&gt;
+</code></pre><p>注意到此时， %ebx 中放的是 got.plt 的地址，g_func@plt 的第一条指令用于获取 got.plt 中 func 的具体地址， func 放在 0xc + %ebx = 0xc + 0x16cc = 0x16d8, 这个地址里放的是什么呢？我们查一下重定位表：</p>
+<pre><code>-bash-3.00$ objdump -R liba.so
 
-Return a string of one character with ordinal i; 0 &lt;= i &lt; 256.
-</code></pre><p>参数是0 - 256 的一个整数，返回值是当前整数对应的ascii字符。参数可以是10进制也可以是16进制的形式<br><a id="more"></a><br>十六进制：</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>print chr(0x30), chr(0x31), chr(0x61)<br>0 1 a<br>十进制：</p>
-<p>print chr(48), chr(49), chr(97)<br>0 1 a<br>unichr(…)</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<pre><code>unichr(i) -&gt; Unicode character    
-Return a Unicode string of one character with ordinal i; 0 &lt;= i &lt;= 0x10ffff.
-</code></pre><p>unichr()和chr()函数功能基本一样， 只不过是返回unicode的字符</p>
-<p>ord(…)<br>    ord(c) -&gt; integer<br>    Return the integer ordinal of a one-character string.</p>
-<p>参数是一个ascii字符，返回值是对应的十进制整数</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>print ord(‘a’), ord(‘0’), ord(‘1’)<br>97 48 49<br>print “%x %x %x” % (ord(‘a’), ord(‘0’), ord(‘1’))<br>61 30 31<br>print “%#x %#x %#x” % (ord(‘a’), ord(‘0’), ord(‘1’))<br>0x61 0x30 0x31<br>通过chr()和ord()联合起来使用，我们就可以对字符串进行相关运算的转换</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>比如一个字符串str1，转化成另一个字符串str2， 使得 str2[i] = str1[i] - i</p>
-<p>str1 = “eb;3ej8h”</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>for i in range(0, len(str1)):<br>…     print chr((ord(str1[i])-i)),<br>…<br>e a 9 0 a e 2 a</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<h2 id="FindKey-writeup"><a href="#FindKey-writeup" class="headerlink" title="FindKey writeup"></a>FindKey writeup</h2><pre><code>题目：FLAG就是你输入的key
-</code></pre><p>点击下载 <a href="http://static2.ichunqiu.com/icq/resources/fileupload/phrackCTF/REVERSE/findkey" target="_blank" rel="external">附件</a></p>
-<p>下载之后发现居然不知道是什么格式的，这怎么反编译，最后在Ubuntu里执行file命令发现是python写的。</p>
-<pre><code>findkey: python 2.7 byte-compiled
-</code></pre><p>将后缀修改为.pyc直接使用<a href="http://tool.lu/pyc" target="_blank" rel="external">http://tool.lu/pyc</a>进行反编译。</p>
-<pre><code>!/usr/bin/env python
- encoding: utf-8
- 如果觉得不错，可以推荐给你的朋友！http://tool.lu/pyc
-import sys
-</code></pre><p>lookup = [<br>    196,<br>    153,<br>    149,<br>    206,<br>    17,<br>    221,<br>    10,<br>    217,<br>    167,<br>    18,<br>    36,<br>    135,<br>    103,<br>    61,<br>    111,<br>    31,<br>    92,<br>    152,<br>    21,<br>    228,<br>    105,<br>    191,<br>    173,<br>    41,<br>    2,<br>    245,<br>    23,<br>    144,<br>    1,<br>    246,<br>    89,<br>    178,<br>    182,<br>    119,<br>    38,<br>    85,<br>    48,<br>    226,<br>    165,<br>    241,<br>    166,<br>    214,<br>    71,<br>    90,<br>    151,<br>    3,<br>    109,<br>    169,<br>    150,<br>    224,<br>    69,<br>    156,<br>    158,<br>    57,<br>    181,<br>    29,<br>    200,<br>    37,<br>    51,<br>    252,<br>    227,<br>    93,<br>    65,<br>    82,<br>    66,<br>    80,<br>    170,<br>    77,<br>    49,<br>    177,<br>    81,<br>    94,<br>    202,<br>    107,<br>    25,<br>    73,<br>    148,<br>    98,<br>    129,<br>    231,<br>    212,<br>    14,<br>    84,<br>    121,<br>    174,<br>    171,<br>    64,<br>    180,<br>    233,<br>    74,<br>    140,<br>    242,<br>    75,<br>    104,<br>    253,<br>    44,<br>    39,<br>    87,<br>    86,<br>    27,<br>    68,<br>    22,<br>    55,<br>    76,<br>    35,<br>    248,<br>    96,<br>    5,<br>    56,<br>    20,<br>    161,<br>    213,<br>    238,<br>    220,<br>    72,<br>    100,<br>    247,<br>    8,<br>    63,<br>    249,<br>    145,<br>    243,<br>    155,<br>    222,<br>    122,<br>    32,<br>    43,<br>    186,<br>    0,<br>    102,<br>    216,<br>    126,<br>    15,<br>    42,<br>    115,<br>    138,<br>    240,<br>    147,<br>    229,<br>    204,<br>    117,<br>    223,<br>    141,<br>    159,<br>    131,<br>    232,<br>    124,<br>    254,<br>    60,<br>    116,<br>    46,<br>    113,<br>    79,<br>    16,<br>    128,<br>    6,<br>    251,<br>    40,<br>    205,<br>    137,<br>    199,<br>    83,<br>    54,<br>    188,<br>    19,<br>    184,<br>    201,<br>    110,<br>    255,<br>    26,<br>    91,<br>    211,<br>    132,<br>    160,<br>    168,<br>    154,<br>    185,<br>    183,<br>    244,<br>    78,<br>    33,<br>    123,<br>    28,<br>    59,<br>    12,<br>    210,<br>    218,<br>    47,<br>    163,<br>    215,<br>    209,<br>    108,<br>    235,<br>    237,<br>    118,<br>    101,<br>    24,<br>    234,<br>    106,<br>    143,<br>    88,<br>    9,<br>    136,<br>    95,<br>    30,<br>    193,<br>    176,<br>    225,<br>    198,<br>    197,<br>    194,<br>    239,<br>    134,<br>    162,<br>    192,<br>    11,<br>    70,<br>    58,<br>    187,<br>    50,<br>    67,<br>    236,<br>    230,<br>    13,<br>    99,<br>    190,<br>    208,<br>    207,<br>    7,<br>    53,<br>    219,<br>    203,<br>    62,<br>    114,<br>    127,<br>    125,<br>    164,<br>    179,<br>    175,<br>    112,<br>    172,<br>    250,<br>    133,<br>    130,<br>    52,<br>    189,<br>    97,<br>    146,<br>    34,<br>    157,<br>    120,<br>    195,<br>    45,<br>    4,<br>    142,<br>    139]</p>
-<p>pwda = [<br>    188,<br>    155,<br>    11,<br>    58,<br>    251,<br>    208,<br>    204,<br>    202,<br>    150,<br>    120,<br>    206,<br>    237,<br>    114,<br>    92,<br>    126,<br>    6,<br>    42]</p>
-<p>pwdb = [<br>    53,<br>    222,<br>    230,<br>    35,<br>    67,<br>    248,<br>    226,<br>    216,<br>    17,<br>    209,<br>    32,<br>    2,<br>    181,<br>    200,<br>    171,<br>    60,<br>    108]</p>
-<pre><code>flag = raw_input(&apos;Input your Key:&apos;).strip()
-if len(flag) != 17:
-print &apos;Wrong Key!!&apos;
-sys.exit(1)
-flag = flag[::-1]
-for i in range(0, len(flag)):
-if ord(flag[i]) + pwda[i] &amp; 255 != lookup[i + pwdb[i]]:
-    print &apos;Wrong Key!!&apos;
-    sys.exit(1)
+liba.so:     file format elf32-i386
 
-print &apos;Congratulations!!&apos;
-</code></pre><p>反编译之后写出脚本</p>
-<pre><code>#!/usr/bin/env python 
-# encoding: utf-8 
-# 访问 http://tool.lu/pyc/ 查看更多信息 
-import sys 
-lookup = [196,153,149,206,17,221,10,217,167,18,36,135, 
-103,61,111,31,92,152,21,228,105,191,173,41,2,245, 
-23,144,1,246,89,178,182,119,38,85,48,226,165,241, 
-166,214,71,90,151,3,109,169,150,224,69,156,158,57, 
-181,29,200,37,51,252,227,93,65,82,66,80,170,77,49, 
-177,81,94,202,107,25,73,148,98,129,231,212,14,84, 
-121,174,171,64,180,233,74,140,242,75,104,253,44,39, 
-87,86,27,68,22,55,76,35,248,96,5,56,20,161,213,238, 
-220,72,100,247,8,63,249,145,243,155,222,122,32,43, 
-186,0,102,216,126,15,42,115,138,240,147,229,204, 
-117,223,141,159,131,232,124,254,60,116,46,113,79, 
-16,128,6,251,40,205,137,199,83,54,188,19,184,201, 
-110,255,26,91,211,132,160,168,154,185,183,244,78, 
-33,123,28,59,12,210,218,47,163,215,209,108,235,237, 
-118,101,24,234,106,143,88,9,136,95,30,193,176,225, 
-198,197,194,239,134,162,192,11,70,58,187,50,67,236, 
-230,13,99,190,208,207,7,53,219,203,62,114,127,125, 
-164,179,175,112,172,250,133,130,52,189,97,146,34, 
-157,120,195,45,4,142,139] 
-pwda = [188,155,11,58,251,208,204,202,150,120,206,237,114,92,126,6,42] 
-pwdb = [53,222,230,35,67,248,226,216,17,209,32,2,181,200,171,60,108] 
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE
+000016e0 R_386_RELATIVE    *ABS*
+000016e4 R_386_RELATIVE    *ABS*
+000016bc R_386_GLOB_DAT    g_share
+000016c0 R_386_GLOB_DAT    __cxa_finalize
+000016c4 R_386_GLOB_DAT    _Jv_RegisterClasses
+000016c8 R_386_GLOB_DAT    __gmon_start__
+000016d8 R_386_JUMP_SLOT   g_func
+000016dc R_386_JUMP_SLOT   __cxa_finalize
+</code></pre><p>可见，该地址里放的就是 g_func 的具体地址，那此时 0x16d8 放的是真正的地址了吗？我们再看看 got.plt:</p>
+<pre><code>Contents of section .got.plt:
+ 16cc fc150000 00000000 00000000 2e040000  ................
+ 16dc 3e040000 
+</code></pre><p>16d8 处的内容是: 2e040000, 小端序，换回整形就是 0x000042e, 该地址就是 fun@plt 的第二条指令！是不是觉得有点儿绕？你可以定下心来再看一遍，其实不绕，而是很巧妙。</p>
 
-flag=&apos;&apos; 
-for i in range(0, 17): 
-flag=chr( lookup[i + pwdb[i]] - pwda[i] &amp; 255 )+flag 
-print flag 
-</code></pre>
       
     </div>
     
@@ -403,13 +325,13 @@ print flag
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></p>
+        <p><span>本文标题:</span><a href="/2017/02/24/延迟绑定技术原理/">延迟绑定技术原理</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年08月20日 - 11时08分</p>
-        <p><span>最后更新:</span>2016年11月28日 - 20时48分</p>
+        <p><span>发布时间:</span>2017年02月24日 - 13时32分</p>
+        <p><span>最后更新:</span>2017年02月24日 - 13时51分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/" title="python中的ord，chr函数">http://yunnigu.dropsec.xyz/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/02/24/延迟绑定技术原理/" title="延迟绑定技术原理">http://yunnigu.dropsec.xyz/2017/02/24/延迟绑定技术原理/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2017/02/24/延迟绑定技术原理/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -422,18 +344,9 @@ print flag
 
 <nav id="article-nav">
   
-    <a href="/2016/09/19/Python之encode与decode/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Python之encode与decode
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/08/19/RSAtools使用方法/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">RSAtool使用方法</div>
+    <a href="/2017/02/05/reverse之第十更/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">reverse之第十更</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -444,7 +357,7 @@ print flag
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python中的ord，chr函数"><span class="toc-number">1.</span> <span class="toc-text">python中的ord，chr函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FindKey-writeup"><span class="toc-number">1.1.</span> <span class="toc-text">FindKey writeup</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#延迟绑定技术原理"><span class="toc-number">1.</span> <span class="toc-text">延迟绑定技术原理</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -492,7 +405,7 @@ print flag
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/" data-title="python中的ord，chr函数" data-url="http://yunnigu.dropsec.xyz/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/"></div>
+    <div class="ds-thread" data-thread-key="2017/02/24/延迟绑定技术原理/" data-title="延迟绑定技术原理" data-url="http://yunnigu.dropsec.xyz/2017/02/24/延迟绑定技术原理/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -515,13 +428,11 @@ print flag
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/09/19/Python之encode与decode/" title="上一篇: Python之encode与decode">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/08/19/RSAtools使用方法/" title="下一篇: RSAtool使用方法">
+            <a href="/2017/02/05/reverse之第十更/" title="下一篇: reverse之第十更">
                 <i class="fa fa-angle-right"></i>
             </a>
         
