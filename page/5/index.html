@@ -139,7 +139,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 14.29px;">IDEA</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/ctf/" style="font-size: 14.29px;">ctf</a> <a href="/tags/java/" style="font-size: 15.71px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 14.29px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 11.43px;">liunx</a> <a href="/tags/pwn/" style="font-size: 17.14px;">pwn</a> <a href="/tags/python/" style="font-size: 14.29px;">python</a> <a href="/tags/reverse/" style="font-size: 18.57px;">reverse</a> <a href="/tags/wrieteup/" style="font-size: 10px;">wrieteup</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 11.43px;">工具</a> <a href="/tags/漏洞/" style="font-size: 11.43px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 12.86px;">面向对象</a>
+                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 15px;">IDEA</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/ctf/" style="font-size: 16.67px;">ctf</a> <a href="/tags/java/" style="font-size: 16.67px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 15px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 11.67px;">liunx</a> <a href="/tags/pwn/" style="font-size: 18.33px;">pwn</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/reverse/" style="font-size: 18.33px;">reverse</a> <a href="/tags/wrieteup/" style="font-size: 10px;">wrieteup</a> <a href="/tags/writeup/" style="font-size: 20px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 11.67px;">工具</a> <a href="/tags/漏洞/" style="font-size: 11.67px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 13.33px;">面向对象</a>
                     </div>
                 </section>
                 
@@ -228,6 +228,76 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-pwn之-数组下标越界" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/09/pwn之-数组下标越界/" class="article-date">
+      <time datetime="2016-08-09T07:05:05.000Z" itemprop="datePublished">2016-08-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h1 id="数组的下标越界"><a href="#数组的下标越界" class="headerlink" title="数组的下标越界"></a>数组的下标越界</h1><p><strong>下标越界</strong></p>
+<p>在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:</p>
+<pre><code>C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
+数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
+的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代
+码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
+为了程序的运行效率，C / C++才不检查下标是否越界。发现如果数组下标越
+界了，那么它会自动接着那块内存往后写。 
+</code></pre>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/漏洞/">漏洞</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/08/09/pwn之-数组下标越界/#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-程序的动态链接和静态链接1" class="article article-type-post" itemscope itemprop="blogPost">
   
