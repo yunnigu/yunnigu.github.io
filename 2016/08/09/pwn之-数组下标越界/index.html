@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
-  <meta charset="utf-8">
-  
-  <title>pwn之-数组下标越界 | YungGong</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="数组的下标越界下标越界
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Yun" />
+
+
+
+<meta name="description" content="数组的下标越界下标越界
 在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:
 C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的
 数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行
@@ -38,37 +48,69 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
 码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以
 为了程序的运行效率">
 <meta name="twitter:image" content="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png">
-  
-    <link rel="alternative" href="/atom.xml" title="YungGong" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/img/Night_Elf.jpg">
-  
-  
-  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  
-  
-      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  
-  <!-- 加载特效 -->
-    <script src="/js/pace.js"></script>
-    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
-  <script>
-      var yiliaConfig = {
-          fancybox: true,
-          animate: true,
-          isHome: false,
-          isPost: true,
-          isArchive: false,
-          isTag: false,
-          isCategory: false,
-          open_in_new: false
-      }
-  </script>
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="YungGong" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/Night_Elf.jpg">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>pwn之-数组下标越界 | YungGong</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: undefined
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
 </head>
 <body>
   <div id="container">
@@ -77,17 +119,17 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
 <div class="intrude-less">
     <header id="header" class="inner">
         <a href="/" class="profilepic">
-            
-            <img lazy-src="/img/Night_Elf.jpg" class="js-avatar">
-            
+            <img src="/img/Night_Elf.jpg" class="animated zoomIn">
         </a>
-
         <hgroup>
           <h1 class="header-author"><a href="/">Yun</a></h1>
         </hgroup>
 
         
+
         
+
+
         
             <div id="switch-btn" class="switch-btn">
                 <div class="icon">
@@ -136,22 +178,18 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
                     <nav class="header-menu">
                         <ul>
                         
-                            <li><a href="/">博客首页</a></li>
+                            <li><a href="/">主页</a></li>
                         
-                            <li><a href="/about">留言打卡</a></li>
-                        
-                            <li><a href="/tags">标签云</a></li>
+                            <li><a href="/tags/">标签云</a></li>
                         
                         </ul>
                     </nav>
                     <nav class="header-nav">
                         <ul class="social">
                             
-                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="mail">mail</a>
+                                <a class="fa Email" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="Email"></a>
                             
-                                <a class="fl github" target="_blank" href="https://github.com/yunnigu" title="github">github</a>
-                            
-                                <a class="fl weibo" target="_blank" href="http://weibo.com/lishangmou" title="weibo">weibo</a>
+                                <a class="fa GitHub" href="https://github.com/yunnigu" title="GitHub"></a>
                             
                         </ul>
                     </nav>
@@ -160,7 +198,7 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/IDA/" style="font-size: 10px;">IDA</a> <a href="/tags/IDEA/" style="font-size: 14.29px;">IDEA</a> <a href="/tags/Protostar/" style="font-size: 10px;">Protostar</a> <a href="/tags/Stack/" style="font-size: 10px;">Stack</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/ctf/" style="font-size: 15.71px;">ctf</a> <a href="/tags/java/" style="font-size: 15.71px;">java</a> <a href="/tags/java，面向对象/" style="font-size: 14.29px;">java，面向对象</a> <a href="/tags/liunx/" style="font-size: 11.43px;">liunx</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/python/" style="font-size: 14.29px;">python</a> <a href="/tags/reverse/" style="font-size: 17.14px;">reverse</a> <a href="/tags/stack/" style="font-size: 10px;">stack</a> <a href="/tags/wrieteup/" style="font-size: 10px;">wrieteup</a> <a href="/tags/writeup/" style="font-size: 18.57px;">writeup</a> <a href="/tags/函数/" style="font-size: 10px;">函数</a> <a href="/tags/动态链接/" style="font-size: 10px;">动态链接</a> <a href="/tags/密码学/" style="font-size: 10px;">密码学</a> <a href="/tags/工具/" style="font-size: 11.43px;">工具</a> <a href="/tags/漏洞/" style="font-size: 11.43px;">漏洞</a> <a href="/tags/编程/" style="font-size: 10px;">编程</a> <a href="/tags/静态链接/" style="font-size: 10px;">静态链接</a> <a href="/tags/面向对象/" style="font-size: 12.86px;">面向对象</a>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELF/">ELF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IDA/">IDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IDEA/">IDEA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Protostar/">Protostar</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stack/">Stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/System/">System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java，面向对象/">java，面向对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/liunx/">liunx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wrieteup/">wrieteup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeup/">writeup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数/">函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/动态链接/">动态链接</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/密码学/">密码学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/漏洞/">漏洞</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/编程/">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/静态链接/">静态链接</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/面向对象/">面向对象</a></li></ul>
                     </div>
                 </section>
                 
@@ -169,25 +207,23 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
                 <section class="switch-part switch-part3">
                     <div id="js-friends">
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://byd.dropsec.xyz/">老毕</a>
+                      <a class="main-nav-link switch-friends-link" href="http://byd.dropsec.xyz/">老毕</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://zt.dropsec.xyz/">小光头</a>
+                      <a class="main-nav-link switch-friends-link" href="http://zt.dropsec.xyz/">小光头</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lyx.dropsec.xyz/">翔哥</a>
+                      <a class="main-nav-link switch-friends-link" href="http://lyx.dropsec.xyz/">翔哥</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://zjw.dropsec.xyz/">伟哥</a>
+                      <a class="main-nav-link switch-friends-link" href="http://zjw.dropsec.xyz/">伟哥</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lzx.dropsec.xyz/">小崽崽</a>
+                      <a class="main-nav-link switch-friends-link" href="http://lzx.dropsec.xyz/">小崽崽</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://lyh.dropsec.xyz/">魂道</a>
+                      <a class="main-nav-link switch-friends-link" href="http://wkh.dropsec.xyz/">洪哥</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://wkh.dropsec.xyz/">洪哥</a>
+                      <a class="main-nav-link switch-friends-link" href="http://fgp.dropsec.xyz/">鹏哥</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://fgp.dropsec.xyz/">鹏哥</a>
+                      <a class="main-nav-link switch-friends-link" href="http://spd.dropsec.xyz/">东哥</a>
                     
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://spd.dropsec.xyz/">东哥</a>
-                    
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://cq.dropsec.xyz/">陈奇奇</a>
+                      <a class="main-nav-link switch-friends-link" href="http://cq.dropsec.xyz/">陈奇奇</a>
                     
                     </div>
                 </section>
@@ -197,7 +233,7 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
                 
                 <section class="switch-part switch-part4">
                 
-                    <div id="js-aboutme">纯海迷、爱运动、爱交友、爱旅行、喜欢接触新鲜事物、迎接新的挑战，更爱游离于错综复杂的编码与逻辑中</div>
+                    <div id="js-aboutme">追求完美的死宅</div>
                 </section>
                 
             </div>
@@ -214,9 +250,7 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
     <div class="intrude-less">
         <header id="header" class="inner">
             <a href="/" class="profilepic">
-                
-                    <img lazy-src="/img/Night_Elf.jpg" class="js-avatar">
-                
+                <img src="/img/Night_Elf.jpg" class="animated zoomIn">
             </a>
             <hgroup>
               <h1 class="header-author"><a href="/" title="回到主页">Yun</a></h1>
@@ -225,28 +259,25 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
             <nav class="header-menu">
                 <ul>
                 
-                    <li><a href="/">博客首页</a></li>
+                    <li><a href="/">主页</a></li>
                 
-                    <li><a href="/about">留言打卡</a></li>
-                
-                    <li><a href="/tags">标签云</a></li>
+                    <li><a href="/tags/">标签云</a></li>
                 
                 <div class="clearfix"></div>
                 </ul>
             </nav>
             <nav class="header-nav">
-                <div class="social">
-                    
-                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="mail">mail</a>
-                    
-                        <a class="github" target="_blank" href="https://github.com/yunnigu" title="github">github</a>
-                    
-                        <a class="weibo" target="_blank" href="http://weibo.com/lishangmou" title="weibo">weibo</a>
-                    
-                </div>
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=EyIiICIjKiMqIyRTYmI9cHx_" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/yunnigu" title="GitHub"></a>
+                            
+                        </ul>
             </nav>
         </header>                
     </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap"><article id="post-pwn之-数组下标越界" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -254,6 +285,8 @@ C/C++不对数组做边界检查。 可以重写数组的每一端，并写入�
       <a href="/2016/08/09/pwn之-数组下标越界/" class="article-date">
       <time datetime="2016-08-09T07:05:05.000Z" itemprop="datePublished">2016-08-09</time>
 </a>
+
+
     </div>
   
   <div class="article-inner">
@@ -382,87 +415,89 @@ io.interactive()
     
     <div class="copyright">
         <p><span>本文标题:</span><a href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></p>
-        <p><span>文章作者:</span><a href="/" title="访问 Yun 的个人博客">Yun</a></p>
-        <p><span>发布时间:</span>2016年08月09日 - 15时05分</p>
-        <p><span>最后更新:</span>2016年11月28日 - 20时50分</p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Yun</a></p>
+        <p><span>发布时间:</span>2016-08-09, 15:05:05</p>
+        <p><span>最后更新:</span>2016-11-28, 20:50:45</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/08/09/pwn之-数组下标越界/" title="pwn之-数组下标越界">http://yunnigu.dropsec.xyz/2016/08/09/pwn之-数组下标越界/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yunnigu.dropsec.xyz/2016/08/09/pwn之-数组下标越界/　　作者: Yun" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
-            <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
         </p>
     </div>
 
 
 
-<nav id="article-nav">
-  
-    <a href="/2016/08/19/RSAtools使用方法/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
+    <nav id="article-nav">
         
-          RSAtool使用方法
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2016/08/19/RSAtools使用方法/">
+                    RSAtool使用方法
+                </a>
+            </div>
         
-      </div>
-    </a>
-  
-  
-    <a href="/2016/08/07/程序的动态链接和静态链接1/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">程序的动态链接和静态链接</div>
-      <strong class="article-nav-caption">></strong>
-    </a>
-  
-</nav>
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2016/08/07/程序的动态链接和静态链接1/">
+                    程序的动态链接和静态链接
+                </a>
+            </div>
+        
+    </nav>
 
   
 </article>
 
     <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数组的下标越界"><span class="toc-number">1.</span> <span class="toc-text">数组的下标越界</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#i春秋30强挑战赛pwn1-writeup"><span class="toc-number">1.1.</span> <span class="toc-text">i春秋30强挑战赛pwn1 writeup</span></a></li></ol></li></ol>
-</div>
-<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
-
-<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-<script>
-    var valueHide = "隐藏目录";
-    var valueShow = "显示目录";
-
-    if ($(".left-col").is(":hidden")) {
-        $("#tocButton").attr("value", valueShow);
-    }
-    $("#tocButton").click(function() {
-        if ($("#toc").is(":hidden")) {
-            $("#tocButton").attr("value", valueHide);
-            $("#toc").slideDown(320);
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数组的下标越界"><span class="toc-number">1.</span> <span class="toc-text">数组的下标越界</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#i春秋30强挑战赛pwn1-writeup"><span class="toc-number">1.1.</span> <span class="toc-text">i春秋30强挑战赛pwn1 writeup</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
         }
-        else {
-            $("#tocButton").attr("value", valueShow);
-            $("#toc").slideUp(350);
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
         }
-    })
-    if ($(".toc").length < 1) {
-        $("#toc, #tocButton").hide();
-    }
-</script>
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
 
 
 
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"pwn之-数组下标越界　| YungGong　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
 
-
-<div class="bdsharebuttonbox">
-	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
-	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
-	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
-	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
-	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
-	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    
 </div>
-<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
 
 
 
@@ -477,9 +512,12 @@ io.interactive()
         }
     </script>
     
+    <script> loadComment(); </script>
+
     <div id="uyan_frame"></div>
 </section>
     
+
 
 
 
@@ -489,32 +527,18 @@ io.interactive()
                 <i class="fa fa-angle-left"></i>
             </a>
         
+
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
         
             <a href="/2016/08/07/程序的动态链接和静态链接1/" title="下一篇: 程序的动态链接和静态链接">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
+
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/03/06/Protostar-Stack/">Protostar-Stack</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/04/栈溢出之利用-stack-chk-fail/">栈溢出之利用__stack_chk_fail</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/28/XMAN-level4/">XMAN-level4</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/27/XMAN-Level3-x64/">XMAN-Level3-x64</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/24/X-MAN-level3/">X-MAN-level3</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/24/X-MAN-level0-level2/">X-MAN(level0~level2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/24/延迟绑定技术原理/">延迟绑定技术原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/05/reverse之第十更/">reverse之第十更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/04/reverse之第九更/">reverse之第九更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/30/reverse之第八更/">reverse之第八更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/26/reverse之第七更/">reverse之第七更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/24/reverse之第六更/">reverse之第六更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/24/reverse之第五更/">reverse之第五更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/20/reverse之第四更/">reverse之第四更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/19/reverse之第三更/">reverse之第三更</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/01/15/信大校赛/">信大校赛</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/05/reverse第二更之问鼎杯2106-6-2/">reverse第二更之问鼎杯2106-6-2</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/29/pwn之第三更SUCTF2016/">pwn之第三更SUCTF2016</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/28/python基于numpy解方程组/">python基于numpy解方程组</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/24/reverse之第一更/">reverse之第一更</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/21/pwn学习rop之x64篇/">pwn学习rop之x64篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习之DynELF的使用/">pwn学习之DynELF的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/19/pwn学习rop之x86篇/">pwn学习rop之x86篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/">pwn第二更-Icectf_drumpfhotel</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/pwn第一更-L-CTFpwn100/">pwn第一更-L-CTFpwn100</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/26/memset函数的用法/">memset函数的用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/20/java之Tostring和HashCode方法的重写/">java之Tostring、equals和HashCode方法的重写</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/18/安装pycrypto遇到的一系列问题总结/">安装pycrypto遇到的一系列问题总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/格式化字符串漏洞/">格式化字符串漏洞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/08/checksec及其包含的保护机制/">checksec及其包含的保护机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/05/xortool的安装使用/">xortool的安装使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/30个java基础程序/">30个java基础程序</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/java之抽象类与接口/">java之抽象类与接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/基类子类对象间的替换/">基类子类对象间的替换</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/25/Java之继承中的方法重写与属性覆盖/">Java之继承中的方法重写与属性覆盖</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之包的概念及其意义/">java之包的概念及其意义</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之getters和setters/">java之getters和setters</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/24/java之构造函数，默认构造函数及构造函数的重载/">java之构造函数，默认构造函数及构造函数的重载</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/23/java之IDEA编程检验java中的四种修饰符的访问权限/">IDEA编程检验java中的四种修饰符的访问权限</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/19/Python之encode与decode/">Python之encode与decode</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/20/PCTF2016-FindKey之python中的ord，chr函数/">python中的ord，chr函数</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/19/RSAtools使用方法/">RSAtool使用方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/09/pwn之-数组下标越界/">pwn之-数组下标越界</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/程序的动态链接和静态链接1/">程序的动态链接和静态链接</a></li></ul>
-    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-    <script>
-        $(".post-list").addClass("toc-article");
-        $(".post-list-item a").attr("target","_blank");
-        $("#post-nav-button > a:nth-child(2)").click(function() {
-            $(".fa-bars, .fa-times").toggle();
-            $(".post-list").toggle(300);
-            if ($(".toc").length > 0) {
-                $("#toc, #tocButton").toggle(200, function() {
-                    if ($(".switch-area").is(":visible")) {
-                        $("#tocButton").attr("value", valueHide);
-                        }
-                    })
-            }
-            else {
-            }
-        })
-    </script>
+
 
 
 
@@ -526,28 +550,27 @@ io.interactive()
     <div class="outer">
         <div id="footer-info">
             <div class="footer-left">
-                &copy; 2017 Yun
+                <i class="fa fa-copyright"></i> 
+                2016-2017 Yun
             </div>
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
             </div>
         </div>
         
             <div class="visit">
                 
                     <span id="busuanzi_container_site_pv" style='display:none'>
-                        <span id="site-visit" >海贼到访数: 
-                            <span id="busuanzi_value_site_uv"></span>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
                         </span>
                     </span>
                 
                 
-                    <span>, </span>
+                    <span>| </span>
                 
                 
                     <span id="busuanzi_container_page_pv" style='display:none'>
-                        <span id="page-visit">本页阅读量: 
-                            <span id="busuanzi_value_page_pv"></span>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
                         </span>
                     </span>
                 
@@ -555,17 +578,23 @@ io.interactive()
         
     </div>
 </footer>
-
     </div>
-    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-<script src="/js/main.js"></script>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            var backgroundnum = 24;
-            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
-            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
-            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
         })
     </script>
 
@@ -574,48 +603,34 @@ io.interactive()
 
 
 <div class="scroll" id="scroll">
-    <a href="#"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
 </div>
 <script>
-    $(document).ready(function() {
-        if ($("#comments").length < 1) {
-            $("#scroll > a:nth-child(2)").hide();
-        };
-    })
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
 </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
-
-  <script language="javascript">
-    $(function() {
-        $("a[title]").each(function() {
-            var a = $(this);
-            var title = a.attr('title');
-            if (title == undefined || title == "") return;
-            a.data('title', title).removeAttr('title').hover(
-
-            function() {
-                var offset = a.offset();
-                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
-                    top: offset.top - a.outerHeight() - 15,
-                    left: offset.left + a.outerWidth()/2 + 1
-                }).fadeIn(function() {
-                    var pop = $(this);
-                    setTimeout(function() {
-                        pop.remove();
-                    }, pop.text().length * 800);
-                });
-            }, function() {
-                $("#anchortitlecontainer").remove();
-            });
-        });
-    });
-</script>
-
-
   </div>
 </body>
 </html>
