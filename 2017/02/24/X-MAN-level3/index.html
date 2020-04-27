@@ -81,16 +81,16 @@
 
 
 
-<meta name="description" content="本题主要考察通过延迟绑定技术泄漏函数的真实地址">
+<meta name="description" content="本题主要考察通过延迟绑定技术泄漏函数的真实地址，延迟绑定技术,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="X-MAN-level3">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/24/X-MAN-level3/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="本题主要考察通过延迟绑定技术泄漏函数的真实地址">
-<meta property="og:updated_time" content="2020-04-27T09:01:14.325Z">
+<meta property="og:description" content="本题主要考察通过延迟绑定技术泄漏函数的真实地址，延迟绑定技术,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，">
+<meta property="og:updated_time" content="2020-04-27T09:04:19.913Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="X-MAN-level3">
-<meta name="twitter:description" content="本题主要考察通过延迟绑定技术泄漏函数的真实地址">
+<meta name="twitter:description" content="本题主要考察通过延迟绑定技术泄漏函数的真实地址，延迟绑定技术,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，">
 
 
 
@@ -300,8 +300,7 @@
       
 
       
-        <p>本题主要考察通过延迟绑定技术泄漏函数的真实地址<br><a id="more"></a><br>，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，</p>
-<p>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
+        <p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，<br><a id="more"></a><br>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
 <p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
 <pre><code>from pwn import *
 
@@ -453,7 +452,7 @@ p.interactive()
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -81,16 +81,16 @@
 
 
 
-<meta name="description" content="linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会">
+<meta name="description" content="rop x64学习笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn学习rop之x64篇">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/21/pwn学习rop之x64篇/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会">
-<meta property="og:updated_time" content="2020-04-27T08:42:26.255Z">
+<meta property="og:description" content="rop x64学习笔记">
+<meta property="og:updated_time" content="2020-04-27T09:07:27.199Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn学习rop之x64篇">
-<meta name="twitter:description" content="linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会">
+<meta name="twitter:description" content="rop x64学习笔记">
 
 
 
@@ -300,7 +300,7 @@
       
 
       
-        <a id="more"></a>
+        <p>rop x64学习笔记<br><a id="more"></a></p>
 <h2 id="linux-64与linux-86的区别"><a href="#linux-64与linux-86的区别" class="headerlink" title="linux_64与linux_86的区别"></a>linux_64与linux_86的区别</h2><p>linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会保存在栈上。</p>
 <p>我们还是拿实际程序做例子进行讲解,test.c内容如下：</p>
 <pre><code>#include &lt;stdio.h&gt;
@@ -833,7 +833,7 @@ p.send(payload3)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
