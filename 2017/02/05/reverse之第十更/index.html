@@ -81,20 +81,16 @@
 
 
 
-<meta name="description" content="reverse之第十更">
+<meta name="description" content="一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="reverse之第十更">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/05/reverse之第十更/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="reverse之第十更">
-<meta property="og:image" content="http://i1.piimg.com/567571/8c0cdd237a854038.png">
-<meta property="og:image" content="http://i1.piimg.com/567571/49e56ee55fa4888e.png">
-<meta property="og:image" content="http://i1.piimg.com/567571/b56177554eff3d9e.png">
-<meta property="og:updated_time" content="2017-02-08T11:08:29.905Z">
+<meta property="og:description" content="一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。">
+<meta property="og:updated_time" content="2020-04-27T08:54:13.724Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="reverse之第十更">
-<meta name="twitter:description" content="reverse之第十更">
-<meta name="twitter:image" content="http://i1.piimg.com/567571/8c0cdd237a854038.png">
+<meta name="twitter:description" content="一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。">
 
 
 
@@ -304,10 +300,7 @@
       
 
       
-        <h1 id="reverse之第十更"><a href="#reverse之第十更" class="headerlink" title="reverse之第十更"></a>reverse之第十更</h1><a id="more"></a>
-<p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。</p>
-<p>程序运行之后发现提示内容是Try angin！但是搜索字符串并没有，但是看到一个很像base64的字符串，过去发现各种算法以及调用，在函数开头下断，果然加密算法都在这个地方。</p>
-<p><img src="http://i1.piimg.com/567571/8c0cdd237a854038.png" alt=""></p>
+        <p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。<br><a id="more"></a><br>程序运行之后发现提示内容是Try angin！但是搜索字符串并没有，但是看到一个很像base64的字符串，过去发现各种算法以及调用，在函数开头下断，果然加密算法都在这个地方。</p>
 <p>在IDA中分析该函数</p>
 <pre><code>char __thiscall sub_401880(int this)
 {
@@ -447,7 +440,6 @@ LABEL_19:
   return result;
 }
 </code></pre><p>首先发现，成功和失败的提示被定义为字符串保存在函数中，程序运行之后才会出现。程序的大致流程是先将输入的前六位取出，判断是不是大写字母，如果不是就失败。</p>
-<p><img src="http://i1.piimg.com/567571/49e56ee55fa4888e.png" alt=""></p>
 <p>之后将前六位分成两组，求其CRC32的校验码，CRC的算法如下：</p>
 <pre><code>uint crc32( uchar *buf, int len)
 {
@@ -466,7 +458,6 @@ LABEL_19:
     return ret;
 }
 </code></pre><p>CRC算法求解关键在于CRC表的生成，一般都是动态生成的，也可以静态定义，不过很麻烦。第一次求CRC初始的ret是-1，之后的ret就是上一次所求的CRC，以此原理将两部分的CRC转换为8位的16进制连接起来作为下面AES加密的密钥。</p>
-<p><img src="http://i1.piimg.com/567571/b56177554eff3d9e.png" alt=""></p>
 <p>加密之后的结果转换为16进制字符串，进行base64编码，与程序给出的XQXgWk5yLADiXx6hVQCAKxTjVQXiWxPhXASCKALhV7X=比较，base64转换过程中的置换表与平常的有些区别</p>
 <pre><code>0987654321ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba+/
 </code></pre><p>最终求正确的注册码必须要枚举密钥，反解AES然后比较解密结果的前六位与密钥是否一致，脚本如下：</p>
@@ -598,17 +589,8 @@ if __name__==&apos;__main__&apos;:
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -623,7 +605,7 @@ if __name__==&apos;__main__&apos;:
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -636,7 +618,7 @@ if __name__==&apos;__main__&apos;:
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -666,22 +648,6 @@ if __name__==&apos;__main__&apos;:
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#reverse之第十更"><span class="nav-number">1.</span> <span class="nav-text">reverse之第十更</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

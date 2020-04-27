@@ -81,18 +81,40 @@
 
 
 
-<meta name="description" content="栈溢出之利用__stack_chk_fail">
+<meta name="description" content="程序的主函数很明显_IO_gets存在栈溢出。
+查看开启的保护机制，开了一大堆。。。
+gdb-peda$ checksec 
+CANARY    : ENABLED
+FORTIFY   : ENABLED
+NX        : ENABLED
+PIE       : disabled
+RELRO     : disabled
+这题是国外的一个CTF题目，他利用的是fortify的报错泄露信息，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="栈溢出之利用__stack_chk_fail">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/03/04/栈溢出之利用-stack-chk-fail/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="栈溢出之利用__stack_chk_fail">
-<meta property="og:image" content="http://p1.bqimg.com/567571/e7d259807dcaf96f.png">
-<meta property="og:updated_time" content="2020-04-27T05:49:11.049Z">
+<meta property="og:description" content="程序的主函数很明显_IO_gets存在栈溢出。
+查看开启的保护机制，开了一大堆。。。
+gdb-peda$ checksec 
+CANARY    : ENABLED
+FORTIFY   : ENABLED
+NX        : ENABLED
+PIE       : disabled
+RELRO     : disabled
+这题是国外的一个CTF题目，他利用的是fortify的报错泄露信息，">
+<meta property="og:updated_time" content="2020-04-27T08:56:20.557Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="栈溢出之利用__stack_chk_fail">
-<meta name="twitter:description" content="栈溢出之利用__stack_chk_fail">
-<meta name="twitter:image" content="http://p1.bqimg.com/567571/e7d259807dcaf96f.png">
+<meta name="twitter:description" content="程序的主函数很明显_IO_gets存在栈溢出。
+查看开启的保护机制，开了一大堆。。。
+gdb-peda$ checksec 
+CANARY    : ENABLED
+FORTIFY   : ENABLED
+NX        : ENABLED
+PIE       : disabled
+RELRO     : disabled
+这题是国外的一个CTF题目，他利用的是fortify的报错泄露信息，">
 
 
 
@@ -302,10 +324,8 @@
       
 
       
-        <h1 id="栈溢出之利用-stack-chk-fail"><a href="#栈溢出之利用-stack-chk-fail" class="headerlink" title="栈溢出之利用__stack_chk_fail"></a>栈溢出之利用__stack_chk_fail</h1><a id="more"></a>
-<p>程序的主函数如下：</p>
-<p><img src="http://p1.bqimg.com/567571/e7d259807dcaf96f.png" alt=""></p>
-<p>很明显_IO_gets存在栈溢出。</p>
+        <a id="more"></a>
+<p>程序的主函数很明显_IO_gets存在栈溢出。</p>
 <p>查看开启的保护机制，开了一大堆。。。</p>
 <pre><code>gdb-peda$ checksec 
 CANARY    : ENABLED
@@ -544,17 +564,8 @@ print flag
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -569,7 +580,7 @@ print flag
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -582,7 +593,7 @@ print flag
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -612,22 +623,6 @@ print flag
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#栈溢出之利用-stack-chk-fail"><span class="nav-number">1.</span> <span class="nav-text">栈溢出之利用__stack_chk_fail</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

@@ -81,19 +81,19 @@
 
 
 
-<meta name="description" content="checksec及其包含的保护机制">
+<meta name="description" content="今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="checksec及其包含的保护机制">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/10/08/checksec及其包含的保护机制/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="checksec及其包含的保护机制">
+<meta property="og:description" content="今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。">
 <meta property="og:image" content="http://img.blog.csdn.net/20160920223340302">
 <meta property="og:image" content="http://img.blog.csdn.net/20160920235408000">
 <meta property="og:image" content="http://space.itpub.net/attachments/2011/07/13164110_201107181702402.jpg?_=2109736">
-<meta property="og:updated_time" content="2020-04-27T03:14:54.350Z">
+<meta property="og:updated_time" content="2020-04-27T08:17:38.521Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="checksec及其包含的保护机制">
-<meta name="twitter:description" content="checksec及其包含的保护机制">
+<meta name="twitter:description" content="今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。">
 <meta name="twitter:image" content="http://img.blog.csdn.net/20160920223340302">
 
 
@@ -304,9 +304,7 @@
       
 
       
-        <h1 id="checksec及其包含的保护机制"><a href="#checksec及其包含的保护机制" class="headerlink" title="checksec及其包含的保护机制"></a>checksec及其包含的保护机制</h1><a id="more"></a>
-<p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。</p>
-<p>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
+        <p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。<br><a id="more"></a><br>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
 <h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>checksec是一个脚本软件，也就是用脚本写的一个文件，不到2000行，可用来学习shell。 </p>
 <p>源码参见 </p>
 <p><a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="external">http://www.trapkit.de/tools/checksec.html</a></p>
@@ -503,7 +501,7 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -516,7 +514,7 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -556,7 +554,7 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#checksec及其包含的保护机制"><span class="nav-number">1.</span> <span class="nav-text">checksec及其包含的保护机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#checksec"><span class="nav-number">1.1.</span> <span class="nav-text">checksec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CANNARY-栈保护"><span class="nav-number">1.2.</span> <span class="nav-text">CANNARY(栈保护)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FORTIFY"><span class="nav-number">1.3.</span> <span class="nav-text">FORTIFY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NX（DEP）"><span class="nav-number">1.4.</span> <span class="nav-text">NX（DEP）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PIE（ASLR）"><span class="nav-number">1.5.</span> <span class="nav-text">PIE（ASLR）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RELRO"><span class="nav-number">1.6.</span> <span class="nav-text">RELRO</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#checksec"><span class="nav-number">1.</span> <span class="nav-text">checksec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CANNARY-栈保护"><span class="nav-number">2.</span> <span class="nav-text">CANNARY(栈保护)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FORTIFY"><span class="nav-number">3.</span> <span class="nav-text">FORTIFY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NX（DEP）"><span class="nav-number">4.</span> <span class="nav-text">NX（DEP）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PIE（ASLR）"><span class="nav-number">5.</span> <span class="nav-text">PIE（ASLR）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RELRO"><span class="nav-number">6.</span> <span class="nav-text">RELRO</span></a></li></ol></div>
             
 
           </div>

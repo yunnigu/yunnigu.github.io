@@ -81,16 +81,37 @@
 
 
 
-<meta name="description" content="信大校赛writeup">
+<meta name="description" content="Android题目比较简单，使用反编译工具查看java代码如下：
+import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.Toast;
+
+clas">
 <meta property="og:type" content="article">
 <meta property="og:title" content="信大校赛">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/01/15/信大校赛/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="信大校赛writeup">
-<meta property="og:updated_time" content="2017-01-24T04:23:43.690Z">
+<meta property="og:description" content="Android题目比较简单，使用反编译工具查看java代码如下：
+import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.Toast;
+
+clas">
+<meta property="og:updated_time" content="2020-04-27T08:49:15.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="信大校赛">
-<meta name="twitter:description" content="信大校赛writeup">
+<meta name="twitter:description" content="Android题目比较简单，使用反编译工具查看java代码如下：
+import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.Toast;
+
+clas">
 
 
 
@@ -300,8 +321,8 @@
       
 
       
-        <h1 id="信大校赛writeup"><a href="#信大校赛writeup" class="headerlink" title="信大校赛writeup"></a>信大校赛writeup</h1><a id="more"></a>
-<h1 id="0x00-Android"><a href="#0x00-Android" class="headerlink" title="0x00 Android"></a>0x00 Android</h1><p>题目比较简单，使用反编译工具查看java代码如下：</p>
+        <a id="more"></a>
+<h1 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h1><p>题目比较简单，使用反编译工具查看java代码如下：</p>
 <pre><code>import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -324,7 +345,7 @@ class a
   }
 }
 </code></pre><p>程序的主要算法流程是将<br>gUID<em>P@Rt}T10n</em>$C#3m3Gu]d_par7|t)On<em>SCH3M3<br>这个字符串经过substring(12, 24)变化之后得到新的字符串，substring() 方法用于提取字符串中介于两个指定下标之间的字符，也就是说将下标12到下标20之间的字符串提取出来，结果是0n</em>$C#3m3Gu]。</p>
-<h1 id="0x01-warmup-re"><a href="#0x01-warmup-re" class="headerlink" title="0x01 warmup-re"></a>0x01 warmup-re</h1><p>拖到IDA里看一下伪代码：</p>
+<h1 id="warmup-re"><a href="#warmup-re" class="headerlink" title="warmup-re"></a>warmup-re</h1><p>拖到IDA里看一下伪代码：</p>
 <pre><code>// local variable allocation has failed, the output may be wrong!
 int __cdecl main(int argc, const char **argv, const char **envp)
 {
@@ -458,7 +479,7 @@ for i in xrange(0,21):
 print(flag)
 </code></pre><p>结果是</p>
 <pre><code>[&apos;1&apos;, &apos;q&apos;, &apos;w&apos;, &apos;e&apos;, &apos;r&apos;, &apos;5&apos;, &apos;t&apos;, &apos;y&apos;, &apos;u&apos;, &apos;i&apos;, &apos;9&apos;, &apos;0&apos;, &apos;o&apos;, &apos;p&apos;, &apos;4&apos;, &apos;e&apos;, &apos;r&apos;, &apos;t&apos;, &apos;g&apos;, &apos;h&apos;, &apos;g&apos;]
-</code></pre><h1 id="0x02-reverse1"><a href="#0x02-reverse1" class="headerlink" title="0x02 reverse1"></a>0x02 reverse1</h1><p>使用IDA分析，关键函数是encrypt()</p>
+</code></pre><h1 id="reverse1"><a href="#reverse1" class="headerlink" title="reverse1"></a>reverse1</h1><p>使用IDA分析，关键函数是encrypt()</p>
 <pre><code>       v19 = 0;
   LODWORD(v16) = std::string::operator[](a2, 0LL);
   while ( *v16 )
@@ -542,7 +563,7 @@ print(flag)
 }
 </code></pre><p>这个函数是求0~1024之间的素数，不包括2作为prime[]的数据。</p>
 <p>最后逆推出来flag为IIECTF{r3V3r5E_1s_Ea5y_DeadBeeF}</p>
-<h1 id="0x03-CrackMe"><a href="#0x03-CrackMe" class="headerlink" title="0x03 CrackMe"></a>0x03 CrackMe</h1><p>IDA反编译发现想要获得flag需要通过4个check函数：</p>
+<h1 id="CrackMe"><a href="#CrackMe" class="headerlink" title="CrackMe"></a>CrackMe</h1><p>IDA反编译发现想要获得flag需要通过4个check函数：</p>
 <p>第一个cheack</p>
 <pre><code>signed int check1(void)
 {
@@ -659,7 +680,7 @@ print(flag1)
 </code></pre><p>check4</p>
 <p>在OD里动态调试修改跳转最后一个符合条件的数字是176455667</p>
 <p>四关都过了，最后将每一关的key输入就可以了。<br>flag is:176455667HqGpGpFoFoEnGpHqBk</p>
-<h1 id="0x04-61dre"><a href="#0x04-61dre" class="headerlink" title="0x04 61dre"></a>0x04 61dre</h1><pre><code>int __cdecl main(int argc, const char **argv, const char **envp)
+<h1 id="61dre"><a href="#61dre" class="headerlink" title="61dre"></a>61dre</h1><pre><code>int __cdecl main(int argc, const char **argv, const char **envp)
 {
   bool v3; // r13@2
   int v4; // eax@5
@@ -906,7 +927,7 @@ print(flag)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -919,7 +940,7 @@ print(flag)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -959,7 +980,7 @@ print(flag)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#信大校赛writeup"><span class="nav-number">1.</span> <span class="nav-text">信大校赛writeup</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-Android"><span class="nav-number">2.</span> <span class="nav-text">0x00 Android</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-warmup-re"><span class="nav-number">3.</span> <span class="nav-text">0x01 warmup-re</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-reverse1"><span class="nav-number">4.</span> <span class="nav-text">0x02 reverse1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-CrackMe"><span class="nav-number">5.</span> <span class="nav-text">0x03 CrackMe</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-61dre"><span class="nav-number">6.</span> <span class="nav-text">0x04 61dre</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android"><span class="nav-number">1.</span> <span class="nav-text">Android</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#warmup-re"><span class="nav-number">2.</span> <span class="nav-text">warmup-re</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reverse1"><span class="nav-number">3.</span> <span class="nav-text">reverse1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CrackMe"><span class="nav-number">4.</span> <span class="nav-text">CrackMe</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#61dre"><span class="nav-number">5.</span> <span class="nav-text">61dre</span></a></li></ol></div>
             
 
           </div>

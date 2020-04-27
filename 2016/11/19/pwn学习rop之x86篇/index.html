@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="pwn学习rop之x86篇">
+<meta name="description" content="这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn学习rop之x86篇">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习rop之x86篇/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="pwn学习rop之x86篇">
+<meta property="og:description" content="这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。">
 <meta property="og:image" content="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png">
 <meta property="og:image" content="http://p1.bqimg.com/567571/5134a5b537aa2d73.png">
 <meta property="og:image" content="http://p1.bpimg.com/567571/fadaebd3da23a2e0.png">
@@ -95,10 +95,10 @@
 <meta property="og:image" content="http://p1.bqimg.com/567571/c0f9f3cc460b2922.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/e6d4d1d7b8b7e1ed.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/4b23913d36d0894b.png">
-<meta property="og:updated_time" content="2016-11-28T12:50:02.369Z">
+<meta property="og:updated_time" content="2020-04-27T08:35:07.563Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn学习rop之x86篇">
-<meta name="twitter:description" content="pwn学习rop之x86篇">
+<meta name="twitter:description" content="这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。">
 <meta name="twitter:image" content="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png">
 
 
@@ -309,14 +309,13 @@
       
 
       
-        <h1 id="pwn学习rop之x86篇"><a href="#pwn学习rop之x86篇" class="headerlink" title="pwn学习rop之x86篇"></a>pwn学习rop之x86篇</h1><a id="more"></a>
-<p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。</p>
-<h2 id="0x00-序"><a href="#0x00-序" class="headerlink" title="0x00 序"></a>0x00 序</h2><p>在说ROP之前，先来说一下什么是缓冲区溢出漏洞。缓冲区溢出漏洞（buffer overflow）是当今软件系统最主要的安全漏洞，利用缓冲区溢出漏洞的攻击也是攻击者最常用的攻击方式之一。所谓缓冲区溢出，是指在应用程序或者系统程序的内存中写入超长数据，从而达到恶意改变或者控制程序执行流程的目的。攻击者通过缓冲区溢出把shellcode写入程序的内存空间，并且通过覆盖栈上函数的返回地址，即EIP寄存器所指向的内存地址的值，或者覆盖SEH链表来实现程序执行流程的控制，使得植入内存的shellcode得以执行。</p>
+        <p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
+<h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>在说ROP之前，先来说一下什么是缓冲区溢出漏洞。缓冲区溢出漏洞（buffer overflow）是当今软件系统最主要的安全漏洞，利用缓冲区溢出漏洞的攻击也是攻击者最常用的攻击方式之一。所谓缓冲区溢出，是指在应用程序或者系统程序的内存中写入超长数据，从而达到恶意改变或者控制程序执行流程的目的。攻击者通过缓冲区溢出把shellcode写入程序的内存空间，并且通过覆盖栈上函数的返回地址，即EIP寄存器所指向的内存地址的值，或者覆盖SEH链表来实现程序执行流程的控制，使得植入内存的shellcode得以执行。</p>
 <p>栈溢出（stack-based buffer overflows）算是安全界常见的漏洞。一方面因为程序员的疏忽，使用了 strcpy、sprintf等不安全的函数，增加了栈溢出漏洞的可能。另一方面，因为栈上保存了函数的返回地址等信息，因此如果攻击者能任意覆盖栈上的数据，通常情况下就意味着他能修改程序的执行流程，从而造成更大的破坏。</p>
 <p>ROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。</p>
 <p>所谓ROP，简单的说就是把原来已经存在的代码块拼接起来，拼接的方式是通过一个预先准备好的特殊的返回栈，里面包含了各条指令结束后下一条指令的地址。</p>
 <p>在一般程序里面，都包含着大量的返回指令（ret），他们基本位于函数的尾部，或是函数中部需要返回的地方。而从函数开始的地方到ret指令之间的这一段序列称为二进制指令代码块（gadgets）。这些二进制指令序列使其组合成完成一些诸如读写内存、算术逻辑运算、控制流程跳转、函数调用等操作。于是，我们就可以通过利用内存空间中各个gadgets以某种顺序执行，达到进行任意操作的目的。而为了使各个gadgets“拼接”起来，我们就需要构造一个特殊的返回栈。首先让指向我们构造的栈（stack）的指针跳到gadget A中，执行其中的代码序列后ret回我们的stack中，然后下一步是跳到gadget B，执行后就到gadgets C……只要stack足够大，就能达到我们想要的效果。</p>
-<h2 id="0x01-Control-Flow-Hijack-程序流劫持"><a href="#0x01-Control-Flow-Hijack-程序流劫持" class="headerlink" title="0x01 Control Flow Hijack 程序流劫持"></a>0x01 Control Flow Hijack 程序流劫持</h2><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出了。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御者也提出了各种防御方法，最常见的方法有DEP（堆栈不可执行），ASLR（内存地址随机化），Stack Protector（栈保护）等。（详细了解可以去看我的另一篇博客<a href="http://yunnigu.dropsec.xyz/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/">checksec及其包含的保护机制</a>）我们这些初学的菜鸟先一步一步来，之后再加上各种防御措施，接着再学习绕过方法，所谓循序渐进嘛。。。</p>
+<h2 id="Control-Flow-Hijack-程序流劫持"><a href="#Control-Flow-Hijack-程序流劫持" class="headerlink" title="Control Flow Hijack 程序流劫持"></a>Control Flow Hijack 程序流劫持</h2><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出了。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御者也提出了各种防御方法，最常见的方法有DEP（堆栈不可执行），ASLR（内存地址随机化），Stack Protector（栈保护）等。（详细了解可以去看我的另一篇博客<a href="http://yunnigu.dropsec.xyz/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/">checksec及其包含的保护机制</a>）我们这些初学的菜鸟先一步一步来，之后再加上各种防御措施，接着再学习绕过方法，所谓循序渐进嘛。。。</p>
 <p>首先来看看我们要用的简单的缓冲区溢出例子：</p>
 <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -414,7 +413,7 @@ payload =  &apos;A&apos;*140 + p32(systemaddr) + p32(ret) + p32(binshaddr)
 p.send(payload)
 
 p.interactive()
-</code></pre><h2 id="0x03-ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><a href="#0x03-ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护" class="headerlink" title="0x03 ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护"></a>0x03 ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</h2><p>接下来我们打开ASLR保护。</p>
+</code></pre><h2 id="ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><a href="#ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护" class="headerlink" title="ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护"></a>ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</h2><p>接下来我们打开ASLR保护。</p>
 <pre><code>sudo -s 
 echo 2 &gt; /proc/sys/kernel/randomize_va_space
 </code></pre><p>从现在开始会发现test的libc.so的地址每次都会变化。</p>
@@ -466,7 +465,7 @@ p.send(payload2)
 
 p.interactive()
 </code></pre><p><img src="http://i1.piimg.com/567571/4b23913d36d0894b.png" alt=""></p>
-<h2 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
 
       
     </div>
@@ -497,8 +496,8 @@ p.interactive()
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/08/pwn第二更-Icectf-drumpfhotel/" rel="next" title="pwn第二更-Icectf_drumpfhotel">
-                <i class="fa fa-chevron-left"></i> pwn第二更-Icectf_drumpfhotel
+              <a href="/2016/11/08/pwn第一更-Icectf-drumpfhotel/" rel="next" title="pwn第一更-Icectf_drumpfhotel">
+                <i class="fa fa-chevron-left"></i> pwn第一更-Icectf_drumpfhotel
               </a>
             
           </div>
@@ -586,7 +585,7 @@ p.interactive()
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -599,7 +598,7 @@ p.interactive()
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -639,7 +638,7 @@ p.interactive()
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pwn学习rop之x86篇"><span class="nav-number">1.</span> <span class="nav-text">pwn学习rop之x86篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-序"><span class="nav-number">1.1.</span> <span class="nav-text">0x00 序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-Control-Flow-Hijack-程序流劫持"><span class="nav-number">1.2.</span> <span class="nav-text">0x01 Control Flow Hijack 程序流劫持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护"><span class="nav-number">1.3.</span> <span class="nav-text">0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><span class="nav-number">1.4.</span> <span class="nav-text">0x03 ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-小结"><span class="nav-number">1.5.</span> <span class="nav-text">0x04 小结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#序"><span class="nav-number">1.</span> <span class="nav-text">序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Control-Flow-Hijack-程序流劫持"><span class="nav-number">2.</span> <span class="nav-text">Control Flow Hijack 程序流劫持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护"><span class="nav-number">3.</span> <span class="nav-text">0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><span class="nav-number">4.</span> <span class="nav-text">ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
 
           </div>

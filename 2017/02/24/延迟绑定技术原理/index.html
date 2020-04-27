@@ -81,16 +81,22 @@
 
 
 
-<meta name="description" content="延迟绑定技术原理">
+<meta name="description" content="动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。
+延迟绑定的实现步骤如下：
+建立一个 GOT.PLT 表">
 <meta property="og:type" content="article">
 <meta property="og:title" content="延迟绑定技术原理">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/24/延迟绑定技术原理/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="延迟绑定技术原理">
-<meta property="og:updated_time" content="2017-02-24T05:54:33.530Z">
+<meta property="og:description" content="动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。
+延迟绑定的实现步骤如下：
+建立一个 GOT.PLT 表">
+<meta property="og:updated_time" content="2020-04-27T08:54:46.352Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="延迟绑定技术原理">
-<meta name="twitter:description" content="延迟绑定技术原理">
+<meta name="twitter:description" content="动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。
+延迟绑定的实现步骤如下：
+建立一个 GOT.PLT 表">
 
 
 
@@ -300,7 +306,7 @@
       
 
       
-        <h1 id="延迟绑定技术原理"><a href="#延迟绑定技术原理" class="headerlink" title="延迟绑定技术原理"></a>延迟绑定技术原理</h1><a id="more"></a>
+        <a id="more"></a>
 <p>动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。<br>主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。<br>另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。</p>
 <p>延迟绑定的实现步骤如下：</p>
 <p>建立一个 GOT.PLT 表，该表用来放全局函数的实际地址，但最开始时，该里面放的不是真实的地址而是一个跳转，接下来会讲。<br>对每一个全局函数，链接器生成一个与之相对应的影子函数，如 fun@plt。<br>所有对 fun 的调用，都换成对 fun@plt 的调用，每个fun@plt 长成如下样子：</p>
@@ -448,17 +454,8 @@ OFFSET   TYPE              VALUE
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -473,7 +470,7 @@ OFFSET   TYPE              VALUE
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -486,7 +483,7 @@ OFFSET   TYPE              VALUE
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -516,22 +513,6 @@ OFFSET   TYPE              VALUE
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#延迟绑定技术原理"><span class="nav-number">1.</span> <span class="nav-text">延迟绑定技术原理</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

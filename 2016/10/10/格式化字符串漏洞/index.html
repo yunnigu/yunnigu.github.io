@@ -81,12 +81,20 @@
 
 
 
-<meta name="description" content="格式化字符串漏洞原理及其利用">
+<meta name="description" content="简介在我们开始理解格式化字符串漏洞之前，我们必须得先知道什么是格式化字符串。一个格式化字符串也就是一个ASCII字符串，其包括了文本和格式参数。例如：
+printf(&amp;quot;My name is: %s&amp;quot;, &amp;quot;format&amp;quot;);
+该函数调用将返回字符串
+My name is: format
+该printf函数的第一个参数就是格式化字符串，它主要是依靠一个用来告诉">
 <meta property="og:type" content="article">
 <meta property="og:title" content="格式化字符串漏洞">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/10/10/格式化字符串漏洞/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="格式化字符串漏洞原理及其利用">
+<meta property="og:description" content="简介在我们开始理解格式化字符串漏洞之前，我们必须得先知道什么是格式化字符串。一个格式化字符串也就是一个ASCII字符串，其包括了文本和格式参数。例如：
+printf(&amp;quot;My name is: %s&amp;quot;, &amp;quot;format&amp;quot;);
+该函数调用将返回字符串
+My name is: format
+该printf函数的第一个参数就是格式化字符串，它主要是依靠一个用来告诉">
 <meta property="og:image" content="http://p1.bqimg.com/567571/391177e9f1a56b9f.png">
 <meta property="og:image" content="http://p1.bqimg.com/567571/9a29b5a9a64701e5.png">
 <meta property="og:image" content="http://i1.piimg.com/567571/f0a479cd3b490e91.png">
@@ -97,10 +105,14 @@
 <meta property="og:image" content="http://p1.bqimg.com/567571/3e0218bcd947aee1.png">
 <meta property="og:image" content="http://p1.bqimg.com/567571/cc555c06d63da5c0.png">
 <meta property="og:image" content="http://p1.bqimg.com/567571/abb9915362a731f1.png">
-<meta property="og:updated_time" content="2016-11-28T12:53:26.749Z">
+<meta property="og:updated_time" content="2020-04-27T08:18:57.495Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="格式化字符串漏洞">
-<meta name="twitter:description" content="格式化字符串漏洞原理及其利用">
+<meta name="twitter:description" content="简介在我们开始理解格式化字符串漏洞之前，我们必须得先知道什么是格式化字符串。一个格式化字符串也就是一个ASCII字符串，其包括了文本和格式参数。例如：
+printf(&amp;quot;My name is: %s&amp;quot;, &amp;quot;format&amp;quot;);
+该函数调用将返回字符串
+My name is: format
+该printf函数的第一个参数就是格式化字符串，它主要是依靠一个用来告诉">
 <meta name="twitter:image" content="http://p1.bqimg.com/567571/391177e9f1a56b9f.png">
 
 
@@ -311,8 +323,8 @@
       
 
       
-        <h1 id="格式化字符串漏洞原理及其利用"><a href="#格式化字符串漏洞原理及其利用" class="headerlink" title="格式化字符串漏洞原理及其利用"></a>格式化字符串漏洞原理及其利用</h1><a id="more"></a>
-<h2 id="0x00简介"><a href="#0x00简介" class="headerlink" title="0x00简介"></a>0x00简介</h2><p>在我们开始理解格式化字符串漏洞之前，我们必须得先知道什么是格式化字符串。一个格式化字符串也就是一个ASCII字符串，其包括了文本和格式参数。例如：</p>
+        <a id="more"></a>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在我们开始理解格式化字符串漏洞之前，我们必须得先知道什么是格式化字符串。一个格式化字符串也就是一个ASCII字符串，其包括了文本和格式参数。例如：</p>
 <pre><code>printf(&quot;My name is: %s&quot;, &quot;format&quot;);
 </code></pre><p>该函数调用将返回字符串</p>
 <pre><code>My name is: format
@@ -335,7 +347,7 @@ scanf(&quot;%s&quot;,str);
 printf(str)
 </code></pre><p>这个程序在printf处用了一种偷懒的写法。这看起来是没有什么问题。但是却产生了一个非常严重的漏洞。</p>
 <p>千万不要将printf中的format字符串的操纵权交给用户。保证printf函数的第一个参数是不可变的，在程序员的掌握中的。</p>
-<h2 id="0x01漏洞原理"><a href="#0x01漏洞原理" class="headerlink" title="0x01漏洞原理"></a>0x01漏洞原理</h2><h3 id="printf-函数的参数个数不固定"><a href="#printf-函数的参数个数不固定" class="headerlink" title="printf()函数的参数个数不固定"></a>printf()函数的参数个数不固定</h3><pre><code>#include &lt;stdio.h&gt;
+<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><h3 id="printf-函数的参数个数不固定"><a href="#printf-函数的参数个数不固定" class="headerlink" title="printf()函数的参数个数不固定"></a>printf()函数的参数个数不固定</h3><pre><code>#include &lt;stdio.h&gt;
 int main(void)
 {
 int a=1,b=2,c=3;
@@ -354,7 +366,7 @@ int main(int argc, char *argv[])
     printf(str);
     return 0;
 }
-</code></pre><p>有了上一个小例子的经验,我们可以直接尝试去读取str[]的内容呢<br>gdb调试,单步运行完call   0x8048340 <a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#58;&#x66;&#x67;&#101;&#116;&#x73;&#x40;&#112;&#108;&#x74;">&#x66;&#x67;&#101;&#116;&#x73;&#x40;&#112;&#108;&#x74;</a>后输入:AAAA%08x%08x%08x%08x%08x%08x</p>
+</code></pre><p>有了上一个小例子的经验,我们可以直接尝试去读取str[]的内容呢<br>gdb调试,单步运行完call   0x8048340 <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#x3a;&#102;&#103;&#x65;&#x74;&#x73;&#64;&#x70;&#108;&#x74;">&#102;&#103;&#x65;&#x74;&#x73;&#64;&#x70;&#108;&#x74;</a>后输入:AAAA%08x%08x%08x%08x%08x%08x</p>
 <p>这时候我们需要借助printf()函数的另一个重要的格式化字符参数%s,我们可以用%s来获取指针指向的内存数据。<br>那么我们就可以这么构造尝试去获取0x41414141地址上的数据:\x41\x41\x41\x41%08x%08x%08x%08x%08x%s</p>
 <p>到现在,我们可以利用格式化字符串漏洞读取内存的内容,看起来好像也没什么用啊,就是读个数据而已,我们能不能利用这个漏洞修改内存信息(比如说修改返回地址)从而劫持程序执行流程呢,这需要看printf()函数的另一个特性。</p>
 <h3 id="利用-n格式符写入数据"><a href="#利用-n格式符写入数据" class="headerlink" title="利用%n格式符写入数据"></a>利用%n格式符写入数据</h3><pre><code>#include &lt;stdio.h&gt;
@@ -386,7 +398,7 @@ After: num = 100
 <pre><code>printf(&quot;%.134512640d%n\n&quot;, num, &amp;num);
 printf(&quot;After: num = %x\n&quot;, num);
 </code></pre><p><img src="http://p1.bqimg.com/567571/d0a0072595782ea0.png" alt=""></p>
-<h2 id="0x02漏洞利用"><a href="#0x02漏洞利用" class="headerlink" title="0x02漏洞利用"></a>0x02漏洞利用</h2><p>这几天刚好遇到一道格式化字符串漏洞pwn题，就以它为例简介一下漏洞的利用，源码如下：</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>这几天刚好遇到一道格式化字符串漏洞pwn题，就以它为例简介一下漏洞的利用，源码如下：</p>
 <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;string.h&gt;
@@ -472,8 +484,8 @@ int main(int argc, char **argv)
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/10/18/安装pycrypto遇到的一系列问题总结/" rel="prev" title="安装pycrypto遇到的一系列问题总结">
-                安装pycrypto遇到的一系列问题总结 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/10/26/memset函数的用法/" rel="prev" title="memset函数的用法">
+                memset函数的用法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -551,7 +563,7 @@ int main(int argc, char **argv)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -564,7 +576,7 @@ int main(int argc, char **argv)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -604,7 +616,7 @@ int main(int argc, char **argv)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#格式化字符串漏洞原理及其利用"><span class="nav-number">1.</span> <span class="nav-text">格式化字符串漏洞原理及其利用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00简介"><span class="nav-number">1.1.</span> <span class="nav-text">0x00简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01漏洞原理"><span class="nav-number">1.2.</span> <span class="nav-text">0x01漏洞原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#printf-函数的参数个数不固定"><span class="nav-number">1.2.1.</span> <span class="nav-text">printf()函数的参数个数不固定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-n格式符写入数据"><span class="nav-number">1.2.2.</span> <span class="nav-text">利用%n格式符写入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义打印字符串宽度"><span class="nav-number">1.2.3.</span> <span class="nav-text">自定义打印字符串宽度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02漏洞利用"><span class="nav-number">1.3.</span> <span class="nav-text">0x02漏洞利用</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞原理"><span class="nav-number">2.</span> <span class="nav-text">漏洞原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#printf-函数的参数个数不固定"><span class="nav-number">2.1.</span> <span class="nav-text">printf()函数的参数个数不固定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-n格式符写入数据"><span class="nav-number">2.2.</span> <span class="nav-text">利用%n格式符写入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义打印字符串宽度"><span class="nav-number">2.3.</span> <span class="nav-text">自定义打印字符串宽度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">漏洞利用</span></a></li></ol></div>
             
 
           </div>

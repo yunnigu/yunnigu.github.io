@@ -81,16 +81,16 @@
 
 
 
-<meta name="description" content="pwn学习rop之x64篇">
+<meta name="description" content="linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn学习rop之x64篇">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/21/pwn学习rop之x64篇/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="pwn学习rop之x64篇">
-<meta property="og:updated_time" content="2016-11-28T13:21:02.074Z">
+<meta property="og:description" content="linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会">
+<meta property="og:updated_time" content="2020-04-27T08:42:26.255Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn学习rop之x64篇">
-<meta name="twitter:description" content="pwn学习rop之x64篇">
+<meta name="twitter:description" content="linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会">
 
 
 
@@ -300,8 +300,8 @@
       
 
       
-        <h1 id="pwn学习rop之x64篇"><a href="#pwn学习rop之x64篇" class="headerlink" title="pwn学习rop之x64篇"></a>pwn学习rop之x64篇</h1><a id="more"></a>
-<h2 id="0x00-linux-64与linux-86的区别"><a href="#0x00-linux-64与linux-86的区别" class="headerlink" title="0x00 linux_64与linux_86的区别"></a>0x00 linux_64与linux_86的区别</h2><p>linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会保存在栈上。</p>
+        <a id="more"></a>
+<h2 id="linux-64与linux-86的区别"><a href="#linux-64与linux-86的区别" class="headerlink" title="linux_64与linux_86的区别"></a>linux_64与linux_86的区别</h2><p>linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会保存在栈上。</p>
 <p>我们还是拿实际程序做例子进行讲解,test.c内容如下：</p>
 <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -441,7 +441,7 @@ payload = &quot;A&quot;*136 + p64(callsystem)
 p.send(payload)
 
 p.interactive()
-</code></pre><h2 id="0x02使用工具寻找gadgets"><a href="#0x02使用工具寻找gadgets" class="headerlink" title="0x02使用工具寻找gadgets"></a>0x02使用工具寻找gadgets</h2><p>我们之前提到x86中参数都是保存在栈上,但在x64中前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9寄存器里，如果还有更多的参数的话才会保存在栈上。所以我们需要寻找一些类似于 pop rdi; ret 的这种gadget。如果是简单的gadgets，我们可以通过objdump来查找。但当我们打算寻找一些复杂的gadgets的时候，还是借助于一些查找gadgets的工具比较方便。比较有名的工具有：</p>
+</code></pre><h2 id="使用工具寻找gadgets"><a href="#使用工具寻找gadgets" class="headerlink" title="使用工具寻找gadgets"></a>使用工具寻找gadgets</h2><p>我们之前提到x86中参数都是保存在栈上,但在x64中前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9寄存器里，如果还有更多的参数的话才会保存在栈上。所以我们需要寻找一些类似于 pop rdi; ret 的这种gadget。如果是简单的gadgets，我们可以通过objdump来查找。但当我们打算寻找一些复杂的gadgets的时候，还是借助于一些查找gadgets的工具比较方便。比较有名的工具有：</p>
 <pre><code>ROPEME: https://github.com/packz/ropeme
 Ropper: https://github.com/sashs/Ropper
 ROPgadget: https://github.com/JonathanSalwan/ROPgadget/tree/master
@@ -563,7 +563,7 @@ pop_pop_call_addr = 0x7f17c3ab2829
 [*] Switching to interactive mode
 $ id
 uid=1000(heyuan) gid=1000(heyuan) 组=1000(heyuan),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),113(lpadmin),128(sambashare),130(wireshark)
-</code></pre><h2 id="0x03-通用gadgets"><a href="#0x03-通用gadgets" class="headerlink" title="0x03 通用gadgets"></a>0x03 通用gadgets</h2><p>因为程序在编译过程中会加入一些通用函数用来进行初始化操作（比如加载libc.so的初始化函数），所以虽然很多程序的源码不同，但是初始化的过程是相同的，因此针对这些初始化函数，我们可以提取一些通用的gadgets加以使用，从而达到我们想要达到的效果。</p>
+</code></pre><h2 id="通用gadgets"><a href="#通用gadgets" class="headerlink" title="通用gadgets"></a>通用gadgets</h2><p>因为程序在编译过程中会加入一些通用函数用来进行初始化操作（比如加载libc.so的初始化函数），所以虽然很多程序的源码不同，但是初始化的过程是相同的，因此针对这些初始化函数，我们可以提取一些通用的gadgets加以使用，从而达到我们想要达到的效果。</p>
 <p>目标程序test5.c源码如下：</p>
 <pre><code>#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -754,8 +754,8 @@ p.send(payload3)
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/11/24/reverse之第一更/" rel="prev" title="reverse之第一更">
-                reverse之第一更 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/11/28/python基于numpy解方程组/" rel="prev" title="python基于numpy解方程组">
+                python基于numpy解方程组 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -833,7 +833,7 @@ p.send(payload3)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -846,7 +846,7 @@ p.send(payload3)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -886,7 +886,7 @@ p.send(payload3)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pwn学习rop之x64篇"><span class="nav-number">1.</span> <span class="nav-text">pwn学习rop之x64篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-linux-64与linux-86的区别"><span class="nav-number">1.1.</span> <span class="nav-text">0x00 linux_64与linux_86的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02使用工具寻找gadgets"><span class="nav-number">1.2.</span> <span class="nav-text">0x02使用工具寻找gadgets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-通用gadgets"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 通用gadgets</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#linux-64与linux-86的区别"><span class="nav-number">1.</span> <span class="nav-text">linux_64与linux_86的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用工具寻找gadgets"><span class="nav-number">2.</span> <span class="nav-text">使用工具寻找gadgets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用gadgets"><span class="nav-number">3.</span> <span class="nav-text">通用gadgets</span></a></li></ol></div>
             
 
           </div>
