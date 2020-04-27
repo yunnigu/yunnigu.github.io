@@ -87,15 +87,15 @@
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/08/19/RSAtools使用方法/index.html">
 <meta property="og:site_name" content="YungGong">
 <meta property="og:description" content="最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。">
-<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools4.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools3.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools2.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools1.png">
-<meta property="og:updated_time" content="2020-04-27T07:09:42.378Z">
+<meta property="og:updated_time" content="2020-04-27T08:04:02.266Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RSAtool使用方法">
 <meta name="twitter:description" content="最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。">
-<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools4.png">
+<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png">
 
 
 
@@ -313,7 +313,7 @@
 请解密出明文，提交时请将数字转化为ascii码提交
 比如你解出的明文是0x6162，那么请提交字符串ab
 提交格式:PCTF{明文字符串}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools4.png" alt=""></p>
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
 <p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
 <p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/blob/master/RSAtools3.png" alt=""></p>
