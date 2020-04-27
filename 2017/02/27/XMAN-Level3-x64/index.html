@@ -81,22 +81,16 @@
 
 
 
-<meta name="description" content="这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。
-由于本题目需要通过write泄漏实际地址，因此需要传递多个参数，rdx这个寄存器在程序中没有找到合适的gadget，但是通过调试会发现rdx这个值比较大，我们需要传入的也是一个较大的值便于进行write和read，这样就可以不用设置这样一个rdx的值。
-还有个问题是">
+<meta name="description" content="这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="XMAN-Level3-x64">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/27/XMAN-Level3-x64/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。
-由于本题目需要通过write泄漏实际地址，因此需要传递多个参数，rdx这个寄存器在程序中没有找到合适的gadget，但是通过调试会发现rdx这个值比较大，我们需要传入的也是一个较大的值便于进行write和read，这样就可以不用设置这样一个rdx的值。
-还有个问题是">
-<meta property="og:updated_time" content="2020-04-27T08:55:51.831Z">
+<meta property="og:description" content="这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。">
+<meta property="og:updated_time" content="2020-04-27T09:00:19.327Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XMAN-Level3-x64">
-<meta name="twitter:description" content="这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。
-由于本题目需要通过write泄漏实际地址，因此需要传递多个参数，rdx这个寄存器在程序中没有找到合适的gadget，但是通过调试会发现rdx这个值比较大，我们需要传入的也是一个较大的值便于进行write和read，这样就可以不用设置这样一个rdx的值。
-还有个问题是">
+<meta name="twitter:description" content="这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。">
 
 
 
@@ -306,8 +300,7 @@
       
 
       
-        <a id="more"></a>
-<p>这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。</p>
+        <p>这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。<br><a id="more"></a></p>
 <p>由于本题目需要通过write泄漏实际地址，因此需要传递多个参数，rdx这个寄存器在程序中没有找到合适的gadget，但是通过调试会发现rdx这个值比较大，我们需要传入的也是一个较大的值便于进行write和read，这样就可以不用设置这样一个rdx的值。</p>
 <p>还有个问题是在运行脚本的时候发现，目标机上程序调用的并不是给的那个库，而是libc.so.6。脚本如下：</p>
 <pre><code>from pwn import *

