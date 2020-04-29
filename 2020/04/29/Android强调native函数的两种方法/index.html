@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg">
-<meta property="og:updated_time" content="2020-04-29T06:13:18.682Z">
+<meta property="og:updated_time" content="2020-04-29T06:32:44.913Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android强调native函数的两种方法">
 <meta name="twitter:description" content="在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。">
@@ -364,7 +364,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-29T14:13:18+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2020-04-29T14:32:44+08:00">
                 2020-04-29
               </time>
             
@@ -497,43 +497,8 @@ include $(BUILD_SHARED_LIBRARY)
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg" alt=""></p>
 <p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
-<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso</p>
-<pre><code>public class MainActivity extends Activity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        System.loadLibrary(&quot;hookso&quot;);
-
-        float value =TypedValue.complexToFloat(55297);
-        Log.e(&quot;DEBUG&quot;, &quot;: &quot; + value);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            JNI.testfunc();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-}
-
-
-public class JNI
+<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<pre><code>public class JNI
 {
     public static native void testfunc();
 }

