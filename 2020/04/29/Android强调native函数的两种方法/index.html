@@ -116,7 +116,7 @@
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg">
-<meta property="og:updated_time" content="2020-04-29T03:43:54.448Z">
+<meta property="og:updated_time" content="2020-04-29T03:48:25.728Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android强调native函数的两种方法">
 <meta name="twitter:description" content="在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。">
@@ -362,7 +362,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-29T11:43:54+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2020-04-29T11:48:25+08:00">
                 2020-04-29
               </time>
             
@@ -402,11 +402,11 @@
 
       
         <p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
-<p>#通过导出函数调用native函数<br>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
-<p>##寻找导出函数<br>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
+<h1 id="通过导出函数调用native函数"><a href="#通过导出函数调用native函数" class="headerlink" title="通过导出函数调用native函数"></a>通过导出函数调用native函数</h1><p>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
+<h2 id="寻找导出函数"><a href="#寻找导出函数" class="headerlink" title="寻找导出函数"></a>寻找导出函数</h2><p>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
 <p>接下来在so中导出函数中该native函数</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
-<p>##编写Android APP<br>自己写一个带按钮的APP，调用该函数</p>
+<h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
 <pre><code>public class MainActivity extends Activity 
 {
     public Button button;
@@ -469,9 +469,10 @@
 {
     private static native String aesEncode(String str, String str2);
 }
-</code></pre><p>##jni配置<br>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
-<p>###Android.mk<br>    LOCAL_PATH := $(call my-dir)</p>
-<pre><code>include $(CLEAR_VARS)
+</code></pre><h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
+<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><pre><code>LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE := Aes
 LOCAL_SRC_FILES := libAes.so
 include $(PREBUILT_SHARED_LIBRARY)
@@ -485,12 +486,11 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := my_objectname
 LOCAL_SRC_FILES := my_objectname.cpp
 include $(BUILD_SHARED_LIBRARY)
-</code></pre><p>###Application.mk<br>    APP_ABI := armeabi-v7a</p>
-<p>###my_objectname.app<br>里面写#include<jni.h>即可</jni.h></p>
+</code></pre><h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><pre><code>APP_ABI := armeabi-v7a
+</code></pre><h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
 <p>最后将APP安装到手机上运行即可输出调用结果</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
-<p>#通过函数地址调用native函数</p>
-
+<h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1>
       
     </div>
     
@@ -613,8 +613,17 @@ include $(BUILD_SHARED_LIBRARY)
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -710,6 +719,22 @@ include $(BUILD_SHARED_LIBRARY)
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#通过导出函数调用native函数"><span class="nav-number">1.</span> <span class="nav-text">通过导出函数调用native函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#寻找导出函数"><span class="nav-number">1.1.</span> <span class="nav-text">寻找导出函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写Android-APP"><span class="nav-number">1.2.</span> <span class="nav-text">编写Android APP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jni配置"><span class="nav-number">1.3.</span> <span class="nav-text">jni配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-mk"><span class="nav-number">1.3.1.</span> <span class="nav-text">Android.mk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Application-mk"><span class="nav-number">1.3.2.</span> <span class="nav-text">Application.mk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#my-objectname-app"><span class="nav-number">1.3.3.</span> <span class="nav-text">my_objectname.app</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通过函数地址调用native函数"><span class="nav-number">2.</span> <span class="nav-text">通过函数地址调用native函数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

