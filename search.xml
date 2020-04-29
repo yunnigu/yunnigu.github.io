@@ -2617,6 +2617,44 @@ if __name__==&apos;__main__&apos;:
       </tags>
   </entry>
   <entry>
+    <title>reverse之第四更</title>
+    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
+    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
+<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
+<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
+<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
+<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
+<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
+<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
+<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
+<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
+<p>解密脚本如下:</p>
+<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
+aList=a.split(&apos; &apos;)
+oriList=[]
+for i in aList:
+    oriList.append((int(i,16)-4)&amp;0xff)
+print(oriList)
+f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
+ctfdata=f.read()
+f.close()
+
+f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
+validData=ctfdata[0x2d:]
+for i in range(0,len(validData)):
+    data=int(validData[i].encode(&apos;hex&apos;),16)
+    tmp=data^oriList[i%16]
+    f.write(chr(tmp))
+    oriList[i%16]+=1
+    oriList[i%16]=oriList[i%16]&amp;0xff
+f.close()
+</code></pre>]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>reverse第二更之问鼎杯2106-6-2</title>
     <url>/2016/12/05/reverse%E7%AC%AC%E4%BA%8C%E6%9B%B4%E4%B9%8B%E9%97%AE%E9%BC%8E%E6%9D%AF2106-6-2/</url>
     <content><![CDATA[<p>题目提供了一个exe程序和一个文本readme.txt，txt内容如下：<br><a id="more"></a></p>
@@ -2675,44 +2713,6 @@ name[5]=&apos;b&apos;,name[9]=&apos;0&apos;,name[10]=&apos;_&apos;,name[11]=&apo
 32     }
 33     //return result;
 34 }
-</code></pre>]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>reverse之第四更</title>
-    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
-    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
-<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
-<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
-<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
-<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
-<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
-<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
-<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
-<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
-<p>解密脚本如下:</p>
-<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
-aList=a.split(&apos; &apos;)
-oriList=[]
-for i in aList:
-    oriList.append((int(i,16)-4)&amp;0xff)
-print(oriList)
-f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
-ctfdata=f.read()
-f.close()
-
-f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
-validData=ctfdata[0x2d:]
-for i in range(0,len(validData)):
-    data=int(validData[i].encode(&apos;hex&apos;),16)
-    tmp=data^oriList[i%16]
-    f.write(chr(tmp))
-    oriList[i%16]+=1
-    oriList[i%16]=oriList[i%16]&amp;0xff
-f.close()
 </code></pre>]]></content>
       <tags>
         <tag>writeup</tag>
