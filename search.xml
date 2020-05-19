@@ -1,39 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>RSAtool使用方法</title>
-    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
-<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
-<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
-已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
-(N=322831561921859 e = 23)
-请解密出明文，提交时请将数字转化为ascii码提交
-比如你解出的明文是0x6162，那么请提交字符串ab
-提交格式:PCTF{明文字符串}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
-<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
-<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
-<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
-<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
-<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
-p = 3487583947589437589237958723892346254777 
-q = 8767867843568934765983476584376578389
-e = 65537
-求d = 
-请提交PCTF{d}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
-<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
-]]></content>
-      <tags>
-        <tag>密码学</tag>
-        <tag>工具</tag>
-        <tag>writeup</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android强调native函数的两种方法</title>
     <url>/2020/04/29/Android%E5%BC%BA%E8%B0%83native%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
@@ -66,6 +33,39 @@ e = 65537
         <tag>Android</tag>
         <tag>Tools</tag>
         <tag>eclipse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RSAtool使用方法</title>
+    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
+<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
+<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
+已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
+(N=322831561921859 e = 23)
+请解密出明文，提交时请将数字转化为ascii码提交
+比如你解出的明文是0x6162，那么请提交字符串ab
+提交格式:PCTF{明文字符串}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
+<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
+<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
+<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
+<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
+<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
+p = 3487583947589437589237958723892346254777 
+q = 8767867843568934765983476584376578389
+e = 65537
+求d = 
+请提交PCTF{d}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
+<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+]]></content>
+      <tags>
+        <tag>密码学</tag>
+        <tag>工具</tag>
+        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -1833,26 +1833,6 @@ print(flag)
       </tags>
   </entry>
   <entry>
-    <title>reverse之第六更</title>
-    <url>/2017/01/24/reverse%E4%B9%8B%E7%AC%AC%E5%85%AD%E6%9B%B4/</url>
-    <content><![CDATA[<p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br><a id="more"></a></p>
-<p><img src="http://p1.bpimg.com/567571/70a93b006a742471.png" alt=""></p>
-<p>loc_402000是验证flag是否正确的函数，点开一看。。。一脸懵逼</p>
-<p><img src="http://p1.bqimg.com/567571/b0ab23cb23308271.png" alt=""></p>
-<p>应该是SMC，所谓SMC就是相当于把某些重要函数在二进制文件中进行加密，这些函数在程序执行的时候会动态解密。然而OD中会出现反调试。</p>
-<p>接下来运行程序，然后将之debugger attach到IDA上，加密数据段就解密了，不过可能是我的IDA的问题，这个过程十分漫长。。。。。。。</p>
-<p>加载完成之后</p>
-<p><img src="http://p1.bpimg.com/567571/e2027be2a13e885b.png" alt=""></p>
-<p>在loc_402000位置创建一下函数，F5反编译。发现这个函数首先为得到re1DLL.dll的Trololololololol数组，然后不断将用户输入与Trololololololol数组中的某些元素进行比较，前面一些比较指令相对比较简单，得到了flag的前半部分ISCC{N3v3r_7r4apped_6y_4nt!_XXXXX}<br>最后的XXXXX是通过re1DLL.dll的Derpaherp函数进行set的</p>
-<p> <img src="http://i1.piimg.com/567571/c77f2dcf766c9a0c.png" alt=""></p>
-<p>Derpaherp是有三个参数的，这里只有一个是IDA F5的锅，调到汇编仍然可以看到调用Derpaherp之前push了三个参数，最后会有一个strcmp，v13和unk_405048比较，我把unk_405048导出来发现其为ad42f6697b035b7580e4fef93be20b4d，是Md5，拖入cmd5.com跑了一下，跑出来是debug。由此也可以断定Derpaherp内部其实是实现了Md5计算，所以最后的flag为ISCC{N3v3r_7r4apped_6y_4nt!_debug}</p>
-]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>reverse之第九更</title>
     <url>/2017/02/04/reverse%E4%B9%8B%E7%AC%AC%E4%B9%9D%E6%9B%B4/</url>
     <content><![CDATA[<p>转载来自看雪论坛@PEdiy.com<br><a id="more"></a></p>
@@ -2408,6 +2388,26 @@ print(flag)
 00403B41    58              POP EAX
 //去花指令之后
 </code></pre><p>综上所述：14位连接一起就是注册码，因此注册码为”codebywidesoft”。</p>
+]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>reverse之第六更</title>
+    <url>/2017/01/24/reverse%E4%B9%8B%E7%AC%AC%E5%85%AD%E6%9B%B4/</url>
+    <content><![CDATA[<p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br><a id="more"></a></p>
+<p><img src="http://p1.bpimg.com/567571/70a93b006a742471.png" alt=""></p>
+<p>loc_402000是验证flag是否正确的函数，点开一看。。。一脸懵逼</p>
+<p><img src="http://p1.bqimg.com/567571/b0ab23cb23308271.png" alt=""></p>
+<p>应该是SMC，所谓SMC就是相当于把某些重要函数在二进制文件中进行加密，这些函数在程序执行的时候会动态解密。然而OD中会出现反调试。</p>
+<p>接下来运行程序，然后将之debugger attach到IDA上，加密数据段就解密了，不过可能是我的IDA的问题，这个过程十分漫长。。。。。。。</p>
+<p>加载完成之后</p>
+<p><img src="http://p1.bpimg.com/567571/e2027be2a13e885b.png" alt=""></p>
+<p>在loc_402000位置创建一下函数，F5反编译。发现这个函数首先为得到re1DLL.dll的Trololololololol数组，然后不断将用户输入与Trololololololol数组中的某些元素进行比较，前面一些比较指令相对比较简单，得到了flag的前半部分ISCC{N3v3r_7r4apped_6y_4nt!_XXXXX}<br>最后的XXXXX是通过re1DLL.dll的Derpaherp函数进行set的</p>
+<p> <img src="http://i1.piimg.com/567571/c77f2dcf766c9a0c.png" alt=""></p>
+<p>Derpaherp是有三个参数的，这里只有一个是IDA F5的锅，调到汇编仍然可以看到调用Derpaherp之前push了三个参数，最后会有一个strcmp，v13和unk_405048比较，我把unk_405048导出来发现其为ad42f6697b035b7580e4fef93be20b4d，是Md5，拖入cmd5.com跑了一下，跑出来是debug。由此也可以断定Derpaherp内部其实是实现了Md5计算，所以最后的flag为ISCC{N3v3r_7r4apped_6y_4nt!_debug}</p>
 ]]></content>
       <tags>
         <tag>writeup</tag>
@@ -3504,12 +3504,12 @@ print flag
 <p>小小脚本，不成敬意</p>
 <h2 id="比较libdvm-so"><a href="#比较libdvm-so" class="headerlink" title="比较libdvm.so"></a>比较libdvm.so</h2><p>在获取到两个libdvm.so之后通过BeyondCompare进行比较</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png" alt=""></p>
-<p>通过比较可以看出在加固的APP运行之后，libdvm.so被改了几部分数据，并不是所有修改的地方都和反调试有关，通过IDA对照便宜去看看都改了什么地方，最终发现与java调试相关的修改地址为0x423B0，当然其他地方也有一些小惊喜，比如梆梆&amp;爱加密抽取函数所hook的函数什么的。</p>
+<p>通过比较可以看出在加固的APP运行之后，libdvm.so被改了几部分数据，并不是所有不同的地方都和反调试有关，通过IDA对照便宜去看看都改了什么地方，最终发现与java调试相关的地址为0x423B0，当然其他地方也有一些小惊喜，比如梆梆&amp;爱加密抽取函数所hook的函数什么的。</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug2.png" alt=""></p>
 <p>_Z12dvmDbgActivev是java调试相关函数，主要功能是啥我也不是很清楚，有清楚的大佬希望可以留言告知一下，万分感谢。</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug7.jpg" alt=""></p>
-<p>由此可见加固APP是通过hook _Z12dvmDbgActivev函数使其跳转到它自己构造的函数，并且在其中将进程kill掉防止调试。那么我们只要将修改之后的libdvm.so再修改回来，让其正常运行_Z12dvmDbgActivev函数，就可以绕过反调试了。</p>
-<h2 id="修改libdvm-so"><a href="#修改libdvm-so" class="headerlink" title="修改libdvm.so"></a>修改libdvm.so</h2><p>这里通过frida hook _Z12dvmDbgActivev函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
+<p>由此可见加固APP是通过hook _Z12dvmDbgActivev函数使其跳转到它自己构造的函数，并且在其中将进程kill掉防止调试。那么我们只要将Hook之后的libdvm.so再Hook修改为原函数，让其正常运行_Z12dvmDbgActivev函数，就可以绕过反调试了。</p>
+<h2 id="Hook-libdvm-so"><a href="#Hook-libdvm-so" class="headerlink" title="Hook libdvm.so"></a>Hook libdvm.so</h2><p>这里通过frida hook _Z12dvmDbgActivev函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libdvm.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x000423C0);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x0D,0x4B,0x0E,0x4A,0x7B,0x44,0x10,0xB5,0x9C,0x58,0x94,0xF8,0xC6,0x33];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
 <p>frida hook之后结果</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug10.png" alt=""></p>
@@ -3518,12 +3518,12 @@ print flag
 <h1 id="Art虚拟机下的反调试绕过"><a href="#Art虚拟机下的反调试绕过" class="headerlink" title="Art虚拟机下的反调试绕过"></a>Art虚拟机下的反调试绕过</h1><h2 id="获取libart-so"><a href="#获取libart-so" class="headerlink" title="获取libart.so"></a>获取libart.so</h2><p>art虚拟机下的反调试绕过同上述的dalvik方法相同，只是关键的运行库libdvm.so替换为libart.so,同样要去/system/lib目录下将其提取到本地，这里需要注意的是在提取之前要确认运行的是libart.so还是libart64.so。</p>
 <h2 id="比较libart-so"><a href="#比较libart-so" class="headerlink" title="比较libart.so"></a>比较libart.so</h2><p>在获取到两个libart.so之后通过BeyondCompare进行比较</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug6.png" alt=""></p>
-<p>最终确认反调试修改地址为0x10ABC4</p>
+<p>最终确认反调试Hook地址为0x10ABC4</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug4.png" alt=""></p>
 <p>_ZN3art3Dbg8GoActiveEv函数功能同Dalvik中_Z12dvmDbgActivev函数功能类似，绕过方法与Dalvik保持一致。</p>
-<h2 id="修改libart-so"><a href="#修改libart-so" class="headerlink" title="修改libart.so"></a>修改libart.so</h2><p>这里通过frida hook _ZN3art3Dbg8GoActiveEv函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
+<h2 id="Hook-libart-so"><a href="#Hook-libart-so" class="headerlink" title="Hook libart.so"></a>Hook libart.so</h2><p>这里通过frida hook _ZN3art3Dbg8GoActiveEv函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libart.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x00115BC4);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x2D, 0xE9, 0xF0, 0x4F, 0x9B, 0xB0, 0xDF, 0xF8, 0xBC, 0x0D, 0xDF, 0xF8, 0xBC, 0x1D];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
-<p>#总结<br>目前在脱壳之后遇到java反调试，皆可用对比libdvm.so&amp;libart.so寻找差异点将其修复绕过反调试，感兴趣的大佬可以通过其他被hook的函数研究加固或者函数抽取的原理。</p>
+<p>#总结<br>这里再简述一下反调试的原理，壳APP通过Hook libdvm.so&amp;libart.so中的_Z12dvmDbgActivev&amp;_ZN3art3Dbg8GoActiveEv函数，使其跳转到自己写的函数中执行kill操作导致无法调试。<br>目前在脱壳之后遇到java反调试，皆可用对比libdvm.so&amp;libart.so寻找差异点将其修复绕过反调试，感兴趣的大佬可以通过其他被hook的函数研究加固或者函数抽取的原理。</p>
 ]]></content>
       <tags>
         <tag>Android</tag>
