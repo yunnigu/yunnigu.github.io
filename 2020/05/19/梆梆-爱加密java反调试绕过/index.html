@@ -107,22 +107,25 @@
 
 
 
-<meta name="description" content="本篇主要整理一下在调试梆梆&amp;amp;爱加密过程中遇到的java层反调试，各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现居然还有java层反调试的日了狗的感觉，干它">
+<meta name="description" content="各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;amp;爱加密过程中遇到的java层反调试以及绕过的方式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="梆梆&爱加密java反调试绕过">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/05/19/梆梆-爱加密java反调试绕过/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="本篇主要整理一下在调试梆梆&amp;amp;爱加密过程中遇到的java层反调试，各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现居然还有java层反调试的日了狗的感觉，干它">
+<meta property="og:description" content="各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;amp;爱加密过程中遇到的java层反调试以及绕过的方式">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug9.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug2.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug7.jpg">
-<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug10.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug8.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug6.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug4.png">
-<meta property="og:updated_time" content="2020-05-19T03:34:29.132Z">
+<meta property="og:updated_time" content="2020-05-19T05:30:33.254Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="梆梆&爱加密java反调试绕过">
-<meta name="twitter:description" content="本篇主要整理一下在调试梆梆&amp;amp;爱加密过程中遇到的java层反调试，各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现居然还有java层反调试的日了狗的感觉，干它">
+<meta name="twitter:description" content="各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;amp;爱加密过程中遇到的java层反调试以及绕过的方式">
 <meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug.jpg">
 
 
@@ -365,7 +368,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-05-19T11:34:29+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2020-05-19T13:30:33+08:00">
                 2020-05-19
               </time>
             
@@ -404,25 +407,31 @@
       
 
       
-        <p>本篇主要整理一下在调试梆梆&amp;爱加密过程中遇到的java层反调试，各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现居然还有java层反调试的日了狗的感觉，干它<br><a id="more"></a></p>
-<h1 id="Dalvik虚拟机下的反调试绕过"><a href="#Dalvik虚拟机下的反调试绕过" class="headerlink" title="Dalvik虚拟机下的反调试绕过"></a>Dalvik虚拟机下的反调试绕过</h1><p>虽然Dalvik已经在逐步退出市场，但是这里还是由他开始，大家都知道Dalvik的核心库是libdvm.so，在调试的过程中与APP建立连接少不了对libdvm.so的引用，因此libdvm.so几乎是最有嫌疑的地方。</p>
+        <p>各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;爱加密过程中遇到的java层反调试以及绕过的方式<br><a id="more"></a></p>
+<p>在将梆梆&amp;爱加密脱壳之后通过AS调试APP遇到反调试挂载失败，只要debug便会杀掉APP进程</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug.jpg" alt=""></p>
+<h1 id="Dalvik虚拟机下的反调试绕过"><a href="#Dalvik虚拟机下的反调试绕过" class="headerlink" title="Dalvik虚拟机下的反调试绕过"></a>Dalvik虚拟机下的反调试绕过</h1><p>虽然Dalvik已经在逐步退出市场，但是这里还是由他开始，大家都知道Dalvik的核心库是libdvm.so，在调试的过程中与APP建立连接少不了对libdvm.so的引用，因此libdvm.so几乎是最有嫌疑的地方。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug9.png" alt=""></p>
 <h2 id="获取libdvm-so"><a href="#获取libdvm-so" class="headerlink" title="获取libdvm.so"></a>获取libdvm.so</h2><p>所谓获取libdvm.so需要获取APP未启动时libdvm.so源文件，这里只要去/system/lib目录下将其提取到本地即可。<br>其次需要加固APP运行时libdvm.so，这里我通过IDA动态挂载APP之后将其从内存中dump出来。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">auto</span> fp, begin, end, dexbyte;</div><div class="line">  fp = fopen(<span class="string">"D:\\dump.so"</span>, <span class="string">"wb"</span>);</div><div class="line">  begin = <span class="number">0x786A0000</span>;</div><div class="line">  end = begin + <span class="number">0x67000</span> ;</div><div class="line">  <span class="keyword">for</span> ( dexbyte = begin; dexbyte &lt; end; dexbyte ++ )</div><div class="line">      fputc(Byte(dexbyte), fp);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>小小脚本，不成敬意</p>
 <h2 id="比较libdvm-so"><a href="#比较libdvm-so" class="headerlink" title="比较libdvm.so"></a>比较libdvm.so</h2><p>在获取到两个libdvm.so之后通过BeyondCompare进行比较</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png" alt=""></p>
-<p>通过比较可以看出在加固的APP运行之后，libdvm.so被改了一些数据，通过IDA对照便宜去看看都改了什么地方，最终发现与java调试相关的函数，当然其他地方也有一些小惊喜，比如梆梆&amp;爱加密抽取函数所hook的函数什么的。</p>
+<p>通过比较可以看出在加固的APP运行之后，libdvm.so被改了几部分数据，并不是所有修改的地方都和反调试有关，通过IDA对照便宜去看看都改了什么地方，最终发现与java调试相关的修改地址为0x423B0，当然其他地方也有一些小惊喜，比如梆梆&amp;爱加密抽取函数所hook的函数什么的。</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug2.png" alt=""></p>
 <p>_Z12dvmDbgActivev是java调试相关函数，主要功能是啥我也不是很清楚，有清楚的大佬希望可以留言告知一下，万分感谢。</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug7.jpg" alt=""></p>
 <p>由此可见加固APP是通过hook _Z12dvmDbgActivev函数使其跳转到它自己构造的函数，并且在其中将进程kill掉防止调试。那么我们只要将修改之后的libdvm.so再修改回来，让其正常运行_Z12dvmDbgActivev函数，就可以绕过反调试了。</p>
 <h2 id="修改libdvm-so"><a href="#修改libdvm-so" class="headerlink" title="修改libdvm.so"></a>修改libdvm.so</h2><p>这里通过frida hook _Z12dvmDbgActivev函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libdvm.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x000423C0);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x0D,0x4B,0x0E,0x4A,0x7B,0x44,0x10,0xB5,0x9C,0x58,0x94,0xF8,0xC6,0x33];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
+<p>frida hook之后结果</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug10.png" alt=""></p>
+<p>反调试以及绕过啦！！！</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug8.png" alt=""></p>
 <h1 id="Art虚拟机下的反调试绕过"><a href="#Art虚拟机下的反调试绕过" class="headerlink" title="Art虚拟机下的反调试绕过"></a>Art虚拟机下的反调试绕过</h1><h2 id="获取libart-so"><a href="#获取libart-so" class="headerlink" title="获取libart.so"></a>获取libart.so</h2><p>art虚拟机下的反调试绕过同上述的dalvik方法相同，只是关键的运行库libdvm.so替换为libart.so,同样要去/system/lib目录下将其提取到本地，这里需要注意的是在提取之前要确认运行的是libart.so还是libart64.so。</p>
 <h2 id="比较libart-so"><a href="#比较libart-so" class="headerlink" title="比较libart.so"></a>比较libart.so</h2><p>在获取到两个libart.so之后通过BeyondCompare进行比较</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png" alt=""></p>
-<p>最终确认反调试修改地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug6.png" alt=""></p>
+<p>最终确认反调试修改地址为0x10ABC4</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug4.png" alt=""></p>
 <p>_ZN3art3Dbg8GoActiveEv函数功能同Dalvik中_Z12dvmDbgActivev函数功能类似，绕过方法与Dalvik保持一致。</p>
 <h2 id="修改libart-so"><a href="#修改libart-so" class="headerlink" title="修改libart.so"></a>修改libart.so</h2><p>这里通过frida hook _ZN3art3Dbg8GoActiveEv函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
