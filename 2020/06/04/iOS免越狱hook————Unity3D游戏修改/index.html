@@ -115,7 +115,11 @@
 <meta property="og:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg">
-<meta property="og:updated_time" content="2020-06-04T07:01:02.808Z">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook5.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook6.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook7.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook8.png">
+<meta property="og:updated_time" content="2020-06-04T07:54:55.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS免越狱hook————Unity3D游戏修改">
 <meta name="twitter:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
@@ -361,7 +365,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-06-04T15:01:02+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2020-06-04T15:54:55+08:00">
                 2020-06-04
               </time>
             
@@ -416,6 +420,36 @@
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg" alt=""></p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg" alt=""></p>
 <h2 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h2><p>首先我们需要砸壳后的ipa进行分析，定位到底需要修改什么。</p>
+<p>端口转发</p>
+<pre><code>iproxy 2222 22
+</code></pre><p>首先通过frida查找要砸壳的APP进程</p>
+<pre><code>Mac-mini:frida-ios-dump-master-2 $ frida-ps -U
+ PID  Name
+----  -------------------------------------------------
+2911  App Store
+2947  信息
+2980  密室逃脱绝境系列11游乐园
+2936  微信
+2972  设置
+2949  邮件
+2814  AppleIDAuthAgent
+1412  AssetCacheLocatorService
+</code></pre><p>接着运行dump.py即可脱壳</p>
+<pre><code>Mac-mini:frida-ios-dump-master-2 $ python2 dump.py 密室逃脱绝境系列11游乐园
+Start the target app 密室逃脱绝境系列11游乐园
+Dumping 密室逃脱绝境系列11游乐园 to /var/folders/m7/g2v2sbfd19g9kg7sk20n639h0000gn/T
+start dump /var/containers/Bundle/Application/617F2079-957E-4005-92B8-7573FE651A8E/app1.app/app1
+app1.fid: 100%|███████████████████████████████████████████████████████████████| 35.7M/35.7M [00:07&lt;00:00, 5.03MB/s]
+InfoPlist.strings: 213MB [00:44, 4.97MB/s]                                                                         
+0.00B [00:00, ?B/s]Generating &quot;密室逃脱绝境系列11游乐园.ipa&quot;
+</code></pre><h2 id="Unity3D符号表恢复"><a href="#Unity3D符号表恢复" class="headerlink" title="Unity3D符号表恢复"></a>Unity3D符号表恢复</h2><p>在做这一步操作之前，机智的人已经将可执行文件脱到IDA文件中开始分析了，APP脱壳后解压ipa，然后查看app1包内容，主程序可执行文件使我们首要分析目标，一般来说是整个包中最大的那个文件。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook5.jpg" alt=""></p>
+<p>在IDA分析的过程中，我们刚好通过Il2CppDumper来提取符号表，提取符号表需要两个文件，一个是上述的主程序可执行文件，另一个则是符号表文件global-metadata.dat，iOS下该文件位于xxx.app/Data/Managed/Metadata目录下</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook6.jpg" alt=""></p>
+<p>先后选择两个文件之后，程序跳出需要输入Unity version</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook7.png" alt=""></p>
+<p>我们怎么确认到底是用了什么版本的Unity呢，之前一个大佬告诉我只要在IDA里搜索字符串X-Unity-Version即可，调用的地方会出现版本号，我们要找的版本号即2018.4.3f1</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook8.png" alt=""></p>
 
       
     </div>
@@ -659,7 +693,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity3D符号表恢复"><span class="nav-number">2.2.</span> <span class="nav-text">Unity3D符号表恢复</span></a></li></ol></li></ol></div>
             
 
           </div>
