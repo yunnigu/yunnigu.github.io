@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="ctf,工具," />
+  <meta name="keywords" content="iOS,Hook,Unity3D," />
 
 
 
@@ -107,19 +107,19 @@
 
 
 
-<meta name="description" content="Xortool.py是一款基于python的脚本，用来完成一些xor分析。">
+<meta name="description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="xortool的安装使用">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/10/05/xortool的安装使用/index.html">
+<meta property="og:title" content="iOS免越狱hook————Unity3D游戏修改">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="Xortool.py是一款基于python的脚本，用来完成一些xor分析。">
-<meta property="og:image" content="https://www.aldeid.com/wiki/Xortool">
-<meta property="og:image" content="http://i1.piimg.com/567571/6931a5b710e21777.png">
-<meta property="og:updated_time" content="2020-04-27T08:15:32.378Z">
+<meta property="og:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg">
+<meta property="og:updated_time" content="2020-06-04T07:01:02.808Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="xortool的安装使用">
-<meta name="twitter:description" content="Xortool.py是一款基于python的脚本，用来完成一些xor分析。">
-<meta name="twitter:image" content="https://www.aldeid.com/wiki/Xortool">
+<meta name="twitter:title" content="iOS免越狱hook————Unity3D游戏修改">
+<meta name="twitter:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
+<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg">
 
 
 
@@ -149,13 +149,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2016/10/05/xortool的安装使用/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/"/>
 
 
 
 
 
-  <title>xortool的安装使用 | YungGong</title>
+  <title>iOS免越狱hook————Unity3D游戏修改 | YungGong</title>
   
 
 
@@ -316,7 +316,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2016/10/05/xortool的安装使用/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -333,7 +333,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">xortool的安装使用</h1>
+          <h1 class="post-title" itemprop="name headline">iOS免越狱hook————Unity3D游戏修改</h1>
         
 
         <div class="post-meta">
@@ -345,8 +345,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-05T10:35:13+08:00">
-                2016-10-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-04T13:36:20+08:00">
+                2020-06-04
               </time>
             
 
@@ -361,8 +361,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-27T16:15:32+08:00">
-                2020-04-27
+              <time title="更新于" itemprop="dateModified" datetime="2020-06-04T15:01:02+08:00">
+                2020-06-04
               </time>
             
           </span>
@@ -400,32 +400,22 @@
       
 
       
-        <p>Xortool.py是一款基于python的脚本，用来完成一些xor分析。<br><a id="more"></a></p>
-<h2 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h2><ul>
-<li>猜想key的长度</li>
-<li>猜想key的值</li>
-<li><p>解密一些经过xoe加密的文件</p>
-<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>xortool依赖于python的命令行参数解释器docopt。</p>
-<p>  $ sudo pip install docopt<br>Then install xortool:</p>
-<p>  $ cd /data/src/<br>  $ git clone <a href="https://github.com/hellman/xortool.git" target="_blank" rel="external">https://github.com/hellman/xortool.git</a><br>  $ cd xortool/<br>  $ sudo python setup.py install</p>
-<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2></li>
+        <p>所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。</p>
+<a id="more"></a>
+<h1 id="工欲善其事必先利其器"><a href="#工欲善其事必先利其器" class="headerlink" title="工欲善其事必先利其器"></a>工欲善其事必先利其器</h1><ul>
+<li>越狱iPhone(必须)<br>虽然最终修改之后的APP是要装到非越狱的iPhone上，但是APP需要砸壳，外加PP助手下架之后没啥好地方下载砸壳之后的ipa了，因此必须要有一部越狱的iPhone。</li>
+<li>未越狱iPhone<br>这个不用说了，目标APP安装</li>
+<li>MonKeyDev<br>AloneMonkey大佬的作品，Hook插件编写神器，大佬还在其中集成了iOSOpenDev，同时也是非越狱插件开发集成的神器。<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%AE%89%E8%A3%85" target="_blank" rel="external">官方安装指南</a></li>
+<li>frida-ios-dump<br>AloneMonkey大佬的又一力作，砸壳神器，iOS逆向一年多了，目前为止无往不利<br>iOS frida安装 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">官方安装指南</a><br>frida-ios-dump使用 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">项目地址</a></li>
+<li>IDA<br>分析砸壳后的APP，导入符号表python脚本方便分析</li>
+<li>Il2CppDumper<br><a href="https://github.com/Perfare/Il2CppDumper" target="_blank" rel="external">项目地址</a><br>Unity3D游戏分析利器，Unity转换成IL2CPP的符号表提取工具，目前只支持Windows平台，最终生成的符号表脚本导入IDA用</li>
+<li>IPAPatch<br><a href="https://github.com/Naituw/IPAPatch" target="_blank" rel="external">项目地址</a><br>用于重新打包签名ipa并安装到非越狱iPhone上，非常强大。如果不想写Hook插件，也可以采取修改汇编的方式重新打包安装ipa</li>
+<li>汇编码转换器<br><a href="http://www.pc6.com/softview/SoftView_594816.html" target="_blank" rel="external">下载地址</a><br>各种类型汇编代码生成机器码的工具，方便静态修改可执行文件，重打包签名安装</li>
 </ul>
-<h3 id="Options"><a href="#Options" class="headerlink" title="Options"></a>Options</h3><pre><code>-l,--key-length
-    length of the key (integer)
--c,--char
-    most possible char (one char or hex code)
--m,--max-keylen=32
-    maximum key length to probe (integer)
--x,--hex
-    input is hex-encoded str
--b,--brute-chars
-    brute force all possible characters
--o,--brute-printable
-    same as -b but will only use printable characters for keys
-</code></pre><h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><p>详细功能参见<br><img src="https://www.aldeid.com/wiki/Xortool" alt="官方说明"><br>这里和大家分享一个解密文件的功能，在xortool里有一个名为xortool-xor的文件，它可以将xor加密的文件解密。</p>
-<p>有一个加密的文件为flag.encrypted,异或加密的密钥是dc647eb65e6711e155375218212b3964，</p>
-<p><img src="http://i1.piimg.com/567571/6931a5b710e21777.png" alt=""></p>
-<p>这样就解密了。。。</p>
+<h1 id="抽丝剥茧"><a href="#抽丝剥茧" class="headerlink" title="抽丝剥茧"></a>抽丝剥茧</h1><p>如果上诉工具全都准备齐全，那么就就可以开始逆向工作了，作为一个侦探密，平时喜欢玩一些密室游戏，今天修改的这款游戏叫做密室逃脱绝境系列–游乐园，不得不说情节设计的很不错，在一次尝试使用提示功能时，突然发现需要金币，然而免费金币需要看广告，每次只给一枚，但是提示的话费确实逐渐增长的，感觉有被冒犯到，所以有了接下来的一切。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg" alt=""></p>
+<h2 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h2><p>首先我们需要砸壳后的ipa进行分析，定位到底需要修改什么。</p>
 
       
     </div>
@@ -472,9 +462,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/ctf/" rel="tag"># ctf</a>
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
           
-            <a href="/tags/工具/" rel="tag"># 工具</a>
+            <a href="/tags/Hook/" rel="tag"># Hook</a>
+          
+            <a href="/tags/Unity3D/" rel="tag"># Unity3D</a>
           
         </div>
       
@@ -487,8 +479,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/19/RSAtools使用方法/" rel="next" title="RSAtool使用方法">
-                <i class="fa fa-chevron-left"></i> RSAtool使用方法
+              <a href="/2020/06/02/iOS-Theos的一些心得/" rel="next" title="iOS Theos的一些心得">
+                <i class="fa fa-chevron-left"></i> iOS Theos的一些心得
               </a>
             
           </div>
@@ -496,10 +488,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/10/08/checksec及其包含的保护机制/" rel="prev" title="checksec及其包含的保护机制">
-                checksec及其包含的保护机制 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -671,7 +659,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Description"><span class="nav-number">1.</span> <span class="nav-text">Description</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Installation"><span class="nav-number">2.</span> <span class="nav-text">Installation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Usage"><span class="nav-number">3.</span> <span class="nav-text">Usage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Options"><span class="nav-number">3.1.</span> <span class="nav-text">Options</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Example"><span class="nav-number">4.</span> <span class="nav-text">Example</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li></ol></li></ol></div>
             
 
           </div>
