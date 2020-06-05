@@ -110,7 +110,7 @@
 <meta name="description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unity3D游戏修改&iOS免越狱hook">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/index.html">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook&Unity3D游戏修改/index.html">
 <meta property="og:site_name" content="YungGong">
 <meta property="og:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg">
@@ -137,7 +137,7 @@
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook19.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook20.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook26.jpg">
-<meta property="og:updated_time" content="2020-06-05T05:48:00.823Z">
+<meta property="og:updated_time" content="2020-06-05T05:56:54.576Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Unity3D游戏修改&iOS免越狱hook">
 <meta name="twitter:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
@@ -171,7 +171,7 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook&Unity3D游戏修改/"/>
 
 
 
@@ -338,7 +338,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook&Unity3D游戏修改/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -383,7 +383,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-06-05T13:48:00+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2020-06-05T13:56:54+08:00">
                 2020-06-05
               </time>
             
@@ -514,7 +514,7 @@ InfoPlist.strings: 213MB [00:44, 4.97MB/s]
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook19.jpg" alt=""></p>
 <p>接下来将砸壳后的ipa或ipa解压后的xxx.app放入Your_P<br>roject/TargetApp目录下，编译整个项目，最终安装到未越狱手机上信任之后正常运行表明签名成功。</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook20.jpg" alt=""></p>
-<p>虽然最终没能成功实现免越狱hook修改游戏，但是我们还是拿它下手</p>
+<h3 id="寻找注入点Hook"><a href="#寻找注入点Hook" class="headerlink" title="寻找注入点Hook"></a>寻找注入点Hook</h3><p>虽然最终没能成功实现免越狱hook修改游戏，但是我们还是拿它下手</p>
 <p>首先通过Class-dump将头文件dump下来，在其中寻找一个又代表性的函数进行Hook，最终决定hook UnityAppController这个类中的init函数，在他调用的时候弹出弹框。</p>
 <p>在your_projectDylib.xm中Hook代码如下:</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;sys/sysctl.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></div><div class="line"></div><div class="line">%hook UnityAppController</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">// Hooking an instance method with an argument.</span></div><div class="line">- (<span class="keyword">void</span>)init&#123;</div><div class="line">%orig;</div><div class="line"></div><div class="line">UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@<span class="string">"Hook成功"</span> message:nil delegate:self cancelButtonTitle:@<span class="string">"OK"</span> otherButtonTitles:nil];</div><div class="line">[alert show];</div><div class="line"><span class="comment">//[alert release];</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">%end</div></pre></td></tr></table></figure>
@@ -765,7 +765,7 @@ InfoPlist.strings: 213MB [00:44, 4.97MB/s]
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity3D符号表恢复"><span class="nav-number">2.2.</span> <span class="nav-text">Unity3D符号表恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定位修改点"><span class="nav-number">2.3.</span> <span class="nav-text">定位修改点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#直捣黄龙"><span class="nav-number">3.</span> <span class="nav-text">直捣黄龙</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS越狱修改"><span class="nav-number">3.1.</span> <span class="nav-text">iOS越狱修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意事项"><span class="nav-number">3.1.1.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插件编写"><span class="nav-number">3.1.2.</span> <span class="nav-text">插件编写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS未越狱修改"><span class="nav-number">3.2.</span> <span class="nav-text">iOS未越狱修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改汇编"><span class="nav-number">3.2.1.</span> <span class="nav-text">修改汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重打包签名"><span class="nav-number">3.2.2.</span> <span class="nav-text">重打包签名</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔山打牛"><span class="nav-number">4.</span> <span class="nav-text">隔山打牛</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建项目-amp-编译"><span class="nav-number">4.0.1.</span> <span class="nav-text">新建项目&编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity3D符号表恢复"><span class="nav-number">2.2.</span> <span class="nav-text">Unity3D符号表恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定位修改点"><span class="nav-number">2.3.</span> <span class="nav-text">定位修改点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#直捣黄龙"><span class="nav-number">3.</span> <span class="nav-text">直捣黄龙</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS越狱修改"><span class="nav-number">3.1.</span> <span class="nav-text">iOS越狱修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意事项"><span class="nav-number">3.1.1.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插件编写"><span class="nav-number">3.1.2.</span> <span class="nav-text">插件编写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS未越狱修改"><span class="nav-number">3.2.</span> <span class="nav-text">iOS未越狱修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改汇编"><span class="nav-number">3.2.1.</span> <span class="nav-text">修改汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重打包签名"><span class="nav-number">3.2.2.</span> <span class="nav-text">重打包签名</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔山打牛"><span class="nav-number">4.</span> <span class="nav-text">隔山打牛</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建项目-amp-编译"><span class="nav-number">4.0.1.</span> <span class="nav-text">新建项目&编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寻找注入点Hook"><span class="nav-number">4.0.2.</span> <span class="nav-text">寻找注入点Hook</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
