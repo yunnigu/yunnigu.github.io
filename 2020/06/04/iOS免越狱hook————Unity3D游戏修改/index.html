@@ -109,7 +109,7 @@
 
 <meta name="description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS免越狱hook————Unity3D游戏修改">
+<meta property="og:title" content="Unity3D游戏修改&iOS免越狱hook">
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/06/04/iOS免越狱hook————Unity3D游戏修改/index.html">
 <meta property="og:site_name" content="YungGong">
 <meta property="og:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
@@ -123,9 +123,23 @@
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook10.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook11.png">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook12.png">
-<meta property="og:updated_time" content="2020-06-04T08:16:19.759Z">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook13.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook16.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook15.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook14.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook17.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook21.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook22.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook25.png">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook23.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook24.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook18.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook19.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook20.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook26.jpg">
+<meta property="og:updated_time" content="2020-06-05T05:48:00.823Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS免越狱hook————Unity3D游戏修改">
+<meta name="twitter:title" content="Unity3D游戏修改&iOS免越狱hook">
 <meta name="twitter:description" content="所谓免越狱Hook就是在iOS设备未进行越狱操作的前提下，对APP进行Hook操作，很久之前就有听说过，昨天花了一天时间整环境外加测试，然后又顺带修改了一个比较让人烦恼的游戏，Unity3D破解其实很早就搞过了，这次借着免越狱Hook一起分享给大家。">
 <meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook3.jpg">
 
@@ -163,7 +177,7 @@
 
 
 
-  <title>iOS免越狱hook————Unity3D游戏修改 | YungGong</title>
+  <title>Unity3D游戏修改&iOS免越狱hook | YungGong</title>
   
 
 
@@ -341,7 +355,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">iOS免越狱hook————Unity3D游戏修改</h1>
+          <h1 class="post-title" itemprop="name headline">Unity3D游戏修改&iOS免越狱hook</h1>
         
 
         <div class="post-meta">
@@ -369,8 +383,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-06-04T16:16:19+08:00">
-                2020-06-04
+              <time title="更新于" itemprop="dateModified" datetime="2020-06-05T13:48:00+08:00">
+                2020-06-05
               </time>
             
           </span>
@@ -462,7 +476,52 @@ InfoPlist.strings: 213MB [00:44, 4.97MB/s]
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook11.png" alt=""></p>
 <p>加载脚本之后对函数进行了标记形成格式如类名$$函数名这样的函数</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook12.png" alt=""></p>
-<h2 id="定位修改点"><a href="#定位修改点" class="headerlink" title="定位修改点"></a>定位修改点</h2><p>在将script.py导入IDA之后，我们立刻着手分析dump.cs这个文件，该文件里面解析了游戏相关的属性和函数。</p>
+<h2 id="定位修改点"><a href="#定位修改点" class="headerlink" title="定位修改点"></a>定位修改点</h2><p>在将script.py导入IDA之后，我们立刻着手分析dump.cs这个文件，该文件里面解析了游戏相关的属性和函数。可以用C#工具打开，我这里直接用source打开分析。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook13.png" alt=""></p>
+<p>与其说是分析，不如说是查找更为准确一些，我们想要修改的最终目的肯定是拥有永远花不完的金币，那么我们就去针对金币去搜索定位，我搜索了Gold，定位到有一个函数为get_Gold较为可疑</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook16.png" alt=""></p>
+<p>在IDA定位到函数地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook15.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook14.png" alt=""></p>
+<p>之后通过lldb下断点调试，发现在打开提示的时候触发了断点，运气不错，返回上层调用查看结果为0，之后去看了个两个视频获得了两个金币之后，返回值果然变成了2，可疑确定程序就是通过这个函数来获取金币的数量。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook17.jpg" alt=""></p>
+<h1 id="直捣黄龙"><a href="#直捣黄龙" class="headerlink" title="直捣黄龙"></a>直捣黄龙</h1><p>分析定位修改点之后，就可以对游戏进行修改了，原本是想通过免越狱Hook实现对游戏的修改，但是尝试了多次一直hook不成功，多次查找发现未越狱iOS并不支持MSHookFunction方式进行hook，同时没法对形如sub_xxxxx函数进行inlinehook。<br>这里介绍两种修改方式，一种是通过iOS越狱Hook来实现对关键函数的Hook修改，主要依赖于MonkeyDev，游戏修改了之后肯定不会天天抱着一个越狱手机来玩，所以这里准备的另一种种修改方式是针对未越狱手机的，通过直接修改汇编，重打包签名ipa安装到手机上，主要依赖于IPAPatch</p>
+<h2 id="iOS越狱修改"><a href="#iOS越狱修改" class="headerlink" title="iOS越狱修改"></a>iOS越狱修改</h2><p>iOS越狱插件的编写这里采用MonKeyDev，如何使用可见<a href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8" target="_blank" rel="external">官方文档</a></p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li>在hook不同APP时将Tweak的plist中Bundles修改应用对应的Bundleid</li>
+<li>在Build Settings——&gt;User-Defined新建项CODE_SIGNING_ALLOWED，赋值为NO，否则编译会报错</li>
+<li>File——&gt;Project Setting将Build System修改为Legacy Build System否则编译报错</li>
+<li>切记安装sshpass</li>
+</ul>
+<h3 id="插件编写"><a href="#插件编写" class="headerlink" title="插件编写"></a>插件编写</h3><p>MonKeyDev支持多种Hook框架，我这里使用Tweak插件。<br>具体hook代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach-o/dyld.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">// 用于保存原函数指针</span></div><div class="line"><span class="keyword">int</span> (*old_get_Gold)();</div><div class="line"></div><div class="line"><span class="comment">// 新函数</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">new_get_Gold</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line"><span class="keyword">return</span> <span class="number">9999</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">%ctor&#123;</div><div class="line"><span class="comment">// 执行hook</span></div><div class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> Gold = <span class="number">_</span>dyld_get_image_vmaddr_slide(<span class="number">0</span>) + <span class="number">0x1011aa060</span>;</div><div class="line">MSHookFunction((<span class="keyword">void</span> *)Gold, (<span class="keyword">void</span> *)&amp;new_get_Gold, (<span class="keyword">void</span> **)&amp;old_get_Gold);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="iOS未越狱修改"><a href="#iOS未越狱修改" class="headerlink" title="iOS未越狱修改"></a>iOS未越狱修改</h2><h3 id="修改汇编"><a href="#修改汇编" class="headerlink" title="修改汇编"></a>修改汇编</h3><p>首先查看get_Gold函数返回位置汇编，返回时传入X1进行经过函数转换为int返回，那么可以将9999传入X0，然后直接ret即可</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook21.png" alt=""></p>
+<p>通过汇编指令生成工具生成我们需要的机器码</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook22.png" alt=""></p>
+<p>ret的机器码为C0 03 5F D6 </p>
+<p>最后修改对应地址的机器码即可</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook25.png" alt=""></p>
+<h3 id="重打包签名"><a href="#重打包签名" class="headerlink" title="重打包签名"></a>重打包签名</h3><p>将修改后的app1可执行文件重新放回原处，将解压后的ipa包重新压缩，最终改名为app.ipa,将该文件放到IPAPatch的Assets目录下，替换掉原本的app.ipa文件。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook23.jpg" alt=""></p>
+<p>最终安装到未越狱手机上效果如下</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook24.jpg" alt=""></p>
+<h1 id="隔山打牛"><a href="#隔山打牛" class="headerlink" title="隔山打牛"></a>隔山打牛</h1><p>iOS免越狱hook主要是通过iosOpenDev生成dylib注入目标APP实现Hook，iosOpenDev是apple官方支持的插件生成工具，可直接由Xcode生成。可生成CaptainHookTweak、Logos Tweak两种dylib。在注入dylib之后对APP进行重打包签名。</p>
+<p>我们接下来用到的MonKeyDev是对原有iOSOpenDev的升级，更加方便于非越狱插件的编写。</p>
+<h3 id="新建项目-amp-编译"><a href="#新建项目-amp-编译" class="headerlink" title="新建项目&amp;编译"></a>新建项目&amp;编译</h3><p>MonKeyDev安装完成之后，打开Xcode新建项目，滑动到最下方可以看到MonKeyDev提供的模块，选择第一个。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook18.jpg" alt=""></p>
+<p>新建之后需要配置General——&gt;Signing，设置自己的AppleID后续用于签名。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook19.jpg" alt=""></p>
+<p>接下来将砸壳后的ipa或ipa解压后的xxx.app放入Your_P<br>roject/TargetApp目录下，编译整个项目，最终安装到未越狱手机上信任之后正常运行表明签名成功。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook20.jpg" alt=""></p>
+<p>虽然最终没能成功实现免越狱hook修改游戏，但是我们还是拿它下手</p>
+<p>首先通过Class-dump将头文件dump下来，在其中寻找一个又代表性的函数进行Hook，最终决定hook UnityAppController这个类中的init函数，在他调用的时候弹出弹框。</p>
+<p>在your_projectDylib.xm中Hook代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;sys/sysctl.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></div><div class="line"></div><div class="line">%hook UnityAppController</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">// Hooking an instance method with an argument.</span></div><div class="line">- (<span class="keyword">void</span>)init&#123;</div><div class="line">%orig;</div><div class="line"></div><div class="line">UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@<span class="string">"Hook成功"</span> message:nil delegate:self cancelButtonTitle:@<span class="string">"OK"</span> otherButtonTitles:nil];</div><div class="line">[alert show];</div><div class="line"><span class="comment">//[alert release];</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">%end</div></pre></td></tr></table></figure>
+<p>运行程序将ipa装到未越狱手机上，游戏打开之后会有弹框出现</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Hook26.jpg" alt=""></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本来准备写一篇免越狱Hook结合Unity3D游戏修改为一体的文章，但是但是在Hook c函数的过程中遇到了难题，目前还没有找到未越狱手机上inlinhook的好方案，只能将两者分开来写，之后找到好的方案之后再进行修改为大家分享。</p>
+<p>下面附上本人iOS Unity3D入门看的一篇文章，本文大致参考了这位大佬的框架。<a href="https://www.ichenxiaoyu.com/archero/#%E5%B7%A5%E5%85%B7" target="_blank" rel="external">iOS上的Unity逆向与弓箭传说游戏修改</a></p>
 
       
     </div>
@@ -706,7 +765,7 @@ InfoPlist.strings: 213MB [00:44, 4.97MB/s]
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity3D符号表恢复"><span class="nav-number">2.2.</span> <span class="nav-text">Unity3D符号表恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定位修改点"><span class="nav-number">2.3.</span> <span class="nav-text">定位修改点</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#工欲善其事必先利其器"><span class="nav-number">1.</span> <span class="nav-text">工欲善其事必先利其器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽丝剥茧"><span class="nav-number">2.</span> <span class="nav-text">抽丝剥茧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#砸壳"><span class="nav-number">2.1.</span> <span class="nav-text">砸壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity3D符号表恢复"><span class="nav-number">2.2.</span> <span class="nav-text">Unity3D符号表恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定位修改点"><span class="nav-number">2.3.</span> <span class="nav-text">定位修改点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#直捣黄龙"><span class="nav-number">3.</span> <span class="nav-text">直捣黄龙</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS越狱修改"><span class="nav-number">3.1.</span> <span class="nav-text">iOS越狱修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意事项"><span class="nav-number">3.1.1.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插件编写"><span class="nav-number">3.1.2.</span> <span class="nav-text">插件编写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS未越狱修改"><span class="nav-number">3.2.</span> <span class="nav-text">iOS未越狱修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改汇编"><span class="nav-number">3.2.1.</span> <span class="nav-text">修改汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重打包签名"><span class="nav-number">3.2.2.</span> <span class="nav-text">重打包签名</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔山打牛"><span class="nav-number">4.</span> <span class="nav-text">隔山打牛</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建项目-amp-编译"><span class="nav-number">4.0.1.</span> <span class="nav-text">新建项目&编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
@@ -726,7 +785,7 @@ InfoPlist.strings: 213MB [00:44, 4.97MB/s]
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020-06-04</span>
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020-06-05</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
