@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="YunGong" />
+  <meta name="keywords" content="iOS,MachO," />
 
 
 
@@ -107,12 +107,20 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="YungGong">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/tags/ctf/index.html">
+<meta name="description" content="接触iOS逆向已经有一段时间了，但是一直没有好好去了解一下最基础的MachO结构，本文主要记录一下对MachO文件结构的学习和理解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MachO文件结构">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/12/10/MachO文件结构/index.html">
 <meta property="og:site_name" content="YungGong">
+<meta property="og:description" content="接触iOS逆向已经有一段时间了，但是一直没有好好去了解一下最基础的MachO结构，本文主要记录一下对MachO文件结构的学习和理解。">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO1.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO2.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO3.jpg">
+<meta property="og:updated_time" content="2020-12-22T09:30:37.717Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="YungGong">
+<meta name="twitter:title" content="MachO文件结构">
+<meta name="twitter:description" content="接触iOS逆向已经有一段时间了，但是一直没有好好去了解一下最基础的MachO结构，本文主要记录一下对MachO文件结构的学习和理解。">
+<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO1.jpg">
 
 
 
@@ -142,13 +150,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/tags/ctf/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2020/12/10/MachO文件结构/"/>
 
 
 
 
 
-  <title>标签: ctf | YungGong</title>
+  <title>MachO文件结构 | YungGong</title>
   
 
 
@@ -167,7 +175,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -295,166 +303,226 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block tag">
-
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>ctf<small>标签</small>
-        </h1>
-      </div>
-
-      
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2020/12/10/MachO文件结构/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Night.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YungGong">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2017/02/28/XMAN-level4/" itemprop="url">
-              
-                <span itemprop="name">XMAN-level4</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">MachO文件结构</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-02-28T17:16:28+08:00"
-              content="2017-02-28" >
-          02-28
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-10T14:10:13+08:00">
+                2020-12-10
+              </time>
+            
 
-    </header>
-  </article>
+            
+              <span class="post-meta-divider">|</span>
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-12-22T17:30:37+08:00">
+                2020-12-22
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 阅读数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/02/27/XMAN-Level3-x64/" itemprop="url">
-              
-                <span itemprop="name">XMAN-Level3-x64</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-02-27T17:03:40+08:00"
-              content="2017-02-27" >
-          02-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/02/24/X-MAN-level3/" itemprop="url">
-              
-                <span itemprop="name">X-MAN-level3</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-02-24T16:29:37+08:00"
-              content="2017-02-24" >
-          02-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/02/24/X-MAN-level0-level2/" itemprop="url">
-              
-                <span itemprop="name">X-MAN(level0~level2)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-02-24T14:01:35+08:00"
-              content="2017-02-24" >
-          02-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2016/10/05/xortool的安装使用/" itemprop="url">
-              
-                <span itemprop="name">xortool的安装使用</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-10-05T10:35:13+08:00"
-              content="2016-10-05" >
-          10-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+        <p>接触iOS逆向已经有一段时间了，但是一直没有好好去了解一下最基础的MachO结构，本文主要记录一下对MachO文件结构的学习和理解。<br><a id="more"></a></p>
+<h1 id="MachO文件的基本格式"><a href="#MachO文件的基本格式" class="headerlink" title="MachO文件的基本格式"></a>MachO文件的基本格式</h1><p>Mach-O是Mach Object文件格式的缩写，iOS以及Mac上可执行的文件格式，类似Window的PE，Linux上的ELF。<br>由下图可知，MachO文件的结构，主要包括Header、LoadCommand、Data三部分，Data部分由Section组成。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/MachO1.jpg" alt=""></p>
+<ul>
+<li>Header：保存了Mach-O的一些基本信息，包括了平台、文件类型、LoadCommands的个数等等。</li>
+<li>LoadCommands：加载Mach-O文件时会使用这里的数据来确定内存的分布。</li>
+<li>Data：每一个segment的具体数据都保存在这里，这里包含了具体的代码、数据等等。</li>
+</ul>
+<p>这里介绍一个分析MachO文件结构的必备工具，MachOView</p>
+<p>MachOView下载地址：<a href="http://sourceforge.net/projects/machoview/" target="_blank" rel="external">http://sourceforge.net/projects/machoview/</a></p>
+<p>MachOView源码地址：<a href="https://github.com/gdbinit/MachOView" target="_blank" rel="external">https://github.com/gdbinit/MachOView</a></p>
+<p>效果如下图所示：</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/MachO2.jpg" alt=""></p>
+<h1 id="MachO头部"><a href="#MachO头部" class="headerlink" title="MachO头部"></a>MachO头部</h1><p>MachO头部结构可以从苹果开源的代码中找到，具体如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * The 32-bit mach header appears at the very beginning of the object file for</div><div class="line"> * 32-bit architectures.</div><div class="line"> */</div><div class="line"><span class="keyword">struct</span> mach_header &#123;</div><div class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* mach magic number identifier */</span></div><div class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier */</span></div><div class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier */</span></div><div class="line">	<span class="keyword">uint32_t</span>	filetype;	<span class="comment">/* type of file */</span></div><div class="line">	<span class="keyword">uint32_t</span>	ncmds;		<span class="comment">/* number of load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	sizeofcmds;	<span class="comment">/* the size of all the load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"> * The <span class="number">64</span>-bit mach header appears at the very beginning of object files <span class="keyword">for</span></div><div class="line"> * <span class="number">64</span>-bit architectures.</div><div class="line"> */</div><div class="line"><span class="keyword">struct</span> mach_header_64 &#123;</div><div class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* mach magic number identifier */</span></div><div class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier */</span></div><div class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier */</span></div><div class="line">	<span class="keyword">uint32_t</span>	filetype;	<span class="comment">/* type of file */</span></div><div class="line">	<span class="keyword">uint32_t</span>	ncmds;		<span class="comment">/* number of load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	sizeofcmds;	<span class="comment">/* the size of all the load commands */</span></div><div class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></div><div class="line">	<span class="keyword">uint32_t</span>	reserved;	<span class="comment">/* reserved */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>从上面的代码中可以看出，它由以下部分组成。</p>
+<ul>
+<li>magic：MachO文件的魔数，FAT为0xcafebabe，ARMv7位0xfeedface，ARM64为0xfeedfacf（Mac是小端模式）。</li>
+<li>cputype、cpusubtype：CPU架构和子版本。</li>
+<li>filetype：文件类型。常见的有MH_OBJECT（目标文件）、MH_EXECUTABLE（可执行二进制文件）、MH_DYLIB（动态库）。</li>
+<li>mcmds：加载命令的数量。</li>
+<li>sizeofcms：所有加载命令的大小</li>
+<li>flags：dyld加载需要一些标记。其中，MH_PIE表示启用地址空间布局随机化。</li>
+<li>reserved：64位的保留字段。</li>
+</ul>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/MachO3.jpg" alt=""></p>
+<h1 id="Load-Command"><a href="#Load-Command" class="headerlink" title="Load Command"></a>Load Command</h1><p>load Command用于告诉操作系统应当如何加载文件中的数据，对系统内核加载器和动态链接器起指导作用。<br>load Command包含以下部分:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_SEGMENT_64				定义一个段，加载后被映射到内存中，包括里面的节</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_SYMTAB					为文件定义符号表和字符串表</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_DYSYMTAB				  将符号表中给出符号的额外符号信息提供给动态链接器</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_LOAD_DYLIB				依赖的动态库，包括动态库名称、当前版本号等等</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_LOAD_DYLINKER 			默认加载器路径</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_UUID					  用于表示MachO文件的ID</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_RPATH         		    rpath搜索的路径</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_ENCRYPTION_INFO_64 	   文件是否加密的标志，加密内容的偏移和大小</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_DYLD_INFO_ONLY 		   记录了有关链接的重要信息，包括__LINKEDIT中动态链接相关信息的偏移和大小。</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_VERSION_MIN_IPHONEOS      系统要求最低版本</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_FUNCTION_STARTS  		 函数起始地址表</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_MAIN 					 程序入口，dyld获取改地址然后跳转到该处执行</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_DATA_IN_CODE  		    定义在代码段内的非指令的表</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_SOURCE_VERSION  		  构建二进制文件的源代码版本号</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span>	LC_DYLIB_CODE_SIGN_DRS       代码签名信息</span></div></pre></td></tr></table></figure>
+<p>LC_SEGMENT_64定义了一个64位的段，当文件加载后映射到地址空间，64位段的定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> segment_command_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">    <span class="keyword">uint32_t</span>   cmd;         <span class="comment">/* LC_SEGMENT_64 */</span></div><div class="line">    <span class="keyword">uint32_t</span>   cmdsize;     <span class="comment">/* includes sizeof section_64 structs */</span></div><div class="line">    <span class="keyword">char</span>       segname[<span class="number">16</span>]; <span class="comment">/* segment name */</span></div><div class="line">    <span class="keyword">uint64_t</span>   vmaddr;      <span class="comment">/* memory address of this segment */</span></div><div class="line">    <span class="keyword">uint64_t</span>   vmsize;      <span class="comment">/* memory size of this segment */</span></div><div class="line">    <span class="keyword">uint64_t</span>   fileoff;     <span class="comment">/* file offset of this segment */</span></div><div class="line">    <span class="keyword">uint64_t</span>   filesize;    <span class="comment">/* amount to map from the file */</span></div><div class="line">    <span class="keyword">vm_prot_t</span>  maxprot;     <span class="comment">/* maximum VM protection */</span></div><div class="line">    <span class="keyword">vm_prot_t</span>  initprot;    <span class="comment">/* initial VM protection */</span></div><div class="line">    <span class="keyword">uint32_t</span>   nsects;      <span class="comment">/* number of sections in segment */</span></div><div class="line">    <span class="keyword">uint32_t</span>   flags;       <span class="comment">/* flags */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>系统将fileoff偏移处的filesize大小的内容加载到虚拟内存的vmaddr，大小为vmsize，vmsize 并不等于 filesize，对于 4KB 大小的 VP，vmsize 是 4K 的倍数；换句话说，vmsize 一般大于 segment 的实际大小。<br>端页面的权限由initport进行初始化。但是不能超过 maxprot 中指定的值。<br>文件中主要包括<strong>PAGEZERO、</strong>TEXT、<strong>DATA、</strong>LINKEDIT四种段，段里可以包括不同的节。定义如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> section_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">    <span class="keyword">char</span>      sectname[<span class="number">16</span>];    <span class="comment">/* name of this section */</span></div><div class="line">    <span class="keyword">char</span>      segname[<span class="number">16</span>];     <span class="comment">/* segment this section goes in */</span></div><div class="line">    <span class="keyword">uint64_t</span>  addr;            <span class="comment">/* memory address of this section */</span></div><div class="line">    <span class="keyword">uint64_t</span>  size;            <span class="comment">/* size in bytes of this section */</span></div><div class="line">    <span class="keyword">uint32_t</span>  offset;          <span class="comment">/* file offset of this section */</span></div><div class="line">    <span class="keyword">uint32_t</span>  align;           <span class="comment">/* section alignment (power of 2) */</span></div><div class="line">    <span class="keyword">uint32_t</span>  reloff;          <span class="comment">/* file offset of relocation entries */</span></div><div class="line">    <span class="keyword">uint32_t</span>  nreloc;          <span class="comment">/* number of relocation entries */</span></div><div class="line">    <span class="keyword">uint32_t</span>  flags;           <span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">    <span class="keyword">uint32_t</span>  reserved1;       <span class="comment">/* reserved (for offset or index) */</span></div><div class="line">    <span class="keyword">uint32_t</span>  reserved2;       <span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">    <span class="keyword">uint32_t</span>  reserved3;       <span class="comment">/* reserved */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>结构体section_64可以看做 section header，它描述了对应 section 的具体位置，以及要被映射的目标虚拟地址。<br>回头再看segment_command_64的cmdsize字段，它的数值并非是segment_command_64的 size 大小，还包括了紧接在 command 后面的所有section_64结构体的大小。<br>如果 segment 含有 5 个 section，那么对应的 segment_command_64 的 cmdsize 值为：72（segment_command_64本身大小） + 5 * 80（section_64的大小） = 472 bytes</p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>有钱的捧个钱场</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/WeChat.jpg" alt="Yun 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/AliPay.jpg" alt="Yun 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/MachO/" rel="tag"># MachO</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/07/Xposed利用-为自己搞点小福利/" rel="next" title="Xposed利用----为自己搞点小福利">
+                <i class="fa fa-chevron-left"></i> Xposed利用----为自己搞点小福利
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -462,6 +530,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -482,8 +554,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -583,6 +664,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MachO文件的基本格式"><span class="nav-number">1.</span> <span class="nav-text">MachO文件的基本格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MachO头部"><span class="nav-number">2.</span> <span class="nav-text">MachO头部</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Load-Command"><span class="nav-number">3.</span> <span class="nav-text">Load Command</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -733,6 +830,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
