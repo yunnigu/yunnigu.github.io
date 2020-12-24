@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="pwn," />
+  <meta name="keywords" content="iOS,MachO,hook," />
 
 
 
@@ -107,18 +107,29 @@
 
 
 
-<meta name="description" content="最近在刷题的时候发现的一道相对简单的溢出题目，但是可能对堆溢出方面知识涉及的不多，导致花了不少时间去研究原理，感觉还有有不少收获的。">
+<meta name="description" content="上一篇整理了一下MachO文件的基本结构，但是对其主要的工作原理并没有深究，fishhook是iOS安全中常见的hook框架，可以通过对其原理探究更加深入的了解MachO的工作原理。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pwn第一更-Icectf_drumpfhotel">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/08/pwn第一更-Icectf-drumpfhotel/index.html">
+<meta property="og:title" content="fishhook原理探究">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2020/12/23/fishhook原理探究/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="最近在刷题的时候发现的一道相对简单的溢出题目，但是可能对堆溢出方面知识涉及的不多，导致花了不少时间去研究原理，感觉还有有不少收获的。">
-<meta property="og:image" content="http://i1.piimg.com/567571/14380bddf3869ff4.png">
-<meta property="og:updated_time" content="2020-04-27T08:33:44.707Z">
+<meta property="og:description" content="上一篇整理了一下MachO文件的基本结构，但是对其主要的工作原理并没有深究，fishhook是iOS安全中常见的hook框架，可以通过对其原理探究更加深入的了解MachO的工作原理。">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook1.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook2.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook3.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook4.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook5.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook6.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook7.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook8.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook9.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook10.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook11.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook12.jpg">
+<meta property="og:updated_time" content="2020-12-24T08:07:41.861Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pwn第一更-Icectf_drumpfhotel">
-<meta name="twitter:description" content="最近在刷题的时候发现的一道相对简单的溢出题目，但是可能对堆溢出方面知识涉及的不多，导致花了不少时间去研究原理，感觉还有有不少收获的。">
-<meta name="twitter:image" content="http://i1.piimg.com/567571/14380bddf3869ff4.png">
+<meta name="twitter:title" content="fishhook原理探究">
+<meta name="twitter:description" content="上一篇整理了一下MachO文件的基本结构，但是对其主要的工作原理并没有深究，fishhook是iOS安全中常见的hook框架，可以通过对其原理探究更加深入的了解MachO的工作原理。">
+<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook1.jpg">
 
 
 
@@ -148,13 +159,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2016/11/08/pwn第一更-Icectf-drumpfhotel/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2020/12/23/fishhook原理探究/"/>
 
 
 
 
 
-  <title>pwn第一更-Icectf_drumpfhotel | YungGong</title>
+  <title>fishhook原理探究 | YungGong</title>
   
 
 
@@ -315,7 +326,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2016/11/08/pwn第一更-Icectf-drumpfhotel/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2020/12/23/fishhook原理探究/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -332,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">pwn第一更-Icectf_drumpfhotel</h1>
+          <h1 class="post-title" itemprop="name headline">fishhook原理探究</h1>
         
 
         <div class="post-meta">
@@ -344,8 +355,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-08T17:39:00+08:00">
-                2016-11-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-23T10:32:09+08:00">
+                2020-12-23
               </time>
             
 
@@ -360,8 +371,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-27T16:33:44+08:00">
-                2020-04-27
+              <time title="更新于" itemprop="dateModified" datetime="2020-12-24T16:07:41+08:00">
+                2020-12-24
               </time>
             
           </span>
@@ -399,240 +410,49 @@
       
 
       
-        <p>最近在刷题的时候发现的一道相对简单的溢出题目，但是可能对堆溢出方面知识涉及的不多，导致花了不少时间去研究原理，感觉还有有不少收获的。<br><a id="more"></a></p>
-<p>代开界面就是一个简单的宾馆预定系统</p>
-<p>使用IDA分析函数，主要的函数包括mian(),book_suite(),book_room(),delete_booking(),print_booking()还有最主要的flag().</p>
-<p>首先在main函数里会给个五个选择，预定suite、room，删除预定，打印预定，退出。</p>
-<p>首先分析book_suite(),大致的情形就是在堆上申请了264个字节的空间，前四个字节储存print_name()函数，256个字节储存name，另外四个存储suite nummber。</p>
-<pre><code>Dump of assembler code for function book_suite:
-   0x0804873b &lt;+0&gt;: push   %ebp
-   0x0804873c &lt;+1&gt;: mov    %esp,%ebp
-   0x0804873e &lt;+3&gt;: push   %ebx
-   0x0804873f &lt;+4&gt;: sub    $0x34,%esp
-   0x08048742 &lt;+7&gt;: mov    %gs:0x14,%eax
-   0x08048748 &lt;+13&gt;: mov    %eax,-0xc(%ebp)
-   0x0804874b &lt;+16&gt;: xor    %eax,%eax
-   0x0804874d &lt;+18&gt;: movl   $0x108,(%esp)   --&gt;Allocate 264 bytes in heap memory
-   0x08048754 &lt;+25&gt;: call   0x80484e0 &lt;malloc@plt&gt; --&gt; return ptr to memory in eax
-   0x08048759 &lt;+30&gt;: mov    %eax,0x804b088  --&gt; assign ptr to variable suite
-   0x0804875e &lt;+35&gt;: movl   $0x8049688,(%esp)
-   0x08048765 &lt;+42&gt;: call   0x8048490 &lt;printf@plt&gt; --&gt; print &quot;Name:&quot;
-   0x0804876a &lt;+47&gt;: mov    0x804b080,%eax
-   0x0804876f &lt;+52&gt;: mov    %eax,(%esp)
-   0x08048772 &lt;+55&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x08048777 &lt;+60&gt;: mov    0x804b060,%eax
-   0x0804877c &lt;+65&gt;: mov    0x804b088,%edx  --&gt; variable suite
-   0x08048782 &lt;+71&gt;: add    $0x4,%edx
-   0x08048785 &lt;+74&gt;: mov    %eax,0x8(%esp)
-   0x08048789 &lt;+78&gt;: movl   $0x100,0x4(%esp)--&gt; length 0x100(256 bytes)
-   0x08048791 &lt;+86&gt;: mov    %edx,(%esp)   
-   0x08048794 &lt;+89&gt;: call   0x80484c0 &lt;fgets@plt&gt;--&gt; read from stdin, store name at address suite+4, length 0x100(256 bytes)
-   0x08048799 &lt;+94&gt;: mov    0x804b088,%eax  --&gt; var suite into eax
-   0x0804879e &lt;+99&gt;: movl   $0x8048a84,(%eax)--&gt; store address of print_name function(0x8048a84) into memory location at suite
-   0x080487a4 &lt;+105&gt;: movl   $0x804968f,(%esp)     --&gt;&quot;Suite number:&quot;
-   0x080487ab &lt;+112&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x080487b0 &lt;+117&gt;: mov    0x804b080,%eax
-   0x080487b5 &lt;+122&gt;: mov    %eax,(%esp)
-   0x080487b8 &lt;+125&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x080487bd &lt;+130&gt;: mov    0x804b060,%eax   --&gt;stdin
-   0x080487c2 &lt;+135&gt;: mov    %eax,0x8(%esp)   --&gt;push stdin stream
-   0x080487c6 &lt;+139&gt;: movl   $0x10,0x4(%esp)  --&gt;read only 16bytes from stdin. *Cannot stack overflow*
-   0x080487ce &lt;+147&gt;: lea    -0x1c(%ebp),%eax --&gt;store in stack starting at $ebp-0x1c (28bytes away from base of stack)
-   0x080487d1 &lt;+150&gt;: mov    %eax,(%esp)
-   0x080487d4 &lt;+153&gt;: call   0x80484c0 &lt;fgets@plt&gt; --&gt; get suite number from stdin and store in stack
-   0x080487d9 &lt;+158&gt;: mov    0x804b088,%ebx   --&gt; pointer suite
-   0x080487df &lt;+164&gt;: lea    -0x1c(%ebp),%eax
-   0x080487e2 &lt;+167&gt;: mov    %eax,(%esp)      
-   0x080487e5 &lt;+170&gt;: call   0x8048530 &lt;atoi@plt&gt;
-   0x080487ea &lt;+175&gt;: mov    %eax,0x104(%ebx)--&gt; save integer result into  suite+0x104
-   0x080487f0 &lt;+181&gt;: movl   $0x804969e,(%esp)  --&gt; &quot;Booked a suite!&quot;
-   0x080487f7 &lt;+188&gt;: call   0x80484f0 &lt;puts@plt&gt;
-   0x080487fc &lt;+193&gt;: mov    0x804b080,%eax
-   0x08048801 &lt;+198&gt;: mov    %eax,(%esp)
-   0x08048804 &lt;+201&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x08048809 &lt;+206&gt;: mov    -0xc(%ebp),%eax  --&gt;Stack canary
-   0x0804880c &lt;+209&gt;: xor    %gs:0x14,%eax
-   0x08048813 &lt;+216&gt;: je     0x804881a &lt;book_suite+223&gt;
-   0x08048815 &lt;+218&gt;: call   0x80484d0 &lt;__stack_chk_fail@plt&gt;
-   0x0804881a &lt;+223&gt;: add    $0x34,%esp
-   0x0804881d &lt;+226&gt;: pop    %ebx
-   0x0804881e &lt;+227&gt;: pop    %ebp
-   0x0804881f &lt;+228&gt;: ret    
-End of assembler dump.
-</code></pre><p>使用gdb查看堆地址分配，第一个地址就是print_name()函数的地址。</p>
-<pre><code>(gdb) x/100wx suite
-0x804c008: 0x08048a84(func) 0x62626262 0x00000a62 0x00000000
-0x804c018: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c028: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c038: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c048: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c058: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c068: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c078: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c088: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c098: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0a8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0b8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0c8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0d8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0e8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0f8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c108: 0x00000000 0x0804863d(int) 0x00000000 0x00020ef1
-0x804c118: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c128: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c138: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c148: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c158: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c168: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c178: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c188: 0x00000000 0x00000000 0x00000000 0x00000000
-</code></pre><p>接下里是book_room函数，分配了大小为260的堆内存，256大小的向内存储存name，剩下4个字节储存room_nummber.</p>
-<pre><code>(gdb) disass book_room
-Dump of assembler code for function book_room:
-   0x08048820 &lt;+0&gt;: push   %ebp
-   0x08048821 &lt;+1&gt;: mov    %esp,%ebp
-   0x08048823 &lt;+3&gt;: push   %ebx
-   0x08048824 &lt;+4&gt;: sub    $0x34,%esp
-   0x08048827 &lt;+7&gt;: mov    %gs:0x14,%eax
-   0x0804882d &lt;+13&gt;: mov    %eax,-0xc(%ebp)
-   0x08048830 &lt;+16&gt;: xor    %eax,%eax
-   0x08048832 &lt;+18&gt;: movl   $0x104,(%esp)   
-   0x08048839 &lt;+25&gt;: call   0x80484e0 &lt;malloc@plt&gt;--&gt; allocate 260 bytes in heap
-   0x0804883e &lt;+30&gt;: mov    %eax,0x804b08c  --&gt; save pointer to variable room 
-   0x08048843 &lt;+35&gt;: movl   $0x8049688,(%esp) --&gt; &quot;Name: &quot;
-   0x0804884a &lt;+42&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x0804884f &lt;+47&gt;: mov    0x804b080,%eax
-   0x08048854 &lt;+52&gt;: mov    %eax,(%esp)
-   0x08048857 &lt;+55&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x0804885c &lt;+60&gt;: mov    0x804b060,%eax
-   0x08048861 &lt;+65&gt;: mov    0x804b08c,%edx --&gt; variable room
-   0x08048867 &lt;+71&gt;: add    $0x4,%edx
-   0x0804886a &lt;+74&gt;: mov    %eax,0x8(%esp)
-   0x0804886e &lt;+78&gt;: movl   $0x100,0x4(%esp)
-   0x08048876 &lt;+86&gt;: mov    %edx,(%esp)
-   0x08048879 &lt;+89&gt;: call   0x80484c0 &lt;fgets@plt&gt; --&gt; read from stdin, store name at address room+4, length 0x100(256 bytes)
-   0x0804887e &lt;+94&gt;: movl   $0x80496ae,(%esp)  --&gt; &quot;Room Number: &quot;
-   0x08048885 &lt;+101&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x0804888a &lt;+106&gt;: mov    0x804b080,%eax
-   0x0804888f &lt;+111&gt;: mov    %eax,(%esp)
-   0x08048892 &lt;+114&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x08048897 &lt;+119&gt;: mov    0x804b060,%eax
-   0x0804889c &lt;+124&gt;: mov    %eax,0x8(%esp)
-   0x080488a0 &lt;+128&gt;: movl   $0x10,0x4(%esp)  --&gt; read 16 bytes
-   0x080488a8 &lt;+136&gt;: lea    -0x1c(%ebp),%eax 
-   0x080488ab &lt;+139&gt;: mov    %eax,(%esp)
-   0x080488ae &lt;+142&gt;: call   0x80484c0 &lt;fgets@plt&gt;
-   0x080488b3 &lt;+147&gt;: mov    0x804b08c,%ebx
-   0x080488b9 &lt;+153&gt;: lea    -0x1c(%ebp),%eax
-   0x080488bc &lt;+156&gt;: mov    %eax,(%esp)
-   0x080488bf &lt;+159&gt;: call   0x8048530 &lt;atoi@plt&gt;
-   0x080488c4 &lt;+164&gt;: mov    %eax,(%ebx)  --&gt; save room number into address room
-   0x080488c6 &lt;+166&gt;: movl   $0x80496bc,(%esp)
-   0x080488cd &lt;+173&gt;: call   0x80484f0 &lt;puts@plt&gt; &quot;Booked a room!&quot;
-   0x080488d2 &lt;+178&gt;: mov    0x804b080,%eax
-   0x080488d7 &lt;+183&gt;: mov    %eax,(%esp)
-   0x080488da &lt;+186&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x080488df &lt;+191&gt;: mov    -0xc(%ebp),%eax
-   0x080488e2 &lt;+194&gt;: xor    %gs:0x14,%eax
-   0x080488e9 &lt;+201&gt;: je     0x80488f0 &lt;book_room+208&gt;
-   0x080488eb &lt;+203&gt;: call   0x80484d0 &lt;__stack_chk_fail@plt&gt;
-   0x080488f0 &lt;+208&gt;: add    $0x34,%esp
-   0x080488f3 &lt;+211&gt;: pop    %ebx
-   0x080488f4 &lt;+212&gt;: pop    %ebp
-   0x080488f5 &lt;+213&gt;: ret    
-End of assembler dump.
-(gdb) 
-</code></pre><p>查看堆结构，发现前四个字节储存的就是room_nummber</p>
-<pre><code>(gdb) x/100wx room
-0x804c008: 0x00000001(int) 0x61616161 0x00000a61 0x00000000
-0x804c018: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c028: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c038: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c048: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c058: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c068: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c078: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c088: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c098: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0a8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0b8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0c8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0d8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0e8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c0f8: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c108: 0x00000000 0x00020ef9 0x00000000 0x00000000
-0x804c118: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c128: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c138: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c148: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c158: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c168: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c178: 0x00000000 0x00000000 0x00000000 0x00000000
-0x804c188: 0x00000000 0x00000000 0x00000000 0x00000000
-</code></pre><p>主要的问题在print_booking中，这个函数里调用了print_name函数</p>
-<pre><code>(gdb) disass print_booking
-Dump of assembler code for function print_booking:
-   0x080489a5 &lt;+0&gt;: push   %ebp
-   0x080489a6 &lt;+1&gt;: mov    %esp,%ebp
-   0x080489a8 &lt;+3&gt;: sub    $0x28,%esp
-   0x080489ab &lt;+6&gt;: mov    %gs:0x14,%eax
-   0x080489b1 &lt;+12&gt;: mov    %eax,-0xc(%ebp)
-   0x080489b4 &lt;+15&gt;: xor    %eax,%eax
-   0x080489b6 &lt;+17&gt;: mov    0x804b088,%eax  --&gt; pointer suite
-   0x080489bb &lt;+22&gt;: test   %eax,%eax
-   0x080489bd &lt;+24&gt;: jne    0x80489e6 &lt;print_booking+65&gt;
-   0x080489bf &lt;+26&gt;: mov    0x804b08c,%eax
-   0x080489c4 &lt;+31&gt;: test   %eax,%eax
-   0x080489c6 &lt;+33&gt;: jne    0x80489e6 &lt;print_booking+65&gt;
-   0x080489c8 &lt;+35&gt;: movl   $0x80496cb,(%esp)
-   0x080489cf &lt;+42&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x080489d4 &lt;+47&gt;: mov    0x804b080,%eax
-   0x080489d9 &lt;+52&gt;: mov    %eax,(%esp)
-   0x080489dc &lt;+55&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x080489e1 &lt;+60&gt;: jmp    0x8048a71 &lt;print_booking+204&gt;
-   0x080489e6 &lt;+65&gt;: mov    0x804b088,%eax --&gt; pointer suite
-   0x080489eb &lt;+70&gt;: test   %eax,%eax
-   0x080489ed &lt;+72&gt;: je     0x8048a2c &lt;print_booking+135&gt;
-   0x080489ef &lt;+74&gt;: mov    0x804b088,%eax
-   0x080489f4 &lt;+79&gt;: mov    (%eax),%eax --&gt;address of print_name function in suite
-   0x080489f6 &lt;+81&gt;: mov    0x804b088,%edx
-   0x080489fc &lt;+87&gt;: add    $0x4,%edx
-   0x080489ff &lt;+90&gt;: mov    %edx,(%esp) --&gt; location of string for suite name
-   0x08048a02 &lt;+93&gt;: call   *%eax --&gt; call print_name function giving it location of suite name **Need to overwrite value of print_name function in suite with address of function flag()
-   0x08048a04 &lt;+95&gt;: mov    0x804b088,%eax
-   0x08048a09 &lt;+100&gt;: mov    0x104(%eax),%eax
-   0x08048a0f &lt;+106&gt;: mov    %eax,0x4(%esp)
-   0x08048a13 &lt;+110&gt;: movl   $0x804970a,(%esp)
-   0x08048a1a &lt;+117&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x08048a1f &lt;+122&gt;: mov    0x804b080,%eax
-   0x08048a24 &lt;+127&gt;: mov    %eax,(%esp)
-   0x08048a27 &lt;+130&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x08048a2c &lt;+135&gt;: mov    0x804b08c,%eax
-   0x08048a31 &lt;+140&gt;: test   %eax,%eax
-   0x08048a33 &lt;+142&gt;: je     0x8048a71 &lt;print_booking+204&gt;
-   0x08048a35 &lt;+144&gt;: mov    0x804b08c,%eax
-   0x08048a3a &lt;+149&gt;: add    $0x4,%eax
-   0x08048a3d &lt;+152&gt;: mov    %eax,0x4(%esp)
-   0x08048a41 &lt;+156&gt;: movl   $0x804971c,(%esp)
-   0x08048a48 &lt;+163&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x08048a4d &lt;+168&gt;: mov    0x804b08c,%eax
-   0x08048a52 &lt;+173&gt;: mov    (%eax),%eax
-   0x08048a54 &lt;+175&gt;: mov    %eax,0x4(%esp)
-   0x08048a58 &lt;+179&gt;: movl   $0x804970a,(%esp)
-   0x08048a5f &lt;+186&gt;: call   0x8048490 &lt;printf@plt&gt;
-   0x08048a64 &lt;+191&gt;: mov    0x804b080,%eax
-   0x08048a69 &lt;+196&gt;: mov    %eax,(%esp)
-   0x08048a6c &lt;+199&gt;: call   0x80484a0 &lt;fflush@plt&gt;
-   0x08048a71 &lt;+204&gt;: mov    -0xc(%ebp),%eax
-   0x08048a74 &lt;+207&gt;: xor    %gs:0x14,%eax
-   0x08048a7b &lt;+214&gt;: je     0x8048a82 &lt;print_booking+221&gt;
-   0x08048a7d &lt;+216&gt;: call   0x80484d0 &lt;__stack_chk_fail@plt&gt;
-   0x08048a82 &lt;+221&gt;: leave  
-   0x08048a83 &lt;+222&gt;: ret    
-End of assembler dump.
-(gdb)  
-</code></pre><p>之后的delete_booking()函数主要是free()堆块，利用过程就是首先为suite申请堆块，然后free掉，之后为room申请堆块，nummber处输入flag()地址的十进制，这样suite和room的前四个字节都指向同一个地址，造成room前四个字节地址指针混乱，而suite()的print_name()函数地址被转换为flag()地址。</p>
-<p><img src="http://i1.piimg.com/567571/14380bddf3869ff4.png" alt=""></p>
+        <p>上一篇整理了一下MachO文件的基本结构，但是对其主要的工作原理并没有深究，fishhook是iOS安全中常见的hook框架，可以通过对其原理探究更加深入的了解MachO的工作原理。<br><a id="more"></a></p>
+<h1 id="fishhook"><a href="#fishhook" class="headerlink" title="fishhook"></a>fishhook</h1><p>fishHook是Facebook提供的一个动态修改链接mach-O文件的工具。利用MachO文件加载原理，通过修改懒加载表(Lazy Symbol Pointers)和非懒加载表(Non-Lazy Symbol Pointers)这两个表的指针达到C函数HOOK的目的。</p>
+<p>首先需要下载fishhook<a href="https://github.com/facebook/fishhookw" target="_blank" rel="external">源码</a>，新建项目，将其中的fishhook.c和fishhook.h文件放入目录下：</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook1.jpg" alt=""></p>
+<h2 id="fishhook简单利用"><a href="#fishhook简单利用" class="headerlink" title="fishhook简单利用"></a>fishhook简单利用</h2><p>fishhook.h内容并不多，只有两个接口函数和一个结构体，具体如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> fishhook_h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> fishhook_h</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stddef.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(FISHHOOK_EXPORT)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FISHHOOK_VISIBILITY __attribute__((visibility(<span class="meta-string">"hidden"</span>)))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FISHHOOK_VISIBILITY __attribute__((visibility(<span class="meta-string">"default"</span>)))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//__cplusplus</span></span></div><div class="line"></div><div class="line"><span class="keyword">struct</span> rebinding &#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要HOOK的函数名称，字符串</span></div><div class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换到哪个新的函数上(新函数地址)</span></div><div class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//保存原始函数指针变量的指针</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function">FISHHOOK_VISIBILITY</span></div><div class="line"><span class="keyword">int</span> <span class="title">rebind_symbols</span><span class="params">(<span class="keyword">struct</span> rebinding rebindings[], <span class="keyword">size_t</span> rebindings_nel)</span>;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function">FISHHOOK_VISIBILITY</span></div><div class="line"><span class="keyword">int</span> <span class="title">rebind_symbols_image</span><span class="params">(<span class="keyword">void</span> *header,</span></div><div class="line">                         <span class="keyword">intptr_t</span> slide,</div><div class="line">                         <span class="keyword">struct</span> rebinding rebindings[],</div><div class="line">                         <span class="keyword">size_t</span> rebindings_nel);</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//__cplusplus</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//fishhook_h</span></span></div></pre></td></tr></table></figure>
+<p>rebind_symbols函数的第一个参数传入rebinding结构体数组，hook一个函数只需要传入一个rebinding结构体，hook多个函数则传入多个rebinding结构体。</p>
+<p>rebinding结构体参数意义如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> rebinding &#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要HOOK的函数名称，字符串</span></div><div class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换到哪个新的函数上(新函数地址)</span></div><div class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//保存原始函数指针变量的指针</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>demo的代码如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">#import "ViewController.h"</div><div class="line">#import "fishhook.h"</div><div class="line"></div><div class="line">@interface ViewController ()</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation ViewController</div><div class="line">    </div><div class="line">    </div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    //定义rebingding结构体</div><div class="line">    struct rebinding nslogBind;</div><div class="line">    //函数名称</div><div class="line">    nslogBind.name = "NSLog";</div><div class="line">    //新函数地址</div><div class="line">    nslogBind.replacement = myNSLog;</div><div class="line">    //保存原始函数地址的变量的指针</div><div class="line">    nslogBind.replaced = (void *)&amp;old_nslog;</div><div class="line">    </div><div class="line">    //数组</div><div class="line">    struct rebinding rebs[] = &#123;nslogBind&#125;;</div><div class="line">  </div><div class="line">    rebind_symbols(rebs, 1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">//函数指针，用来保存原始的函数的地址</div><div class="line">static void(*old_nslog)(NSString *format, ...);</div><div class="line"></div><div class="line">//新的NSLog</div><div class="line">void myNSLog(NSString *format, ...)&#123;</div><div class="line">    format = @"~~勾上了！\n";</div><div class="line">    //再调用原来的nslog</div><div class="line">    old_nslog(format);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event&#123;</div><div class="line">    NSLog(@"点击了屏幕");</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>运行点击屏幕，就可以Hook NSLog函数输出我们自己定义的字符串。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook2.jpg" alt=""></p>
+<h2 id="fishhook原理分析"><a href="#fishhook原理分析" class="headerlink" title="fishhook原理分析"></a>fishhook原理分析</h2><p>首先有个问题需要思考，fishhook为什么可以Hook系统的C函数，只有动态才有可能被Hook，C函数是静态的，OC是动态的，这是因为系统的C函数有动态的部分，也就是符号绑定的过程。</p>
+<p>PIC技术（位置代码独立）：在文件内部生成一个表， 函数名称：函数地址，这玩意就是符号表<br>当MachO由dyld加载到内存中时，在调用NSLOg时，dyld将该函数地址赋值到符号表函数地址，这个过程就叫做符号绑定。</p>
+<p>我们在之前的代码基础上添加两句NSLog输出</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook3.jpg" alt=""></p>
+<p>前面的NSLog是为了提前将该函数进行绑定，也即时懒加载符号表中，非懒加载符号在dyld加载时就会绑定真实的地址值，而懒加载不会，只有第一次去调用才会绑定真实地址，在第二次调用时直接使用真实地址。</p>
+<p>编译demo，使用MachOView查看编译生成的MachO文件，可以看到NSLog是位于懒加载符号表的第一个，offset为0x8020，这里说一下为什么要在最上面的代码写一个NSLog,是为了先完成绑定真实地址的过程，下次调用就不用再去绑定了。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook4.jpg" alt=""></p>
+<p>在rebind_symbols调用处下断点，调试输入命令image list查看demo运行时的基址。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook5.jpg" alt=""></p>
+<p>用获取到的基址加上NSLog函数偏移0x8020，memory read查看内存，查看对应内存地址的汇编代码dis -s，发现是NSLog的函数真实地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook6.jpg" alt=""></p>
+<p>单步步过rebind_symbols(rebs, 1),再次查看NSLog偏移位置的内存，发现里面写入的地址有变化，查看对应的汇编代码，已经替换为我们自己写的myNSLog的真实地址。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook7.jpg" alt=""></p>
+<p>通过上述的调试过程，可以看出fishhook实现原理其实就是重新绑定了符号表，将原本NSLog的地址替换为myNSLog的地址。至于如何重新绑定这个过程需要深入分析fishhook源码，之后单独开一篇进行分析。</p>
+<h1 id="class-dump原理"><a href="#class-dump原理" class="headerlink" title="class-dump原理"></a>class-dump原理</h1><p>class-dump可以将应用的头文件导出，头文件包含了应用的类名和方法名对应关系，通过MachO文件格式来分析其原理。<br>同样以上述demo为例来探寻class-dump原理。<br>首先在数据段中寻找_objc_classlist节，该节中保存了程序中每个类的地址，下图可以看出0x8158地址上保存着数据0x100008E18,改地址保存的是类AppDelegate的信息</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook8.jpg" alt=""></p>
+<p>32 位类信息的结构体定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_info&#123;</div><div class="line"><span class="keyword">int32_t</span> isa;</div><div class="line"><span class="keyword">int32_t</span> wuperclass;</div><div class="line"><span class="keyword">int32_t</span> cache;</div><div class="line"><span class="keyword">int32_t</span> vtable;</div><div class="line"><span class="keyword">int32_t</span> data;</div><div class="line"><span class="keyword">int32_t</span> reserved1;</div><div class="line"><span class="keyword">int32_t</span> reserved2;</div><div class="line"><span class="keyword">int32_t</span> reserved3;</div><div class="line">&#125;objc_class_info;</div></pre></td></tr></table></figure>
+<p>64 位的类信息的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_info_64&#123;</div><div class="line"><span class="keyword">int64_t</span> isa;</div><div class="line"><span class="keyword">int64_t</span> wuperclass;</div><div class="line"><span class="keyword">int64_t</span> cache;</div><div class="line"><span class="keyword">int64_t</span> vtable;</div><div class="line"><span class="keyword">int64_t</span> data;</div><div class="line"><span class="keyword">int64_t</span> reserved1;</div><div class="line"><span class="keyword">int64_t</span> reserved2;</div><div class="line"><span class="keyword">int64_t</span> reserved3;</div><div class="line">&#125;objc_class_info_64;</div></pre></td></tr></table></figure></p>
+<p>0x100008E18属于数据段的_objc_data节</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook9.jpg" alt=""></p>
+<p>该类的Data数据是0x100008D30，其中保存类的数据信息</p>
+<p>32位的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_data&#123;</div><div class="line"><span class="keyword">int32_t</span> flags;</div><div class="line"><span class="keyword">int32_t</span> instanceStart;</div><div class="line"><span class="keyword">int32_t</span> instanceSize;</div><div class="line"><span class="keyword">int32_t</span> ivarlayout;</div><div class="line"><span class="keyword">int32_t</span> name;</div><div class="line"><span class="keyword">int32_t</span> baseMethod;</div><div class="line"><span class="keyword">int32_t</span> baseProtocol;</div><div class="line"><span class="keyword">int32_t</span> ivars;</div><div class="line"><span class="keyword">int32_t</span> weakIvarLayout;</div><div class="line"><span class="keyword">int32_t</span> baseProperties;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>64 位的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_data_64&#123;</div><div class="line"><span class="keyword">int32_t</span> flags;</div><div class="line"><span class="keyword">int32_t</span> instanceStart;</div><div class="line"><span class="keyword">int32_t</span> instanceSize;</div><div class="line"><span class="keyword">int32_t</span> reserved; <span class="comment">//only arm64</span></div><div class="line"><span class="keyword">int64_t</span> ivarlayout;</div><div class="line"><span class="keyword">int64_t</span> name;</div><div class="line"><span class="keyword">int64_t</span> baseMethod;</div><div class="line"><span class="keyword">int64_t</span> baseProtocol;</div><div class="line"><span class="keyword">int64_t</span> ivars;</div><div class="line"><span class="keyword">int64_t</span> weakIvarLayout;</div><div class="line"><span class="keyword">int64_t</span> baseProperties;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在数据段的_objc_const节中查看0x100008D30, 该节保存是objc常量</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook10.jpg" alt=""></p>
+<p>Name中数据地址为0x100007711,保存的字符串位于__objc_classname节中</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook11.jpg" alt=""></p>
+<p>_objc_const节中Base Methods地址的数据是0x100008BD0,在_objc_const节寻找该地址，该类相关的函数都在其中。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook12.jpg" alt=""></p>
+<p>其中方法名对应的字符串位于代码段的__objc_methname节中。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>通过fishhook和class-dump原理来熟悉MachO文件格式，反之通过MachO文件格式去解析各种工具实现原理，收获良多</p>
 
       
     </div>
@@ -679,7 +499,11 @@ End of assembler dump.
       
         <div class="post-tags">
           
-            <a href="/tags/pwn/" rel="tag"># pwn</a>
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/MachO/" rel="tag"># MachO</a>
+          
+            <a href="/tags/hook/" rel="tag"># hook</a>
           
         </div>
       
@@ -692,8 +516,8 @@ End of assembler dump.
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/26/memset函数的用法/" rel="next" title="memset函数的用法">
-                <i class="fa fa-chevron-left"></i> memset函数的用法
+              <a href="/2020/12/10/MachO文件结构/" rel="next" title="MachO文件结构">
+                <i class="fa fa-chevron-left"></i> MachO文件结构
               </a>
             
           </div>
@@ -701,10 +525,6 @@ End of assembler dump.
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/19/pwn学习rop之x86篇/" rel="prev" title="pwn学习rop之x86篇">
-                pwn学习rop之x86篇 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -756,8 +576,17 @@ End of assembler dump.
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -857,6 +686,22 @@ End of assembler dump.
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#fishhook"><span class="nav-number">1.</span> <span class="nav-text">fishhook</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fishhook简单利用"><span class="nav-number">1.1.</span> <span class="nav-text">fishhook简单利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fishhook原理分析"><span class="nav-number">1.2.</span> <span class="nav-text">fishhook原理分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#class-dump原理"><span class="nav-number">2.</span> <span class="nav-text">class-dump原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

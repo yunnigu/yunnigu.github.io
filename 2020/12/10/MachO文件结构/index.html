@@ -116,7 +116,7 @@
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO1.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO2.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/MachO3.jpg">
-<meta property="og:updated_time" content="2020-12-23T02:25:02.785Z">
+<meta property="og:updated_time" content="2020-12-24T07:34:56.095Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MachO文件结构">
 <meta name="twitter:description" content="接触iOS逆向已经有一段时间了，但是一直没有好好去了解一下最基础的MachO结构，本文主要记录一下对MachO文件结构的学习和理解。">
@@ -362,8 +362,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-12-23T10:25:02+08:00">
-                2020-12-23
+              <time title="更新于" itemprop="dateModified" datetime="2020-12-24T15:34:56+08:00">
+                2020-12-24
               </time>
             
           </span>
@@ -433,6 +433,28 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> segment_command_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">    <span class="keyword">uint32_t</span>   cmd;         <span class="comment">/* LC_SEGMENT_64 */</span></div><div class="line">    <span class="keyword">uint32_t</span>   cmdsize;     <span class="comment">/* includes sizeof section_64 structs */</span></div><div class="line">    <span class="keyword">char</span>       segname[<span class="number">16</span>]; <span class="comment">/* segment name */</span></div><div class="line">    <span class="keyword">uint64_t</span>   vmaddr;      <span class="comment">/* memory address of this segment */</span></div><div class="line">    <span class="keyword">uint64_t</span>   vmsize;      <span class="comment">/* memory size of this segment */</span></div><div class="line">    <span class="keyword">uint64_t</span>   fileoff;     <span class="comment">/* file offset of this segment */</span></div><div class="line">    <span class="keyword">uint64_t</span>   filesize;    <span class="comment">/* amount to map from the file */</span></div><div class="line">    <span class="keyword">vm_prot_t</span>  maxprot;     <span class="comment">/* maximum VM protection */</span></div><div class="line">    <span class="keyword">vm_prot_t</span>  initprot;    <span class="comment">/* initial VM protection */</span></div><div class="line">    <span class="keyword">uint32_t</span>   nsects;      <span class="comment">/* number of sections in segment */</span></div><div class="line">    <span class="keyword">uint32_t</span>   flags;       <span class="comment">/* flags */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>系统将fileoff偏移处的filesize大小的内容加载到虚拟内存的vmaddr，大小为vmsize，vmsize 并不等于 filesize，对于 4KB 大小的 VP，vmsize 是 4K 的倍数；换句话说，vmsize 一般大于 segment 的实际大小。<br>端页面的权限由initport进行初始化。但是不能超过 maxprot 中指定的值。<br>文件中主要包括<strong>PAGEZERO、</strong>TEXT、<strong>DATA、</strong>LINKEDIT四种段，段里可以包括不同的节。定义如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> section_64 &#123; <span class="comment">/* for 64-bit architectures */</span></div><div class="line">    <span class="keyword">char</span>      sectname[<span class="number">16</span>];    <span class="comment">/* name of this section */</span></div><div class="line">    <span class="keyword">char</span>      segname[<span class="number">16</span>];     <span class="comment">/* segment this section goes in */</span></div><div class="line">    <span class="keyword">uint64_t</span>  addr;            <span class="comment">/* memory address of this section */</span></div><div class="line">    <span class="keyword">uint64_t</span>  size;            <span class="comment">/* size in bytes of this section */</span></div><div class="line">    <span class="keyword">uint32_t</span>  offset;          <span class="comment">/* file offset of this section */</span></div><div class="line">    <span class="keyword">uint32_t</span>  align;           <span class="comment">/* section alignment (power of 2) */</span></div><div class="line">    <span class="keyword">uint32_t</span>  reloff;          <span class="comment">/* file offset of relocation entries */</span></div><div class="line">    <span class="keyword">uint32_t</span>  nreloc;          <span class="comment">/* number of relocation entries */</span></div><div class="line">    <span class="keyword">uint32_t</span>  flags;           <span class="comment">/* flags (section type and attributes)*/</span></div><div class="line">    <span class="keyword">uint32_t</span>  reserved1;       <span class="comment">/* reserved (for offset or index) */</span></div><div class="line">    <span class="keyword">uint32_t</span>  reserved2;       <span class="comment">/* reserved (for count or sizeof) */</span></div><div class="line">    <span class="keyword">uint32_t</span>  reserved3;       <span class="comment">/* reserved */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>结构体section_64可以看做 section header，它描述了对应 section 的具体位置，以及要被映射的目标虚拟地址。<br>回头再看segment_command_64的cmdsize字段，它的数值并非是segment_command_64的 size 大小，还包括了紧接在 command 后面的所有section_64结构体的大小。<br>如果 segment 含有 5 个 section，那么对应的 segment_command_64 的 cmdsize 值为：72（segment_command_64本身大小） + 5 * 80（section_64的大小） = 472 bytes</p>
+<h1 id="TEXT段和-DATA段"><a href="#TEXT段和-DATA段" class="headerlink" title="_TEXT段和_DATA段"></a>_TEXT段和_DATA段</h1><h2 id="TEXT"><a href="#TEXT" class="headerlink" title="_TEXT"></a>_TEXT</h2><p>_TEXT段包含了多个节区，各区的作用如下：</p>
+<ul>
+<li>_text节是主程序代码</li>
+<li>_picsymbolstub4节和__syub_helper节用于动态链接</li>
+<li>_cstring是代码里用到的字符串表</li>
+<li>_objc_classname是objc类方法名</li>
+<li>_objc_methname是objc的方法名称</li>
+<li>_objc_methtype是objc的方法类型</li>
+<li>_const是由const修饰的常量</li>
+</ul>
+<h2 id="DATA"><a href="#DATA" class="headerlink" title="_DATA"></a>_DATA</h2><p>_DATA是数据段，里面主要存放数据，可读可写不可执行，部分节区作用如下：</p>
+<ul>
+<li>_got非懒加载全局指针表</li>
+<li>_la_symbol_ptr懒加载指针表</li>
+<li>_cftring使用的字符串信息</li>
+<li>_objc_classlist程序中类列表</li>
+<li>_objc_protolist程序中协议列表</li>
+<li>_objc_imageinfo程序中镜像信息</li>
+<li>_objc_const是objc常量</li>
+<li>_objc_superrefs是objc超类引用</li>
+<li>_objc_ivar是objc类的实例变量</li>
+</ul>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上是针对MachO文件结构的简单总结，为了更加形象的了解MachO文件结构及其在程序运行中的运用，下一节通过fishhook、class-dump等工具的原理深入了解MachO的工作原理。</p>
 
       
@@ -504,6 +526,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/12/23/fishhook原理探究/" rel="prev" title="fishhook原理探究">
+                fishhook原理探究 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -584,7 +610,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -597,7 +623,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -675,7 +701,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MachO文件的基本格式"><span class="nav-number">1.</span> <span class="nav-text">MachO文件的基本格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MachO头部"><span class="nav-number">2.</span> <span class="nav-text">MachO头部</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Load-Command"><span class="nav-number">3.</span> <span class="nav-text">Load Command</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MachO文件的基本格式"><span class="nav-number">1.</span> <span class="nav-text">MachO文件的基本格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MachO头部"><span class="nav-number">2.</span> <span class="nav-text">MachO头部</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Load-Command"><span class="nav-number">3.</span> <span class="nav-text">Load Command</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TEXT段和-DATA段"><span class="nav-number">4.</span> <span class="nav-text">_TEXT段和_DATA段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TEXT"><span class="nav-number">4.1.</span> <span class="nav-text">_TEXT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DATA"><span class="nav-number">4.2.</span> <span class="nav-text">_DATA</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
@@ -695,7 +721,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020-12-23</span>
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020-12-24</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
