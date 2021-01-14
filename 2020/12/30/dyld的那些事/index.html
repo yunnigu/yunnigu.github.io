@@ -115,7 +115,23 @@
 <meta property="og:description" content="前几天学习了MachO文件的基本结构，简单了解了MathO的工作原理，但是里面经常会涉及到dyld加载器，本篇主要学习dyld加载应用程序中的那些事。">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld1.jpg">
 <meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld2.jpg">
-<meta property="og:updated_time" content="2021-01-11T06:11:09.520Z">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld3.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld4.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld5.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld6.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld7.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld8.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld9.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld10.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld11.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld12.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld13.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld14.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld15.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld16.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld17.jpg">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/dyld18.jpg">
+<meta property="og:updated_time" content="2021-01-14T02:44:19.070Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="dyld的那些事">
 <meta name="twitter:description" content="前几天学习了MachO文件的基本结构，简单了解了MathO的工作原理，但是里面经常会涉及到dyld加载器，本篇主要学习dyld加载应用程序中的那些事。">
@@ -361,8 +377,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2021-01-11T14:11:09+08:00">
-                2021-01-11
+              <time title="更新于" itemprop="dateModified" datetime="2021-01-14T10:44:19+08:00">
+                2021-01-14
               </time>
             
           </span>
@@ -410,7 +426,26 @@
 <p>从start函数的源码可知：dlyd会内存中找到一块地址给MachO使用，也就是ASLR，内存偏移。<br>最后start函数调用了dyld::_main并返回程序main函数的指针。</p>
 <h3 id="dyld-main"><a href="#dyld-main" class="headerlink" title="dyld::_main"></a>dyld::_main</h3><p>main函数很多，这里只分析了一些关键的代码</p>
 <p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld2.jpg" alt=""></p>
-<h4 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h4><p>未完待续。。。</p>
+<h4 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h4><p>从main函数的初始，到函数getHostInfo()之前都是在配置一些环境变量，贴出部分代码功能。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld3.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld4.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld5.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld6.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld7.jpg" alt=""></p>
+<h4 id="加载共享缓存"><a href="#加载共享缓存" class="headerlink" title="加载共享缓存"></a>加载共享缓存</h4><p>在iOS系统中，每个程序依赖的动态库都需要通过dyld（位于/usr/lib/dyld）一个一个加载到内存，然而如果在每个程序运行的时候都重复的去加载一次，势必造成运行缓慢，为了优化启动速度和提高程序性能，共享缓存机制就应运而生。所有默认的动态链接库被合并成一个大的缓存文件，放到/System/Library/Caches/com.apple.dyld/目录下，按不同的架构保存分别保存着。其中包括UIKit，Foundation等基础库。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld8.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld9.jpg" alt=""></p>
+<h4 id="实例化主程序"><a href="#实例化主程序" class="headerlink" title="实例化主程序"></a>实例化主程序</h4><p>主程序的实例化主要是将MachO文件中LoadCommons段内信息放入内存中。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld10.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld11.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld12.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld13.jpg" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld14.jpg" alt=""></p>
+<h4 id="加载动态链接库"><a href="#加载动态链接库" class="headerlink" title="加载动态链接库"></a>加载动态链接库</h4><p>加载外部的动态链接库，注入涉及到的库也是通过这种方式添加。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld15.jpg" alt=""></p>
+<h4 id="链接主程序"><a href="#链接主程序" class="headerlink" title="链接主程序"></a>链接主程序</h4><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld16.jpg" alt=""></p>
+<h4 id="链接其他动态链接库"><a href="#链接其他动态链接库" class="headerlink" title="链接其他动态链接库"></a>链接其他动态链接库</h4><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld17.jpg" alt=""></p>
+<h4 id="加载load方法-amp-寻找main函数"><a href="#加载load方法-amp-寻找main函数" class="headerlink" title="加载load方法&amp;寻找main函数"></a>加载load方法&amp;寻找main函数</h4><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/dyld18.jpg" alt=""></p>
 
       
     </div>
@@ -656,7 +691,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#dyld"><span class="nav-number">1.</span> <span class="nav-text">dyld</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dyld简介"><span class="nav-number">1.1.</span> <span class="nav-text">dyld简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dyld加载流程"><span class="nav-number">1.2.</span> <span class="nav-text">dyld加载流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dyldbootstrap-start"><span class="nav-number">1.2.1.</span> <span class="nav-text">dyldbootstrap::start</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dyld-main"><span class="nav-number">1.2.2.</span> <span class="nav-text">dyld::_main</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置环境变量"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">配置环境变量</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#dyld"><span class="nav-number">1.</span> <span class="nav-text">dyld</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dyld简介"><span class="nav-number">1.1.</span> <span class="nav-text">dyld简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dyld加载流程"><span class="nav-number">1.2.</span> <span class="nav-text">dyld加载流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dyldbootstrap-start"><span class="nav-number">1.2.1.</span> <span class="nav-text">dyldbootstrap::start</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dyld-main"><span class="nav-number">1.2.2.</span> <span class="nav-text">dyld::_main</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置环境变量"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加载共享缓存"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">加载共享缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例化主程序"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">实例化主程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加载动态链接库"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">加载动态链接库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接主程序"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">链接主程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接其他动态链接库"><span class="nav-number">1.2.2.6.</span> <span class="nav-text">链接其他动态链接库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加载load方法-amp-寻找main函数"><span class="nav-number">1.2.2.7.</span> <span class="nav-text">加载load方法&寻找main函数</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -676,7 +711,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2021-01-11</span>
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2021-01-14</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
