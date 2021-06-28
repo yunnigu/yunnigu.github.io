@@ -113,10 +113,12 @@
 <meta property="og:url" content="http://yunnigu.dropsec.xyz/2021/06/28/AntiAntiDebug助手/index.html">
 <meta property="og:site_name" content="YungGong">
 <meta property="og:description" content="之前有写过针对iOS反调试的及其绕过的分析文章，动态绕过iOS内联svc反调试，本篇主要分享一下自己集成的一款方便绕过反调试的工具。">
-<meta property="og:updated_time" content="2021-06-28T09:39:14.000Z">
+<meta property="og:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/AntiAntiDebug1.png">
+<meta property="og:updated_time" content="2021-06-28T11:07:49.072Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AntiAntiDebug助手">
 <meta name="twitter:description" content="之前有写过针对iOS反调试的及其绕过的分析文章，动态绕过iOS内联svc反调试，本篇主要分享一下自己集成的一款方便绕过反调试的工具。">
+<meta name="twitter:image" content="https://gitee.com/yunnigu/blog_picture/raw/master/AntiAntiDebug1.png">
 
 
 
@@ -358,7 +360,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2021-06-28T17:39:14+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2021-06-28T19:07:49+08:00">
                 2021-06-28
               </time>
             
@@ -399,12 +401,15 @@
       
         <p>之前有写过针对iOS反调试的及其绕过的分析文章，<a href="https://yunnigu.dropsec.xyz/2020/04/30/%E5%8A%A8%E6%80%81%E7%BB%95%E8%BF%87iOS%E5%86%85%E8%81%94svc%E5%8F%8D%E8%B0%83%E8%AF%95/">动态绕过iOS内联svc反调试</a>，本篇主要分享一下自己集成的一款方便绕过反调试的工具。<br><a id="more"></a></p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="反调试相关技术参考"><a href="#反调试相关技术参考" class="headerlink" title="反调试相关技术参考"></a>反调试相关技术参考</h3><p><a href="http://bbs.iosre.com/t/topic/9351" target="_blank" rel="external">反调试与绕过的奇淫技巧</a><br><a href="http://bbs.iosre.com/t/topic/8179" target="_blank" rel="external">关于反调试&amp;反反调试那些事</a></p>
-<h3 id="相关知识储备"><a href="#相关知识储备" class="headerlink" title="相关知识储备"></a>相关知识储备</h3><pre><code>MochO文件结构
-dyld链接加载流程
-iOS inline Hook
-Preferenceloader，applist模块集成
-</code></pre><p>之前对反调试的绕过一般都是采用针对对应APP编写Hook插件来绕过反调试，或者是启动调试定位反调试点，修改寄存器nop汇编指令进行绕过，<br>前几天在使用RevealLoader的过程中，看到其下图界面，突发奇想是否可以开发一个通用的插件，选中某个APP即可绕过其反调试，不再需要逐个分析APP的反调试的反调试点，于是通过之前对反调试的一些积累集成了本工具。</p>
-<p>## </p>
+<h3 id="相关知识储备"><a href="#相关知识储备" class="headerlink" title="相关知识储备"></a>相关知识储备</h3><blockquote>
+<p>MochO文件结构</p>
+<p>dyld链接加载流程</p>
+<p>iOS inline Hook</p>
+<p>Preferenceloader，applist模块集成</p>
+</blockquote>
+<p>之前对反调试的绕过一般都是采用针对对应APP编写Hook插件来绕过反调试，或者是启动调试定位反调试点，修改寄存器nop汇编指令进行绕过，<br>前几天在使用RevealLoader的过程中，看到其下图界面，突发奇想是否可以开发一个通用的插件，选中某个APP即可绕过其反调试，不再需要逐个分析APP的反调试的反调试点，于是通过之前对反调试的一些积累集成了本工具。</p>
+<p><img src="https://gitee.com/yunnigu/blog_picture/raw/master/AntiAntiDebug1.png" alt=""></p>
+<h2 id="设置界面开发"><a href="#设置界面开发" class="headerlink" title="设置界面开发"></a>设置界面开发</h2><p>通过阅读<a href="https://github.com/heardrwt/RevealLoader" target="_blank" rel="external">RevealLoader</a></p>
 
       
     </div>
@@ -643,7 +648,7 @@ Preferenceloader，applist模块集成
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#反调试相关技术参考"><span class="nav-number">1.1.</span> <span class="nav-text">反调试相关技术参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关知识储备"><span class="nav-number">1.2.</span> <span class="nav-text">相关知识储备</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#反调试相关技术参考"><span class="nav-number">1.1.</span> <span class="nav-text">反调试相关技术参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关知识储备"><span class="nav-number">1.2.</span> <span class="nav-text">相关知识储备</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置界面开发"><span class="nav-number">2.</span> <span class="nav-text">设置界面开发</span></a></li></ol></div>
             
 
           </div>
